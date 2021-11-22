@@ -1,28 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   builtins.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/18 13:34:12 by mframbou          #+#    #+#             */
-/*   Updated: 2021/11/22 15:00:12 by mframbou         ###   ########.fr       */
+/*   Created: 2021/11/22 14:59:30 by mframbou          #+#    #+#             */
+/*   Updated: 2021/11/22 15:00:36 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtins.h"
+#ifndef BUILTINS_H
+# define BUILTINS_H
 
-/*
-	If the string passed is null, getcwd allocates it with a buffer of size n,
-	If n is 0, getcwd automatically malloc the required length
-	Returns the address of the buffer (which changed because it was malloc'ed)
-*/
-void	pwd(int argc, char *argv[])
-{
-	char	*curr_path;
+# include "../libft/libft.h"
+# include <stdio.h>
+# include <unistd.h>
+# include <errno.h>
+# include <stdlib.h>
 
-	curr_path = NULL;
-	curr_path = getcwd(curr_path, 0);
-	printf("%s\n", curr_path);
-	free(curr_path);
-}
+#endif

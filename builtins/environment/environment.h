@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/18 13:47:39 by mframbou          #+#    #+#             */
-/*   Updated: 2021/11/18 15:40:45 by mframbou         ###   ########.fr       */
+/*   Updated: 2021/11/22 15:01:04 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,7 @@
 # define ENVIRONMENT_H
 
 # include "environment.h"
-# include <stdlib.h>
-# include "../../libft/libft.h"
-
+# include "../builtins.h"
 
 typedef struct s_dic_variable
 {

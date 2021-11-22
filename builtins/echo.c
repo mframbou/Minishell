@@ -6,12 +6,11 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/18 11:18:16 by mframbou          #+#    #+#             */
-/*   Updated: 2021/11/18 13:43:19 by mframbou         ###   ########.fr       */
+/*   Updated: 2021/11/22 15:00:03 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include "libft/libft.h"
+#include "builtins.h"
 
 void	echo(int argc, char *argv[])
 {
