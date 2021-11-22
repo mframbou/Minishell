@@ -1,4 +1,5 @@
 SRCS =	minishell.c \
+		 parse/parse.c
 #			./builtins/cd.c \
 #			./builtins/echo.c \
 #			./builtins/pwd.c \
