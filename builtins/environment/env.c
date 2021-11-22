@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/18 16:40:17 by mframbou          #+#    #+#             */
-/*   Updated: 2021/11/18 16:47:48 by mframbou         ###   ########.fr       */
+/*   Updated: 2021/11/22 15:53:49 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 t_env_link	**get_var_list(void);
 
-void	env(int argc, char *argv[])
+int	main(int argc, char *argv[])
 {
 	t_env_link	**var_list;
 	t_env_link	*curr;

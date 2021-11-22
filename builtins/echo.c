@@ -6,20 +6,20 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/18 11:18:16 by mframbou          #+#    #+#             */
-/*   Updated: 2021/11/22 15:00:03 by mframbou         ###   ########.fr       */
+/*   Updated: 2021/11/22 15:58:31 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "builtins.h"
 
-void	echo(int argc, char *argv[])
+int	main(int argc, char *argv[])
 {
 	int	print_nl;
 	int	i;
 
-	i = 0;
+	i = 1;
 	print_nl = 1;
-	if (argc >= 1 && ft_strcmp(argv[i], "-n") == 0)
+	if (argc >= 2 && ft_strcmp(argv[i], "-n") == 0)
 	{
 		i++;
 		print_nl = 0;

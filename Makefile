@@ -1,14 +1,14 @@
 SRCS =	minishell.c \
-			./builtins/cd.c \
-			./builtins/echo.c \
-			./builtins/pwd.c \
-				./builtins/environment/add_variable.c \
-				./builtins/environment/env.c \
-				./builtins/environment/export.c \
-				./builtins/environment/get_variable.c \
-				./builtins/environment/remove_variable.c \
-				./builtins/environment/unset.c \
-				./builtins/environment/var_list.c \
+#			./builtins/cd.c \
+#			./builtins/echo.c \
+#			./builtins/pwd.c \
+#				./builtins/environment/add_variable.c \
+#				./builtins/environment/env.c \
+#				./builtins/environment/export.c \
+#				./builtins/environment/get_variable.c \
+#				./builtins/environment/remove_variable.c \
+#				./builtins/environment/unset.c \
+#				./builtins/environment/var_list.c \
 
 LIBFT = ./libft/libft.a
 
@@ -22,10 +22,19 @@ CC = gcc #-Wall -Wextra -Werror
 	@$(CC) -c $< -o $@
 	@echo "\033[0;96mCompiling \033[1;96m$<"
 
-$(NAME):	$(LIBFT) $(OBJS)
+$(NAME):	$(LIBFT) $(OBJS) echo cd pwd
 	@echo "\033[0;95mLinking \033[0;95m($(OBJS)) into \033[1;35m$(NAME)"
 	@$(CC) $(OBJS) $(LIBFT) -lreadline -o $(NAME)
 	@echo "\033[1;92mDONE"
+
+echo:
+	$(CC) ./builtins/echo.c $(LIBFT) -o echo
+
+cd:
+	$(CC) ./builtins/cd.c -o cd
+
+pwd:
+	$(CC) ./builtins/pwd.c -o pwd
 
 $(LIBFT):
 	$(MAKE) -j -C libft
@@ -36,6 +45,7 @@ clean:
 	@rm -f $(OBJS)
 	@echo "\033[0;91mRemoving \033[0;31m$(OBJS)"
 	@make -C libft clean
+	@rm -f echo cd
 
 fclean:		clean
 	@rm -f $(NAME)
