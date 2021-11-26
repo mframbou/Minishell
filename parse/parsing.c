@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "../minishell.h"
 
 int	ft_isspace(char c)
 {
@@ -110,17 +110,7 @@ char	*get_line_till_any_quote(char *str)
 	i++;
 	while (str[i] && str[i] != quote)
 		i++;
-	return (ft_substr(str, 1, i - 1));
-}
-
-char	*get_line_till_quote(char *str)
-{
-	int	i;
-
-	i = 1;
-	while (str[i] && str[i] != '\'')
-		i++;
-	return (ft_substr(str, 1, i - 1));
+	return (ft_substr(str, 0, i + 1));
 }
 
 /*
@@ -246,9 +236,100 @@ char	**parsing(char *old_line)
 	return (args);
 }
 
-//int main()
-//{
-//	char *line = ft_strdup(" salut 'oronda tu es' "" bg ' ' et magnifique");
-//	char **res = parsing(line);
-//	return 0;
-//}
+char *interpret_dollar(char *str, int i)
+{
+	int	start_index;
+	int	end_index;
+	char *env_name;
+	char *env_value;
+	char *result;
+
+
+	i++;
+	start_index = i;
+	if (ft_isalpha(str[i]) || str[i] == '_')
+		i++;
+	else
+		return(str);
+	while (str[i] && (ft_isalpha(str[i]) || ft_isdigit(str[i]) || str[i] == '_'))
+		i++;
+	end_index = i;
+
+	env_name = ft_substr(str,start_index,end_index - start_index);
+	env_value = get_env_variable(env_name);
+	if(env_value)
+	{
+		int res_size = (sizeof(char) * (ft_strlen(str) - (ft_strlen(env_name) + 1) + ft_strlen(env_value)));
+		result = malloc(sizeof(char) * res_size + 1);
+		ft_bzero(result, sizeof(char) * res_size + 1);
+		free(env_name);
+		
+		int j = 0;
+
+		while(str[j] && str[j] != '$')
+		{
+			result[j] = str[j];
+			j++;
+		}
+		ft_strlcat(result, env_value, res_size);
+		ft_strlcat(result, &(str[j + ft_strlen(env_name)]), res_size);
+	}
+	else
+	{
+
+	}
+
+
+
+
+
+
+	//while(str[i] && !ft_isspace(str[i]))
+
+}
+
+
+char	*transform_env_arg(char *str)
+{
+
+	char *result;
+	int	i;
+	i = 0;
+
+	if (str[0] == '\'')
+		return (str);
+	else
+	{
+		while(str[i])
+		{
+			if (str[i] == '$')
+			{
+				str = interpret_dollar(str, i);
+			}
+			i++;
+		}
+		
+		
+		
+		
+	}
+	return str;
+}
+
+// salut '$variable oronda' "$variable oronda"
+int main()
+{
+	add_env_variable(ft_strdup("TEST"), ft_strdup("Grosse merde"));
+	char *line = ft_strdup("\"Salut $TEST-Mais t'es bg\"");
+	char **res = parsing(line);
+	int i = 0;
+	char *test = transform_env_arg(res[0]);
+	/*
+	while(res[i])
+	{
+		interpret_env_arg(res[i]);
+		i++;
+	}
+	*/
+	return 0;
+}
