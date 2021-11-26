@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/18 16:40:17 by mframbou          #+#    #+#             */
-/*   Updated: 2021/11/22 15:53:49 by mframbou         ###   ########.fr       */
+/*   Updated: 2021/11/22 18:04:55 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,7 @@ int	main(int argc, char *argv[])
 	curr = *var_list;
 	while (curr)
 	{
-		printf("%s=", curr->var.key);
-		i = 0;
-		while (curr->var.values[i])
-		{
-			printf("%s", curr->var.values[i]);
-			if (curr->var.values[i + 1])
-				printf(":");
-			i++;
-		}
-		printf("\n");
+		printf("%s=%s\n", curr->var.key, curr->var.value);
 		curr = curr->next;
 	}
 }

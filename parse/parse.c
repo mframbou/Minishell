@@ -1,28 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/18 11:45:12 by mframbou          #+#    #+#             */
-/*   Updated: 2021/11/22 18:26:45 by mframbou         ###   ########.fr       */
+/*   Created: 2021/11/22 14:53:17 by oronda            #+#    #+#             */
+/*   Updated: 2021/11/22 17:41:35 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <readline/readline.h>
-#include <readline/history.h>
+#include "../libft/libft.h"
+#include "../builtins/builtins.h"
+#include <unistd.h>
 
-void	parse(char *str);
-
-int	main(int argc, char *argv[])
+void	parse(char *str)
 {
-	char	*line;
-	while (1)
+	char **args;
+	
+	
+	args = ft_split(str,' ');
+	
+	if (!ft_strcmp(args[0], "cd"))
 	{
-		line = readline("minishell");
-		parse(line);
+		char *test[2];
+		test[0] = getenv("HOME");
+		test[1] = 0;
+		if (fork() == 0)
+			execve("./cd", args, test);
 	}
 }

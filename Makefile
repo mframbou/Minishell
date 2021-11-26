@@ -1,4 +1,5 @@
 SRCS =	minishell.c \
+		 parse/parse.c
 #			./builtins/cd.c \
 #			./builtins/echo.c \
 #			./builtins/pwd.c \
@@ -45,7 +46,7 @@ clean:
 	@rm -f $(OBJS)
 	@echo "\033[0;91mRemoving \033[0;31m$(OBJS)"
 	@make -C libft clean
-	@rm -f echo cd
+	@rm -f echo cd pwd
 
 fclean:		clean
 	@rm -f $(NAME)

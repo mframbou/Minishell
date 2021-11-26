@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/18 14:19:24 by mframbou          #+#    #+#             */
-/*   Updated: 2021/11/18 15:28:45 by mframbou         ###   ########.fr       */
+/*   Updated: 2021/11/22 18:06:14 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,9 @@ static void	lst_remove_env_variable(t_env_link	**var_lst, t_env_link *var)
 			curr->next = var->next;
 	}
 	i = 0;
-	if (var->var.values)
+	if (var->var.value)
 	{
-		while (var->var.values[i])
-			free(var->var.values[i++]);
-		free(var->var.values);
+		free(var->var.value);
 	}
 	free(var->var.key);
 	free(var);

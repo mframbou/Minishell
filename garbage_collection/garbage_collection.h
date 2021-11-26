@@ -1,28 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   garbage_collection.h                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/18 11:45:12 by mframbou          #+#    #+#             */
-/*   Updated: 2021/11/22 18:26:45 by mframbou         ###   ########.fr       */
+/*   Created: 2021/11/22 18:17:45 by mframbou          #+#    #+#             */
+/*   Updated: 2021/11/22 18:45:30 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef GARBAGE_COLLECTION_H
+# define GARBAGE_COLLECTION_H
+
 #include <stdlib.h>
-#include <stdio.h>
-#include <readline/readline.h>
-#include <readline/history.h>
 
-void	parse(char *str);
-
-int	main(int argc, char *argv[])
+typedef struct s_ptr_link
 {
-	char	*line;
-	while (1)
-	{
-		line = readline("minishell");
-		parse(line);
-	}
-}
+	void				*ptr;
+	struct s_ptr_link	*next;
+}	t_ptr_link;
+
+void	*ft_malloc(size_t size);
+void	ft_free_all(void);
+
+#endif

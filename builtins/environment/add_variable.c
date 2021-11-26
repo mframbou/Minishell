@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/18 14:18:25 by mframbou          #+#    #+#             */
-/*   Updated: 2021/11/18 15:09:10 by mframbou         ###   ########.fr       */
+/*   Updated: 2021/11/22 18:03:36 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 t_env_link	**get_var_list(void);
 
-static t_env_link	*create_new_env_variable(char *key, char **values)
+static t_env_link	*create_new_env_variable(char *key, char *value)
 {
 	t_env_link	*new;
 
@@ -23,7 +23,7 @@ static t_env_link	*create_new_env_variable(char *key, char **values)
 	{
 		new->next = NULL;
 		new->var.key = key;
-		new->var.values = values;
+		new->var.value = value;
 	}
 	return (new);
 }
@@ -43,22 +43,18 @@ static void	lst_add_env_variable(t_env_link **var_lst, t_env_link *new)
 	start->next = new;
 }
 
-static void	overwrite_var_values(t_env_link *var, char **new_values)
+static void	overwrite_var_value(t_env_link *var, char *new_value)
 {
 	int	i;
 
 	i = 0;
-	if (var->var.values)
-	{
-		while (var->var.values[i])
-			free(var->var.values[i++]);
-		free(var->var.values);
-	}
+	if (var->var.value)
+		free(var->var.value);
 	free(var->var.key);
 	free(var);
 }
 
-void	add_env_variable(char *key, char **values)
+void	add_env_variable(char *key, char *value)
 {
 	t_env_link	**var_lst;
 	t_env_link	*curr;
@@ -69,10 +65,10 @@ void	add_env_variable(char *key, char **values)
 	{
 		if (ft_strcmp(curr->var.key, key) == 0)
 		{
-			overwrite_var_values(curr, values);
+			overwrite_var_value(curr, value);
 			return ;
 		}
 		curr = curr->next;
 	}
-	lst_add_env_variable(var_lst, create_new_env_variable(key, values));
+	lst_add_env_variable(var_lst, create_new_env_variable(key, value));
 }

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   cd.c                                               :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/18 11:57:52 by mframbou          #+#    #+#             */
-/*   Updated: 2021/11/22 16:38:24 by mframbou         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "builtins.h"
 
 int	main(int argc, char *argv[])
@@ -17,6 +5,8 @@ int	main(int argc, char *argv[])
 	int		res;
 	char	*home_path;
 
+	res = 0;
+	printf("pouet\n");
 	if (argc == 1)
 	{
 		home_path = getenv("HOME");
