@@ -1,15 +1,9 @@
 SRCS =	minishell.c \
-		 parse/parse.c
-#			./builtins/cd.c \
-#			./builtins/echo.c \
-#			./builtins/pwd.c \
-#				./builtins/environment/add_variable.c \
-#				./builtins/environment/env.c \
-#				./builtins/environment/export.c \
-#				./builtins/environment/get_variable.c \
-#				./builtins/environment/remove_variable.c \
-#				./builtins/environment/unset.c \
-#				./builtins/environment/var_list.c \
+		parse/parse.c \
+			./builtins/environment/add_variable.c \
+			./builtins/environment/get_variable.c \
+			./builtins/environment/remove_variable.c \
+			./builtins/environment/var_list.c \
 
 LIBFT = ./libft/libft.a
 
