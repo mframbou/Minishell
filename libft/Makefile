@@ -20,17 +20,17 @@ CFLAGS = -Wall -Wextra -Werror
 
 $(NAME):	$(OBJS)
 	@ar rc $(NAME) $(OBJS)
-	@echo "\033[1;92mDone compiling libft"
+	@echo "\033[1;92mDone compiling libft\033[0m"
 
 all:		$(NAME)
 
 clean:
 	@rm -f $(OBJS)
-	@echo "\033[0;91mRemoving \033[0;31m$(OBJS)"
+	@echo "\033[0;91mRemoving \033[0;31m$(OBJS)\033[0m"
 
 fclean:		clean
 	@rm -f $(NAME)
-	@echo "\033[0;91mRemoving \033[0;31m$(NAME)"
+	@echo "\033[0;91mRemoving \033[0;31m$(NAME)\033[0m"
 
 re:			fclean all
 

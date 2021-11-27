@@ -1,11 +1,11 @@
 #include "../minishell.h"
 
-int	ft_isspace(char c)
+static int	ft_isspace(char c)
 {
 	return (c == ' ' || c == '\t' || c == '\v');
 }
 
-int	is_closed_quote(char *str)
+static int	is_closed_quote(char *str)
 {
 	int		i;
 	char	quote;
@@ -60,7 +60,7 @@ int	is_closed_quote(char *str)
 //	return (ft_substr(str, 0, i));
 //}
 
-char	*get_line_till_space_or_quote(char *str)
+static char	*get_line_till_space_or_quote(char *str)
 {
 	int	i;
 	int	j;
@@ -90,7 +90,7 @@ char	*get_line_till_space_or_quote(char *str)
 
 	special case
 */
-char	*get_line_till_space(char *str)
+static char	*get_line_till_space(char *str)
 {
 	int	i;
 
@@ -100,7 +100,7 @@ char	*get_line_till_space(char *str)
 	return (ft_substr(str, 0, i));
 }
 
-char	*get_line_till_any_quote(char *str)
+static char	*get_line_till_any_quote(char *str)
 {
 	int		i;
 	char	quote;
@@ -150,6 +150,10 @@ char	*replace_env_variable(char *str)
 }
 */
 
+/*
+	Retrieve the argument, only special case is if the arg == '' or ""
+	In which case we just do i += 2 to skip the quotes and return NULL since it's like an empty arg
+*/
 static char	*get_one_arg(char *str, int *i)
 {
 	char	*res;
@@ -166,10 +170,7 @@ static char	*get_one_arg(char *str, int *i)
 			return (NULL);
 		}
 		else
-		{
 			res = get_line_till_any_quote(&(str[*i]));
-			*i += 2;
-		}
 	}
 	else
 		res = get_line_till_space_or_quote(&str[*i]);
@@ -203,40 +204,14 @@ static int	count_args(char *old_line)
 	free(line);
 	return (count);
 }
+/*
+	This function in only called if a $ sign is found
 
-char	**parsing(char *old_line)
-{
-	char	**args;
-	char	*current_arg;
-	char	*line;
-	int		i;
-	int		argc;
-
-	i = 0;
-	argc = 0;
-	args = (char **) malloc(sizeof(char *) * (count_args(old_line) + 1));
-	if (!args)
-		return (NULL);
-	line = ft_strtrim(old_line, " \t\v\f\r");
-	free(old_line);
-	while (line[i])
-	{
-		while (line[i] && ft_isspace(line[i]))
-			i++;
-		if (!line[i])
-			break ;
-		current_arg = get_one_arg(line, &i);
-		if (current_arg)
-		{
-			args[argc++] = current_arg;
-			i += ft_strlen(current_arg);
-		}
-	}
-	args[argc] = NULL;
-	return (args);
-}
-
-char *interpret_dollar(char *str, int i)
+	It goes to the $ (copy every char on the way)
+	Then copy the value of the variable (or nothing if the variable is not in the env)
+	Then copy the second part of the string (starting from the end of the $VAR)
+*/
+static char *interpret_one_dollar_var(char *str, int i)
 {
 	int	start_index;
 	int	end_index;
@@ -244,92 +219,163 @@ char *interpret_dollar(char *str, int i)
 	char *env_value;
 	char *result;
 
-
 	i++;
 	start_index = i;
+	// Continue while our variable is valid
+	// if it's not, return a copy since we free the original in our "parent" / calling function
 	if (ft_isalpha(str[i]) || str[i] == '_')
 		i++;
 	else
-		return(str);
+		return(ft_strdup(str));
 	while (str[i] && (ft_isalpha(str[i]) || ft_isdigit(str[i]) || str[i] == '_'))
 		i++;
 	end_index = i;
-
-	env_name = ft_substr(str,start_index,end_index - start_index);
+	env_name = ft_substr(str,start_index, end_index - start_index);
 	env_value = get_env_variable(env_name);
-	if(env_value)
+
+	// If the env value is valid, then our total size = strlen - env variable length ($ARG) + env value length ("Test variable")
+	// If not, then it's just the strlen - env variable length ($ARG)
+	// Since if our value is null (no associated variable) strlen(NULL) = 0, we can use the same formula
+																					/* env_val == NULL ? 0 : strlen */
+	int total_res_size = (sizeof(char) * (ft_strlen(str) - (ft_strlen(env_name) + 1) + ft_strlen(env_value) + 1));
+	result = malloc(sizeof(char) * total_res_size);
+	int j = 0;
+	// Copy the first part in both cases
+	while(str[j] && str[j] != '$')
 	{
-		int res_size = (sizeof(char) * (ft_strlen(str) - (ft_strlen(env_name) + 1) + ft_strlen(env_value)));
-		result = malloc(sizeof(char) * res_size + 1);
-		ft_bzero(result, sizeof(char) * res_size + 1);
-		free(env_name);
-		
-		int j = 0;
-
-		while(str[j] && str[j] != '$')
-		{
-			result[j] = str[j];
-			j++;
-		}
-		ft_strlcat(result, env_value, res_size);
-		ft_strlcat(result, &(str[j + ft_strlen(env_name)]), res_size);
+		result[j] = str[j];
+		j++;
 	}
-	else
-	{
+	// Set null terminated for strlcat (start point for the cat)
+	result[j] = '\0';
 
-	}
+	// If we have a variable to replace, append it
+	if (env_value)
+		ft_strlcat(result, env_value, total_res_size);
+	
+	// Then "skip" our $ARG (since we replaced it with the variable value)
+	// which is strlen(env_name) ("ARG" = 3) + 1 ('$') => $ARG = 4
+	j += (ft_strlen(env_name) + 1);
 
+	// Then append the second part
+	ft_strlcat(result, &(str[j]), total_res_size);
 
-
-
-
-
-	//while(str[i] && !ft_isspace(str[i]))
-
+	// Free env name, if it's null it will simply do nothing
+	free(env_name);
+	return (result);
 }
 
+static char	*get_unquoted_arg(char *str)
+{
+	char	*res;
 
-char	*transform_env_arg(char *str)
+	// If there are quotes AND they are closed, then remove them, else don't do anything
+	if (str && (str[0] == '\'' || str[0] == '"') && is_closed_quote(&str[0]))
+	{
+		res = ft_substr(str, 1, ft_strlen(str) - 2);
+		free(str);
+	}
+	else
+		res = str;
+	return (res);
+}
+
+static char	*interpret_env_arg(char *str)
 {
 
-	char *result;
-	int	i;
-	i = 0;
+	char	*result;
+	char	*tmp;
+	int		i;
 
-	if (str[0] == '\'')
+	i = 0;
+	// If it's a string starting with simple quotes, don't interpret it, otherwise interpret $ signs
+	// except if it's an unclosed quote
+	// But in both case if it has quotes at the start and end remove them
+	if (str[0] == '\'' && is_closed_quote(&(str[0])))
 		return (str);
 	else
 	{
+		result = ft_strdup(str);
 		while(str[i])
 		{
 			if (str[i] == '$')
 			{
-				str = interpret_dollar(str, i);
+				tmp = result;
+				result = interpret_one_dollar_var(tmp, i);
+				free(tmp);
 			}
 			i++;
 		}
-		
-		
-		
-		
+		free(str);
 	}
-	return str;
+	return get_unquoted_arg(result);
 }
 
-// salut '$variable oronda' "$variable oronda"
-int main()
+// Takes pointer to array of string (triple pointer)
+void	interpret_all_args(char	***args)
 {
-	add_env_variable(ft_strdup("TEST"), ft_strdup("Grosse merde"));
-	char *line = ft_strdup("\"Salut $TEST-Mais t'es bg\"");
-	char **res = parsing(line);
-	int i = 0;
-	char *test = transform_env_arg(res[0]);
-	/*
-	while(res[i])
+	int	i;
+
+	i = 0;
+	while ((*args)[i])
 	{
-		interpret_env_arg(res[i]);
+		(*args)[i] = interpret_env_arg((*args)[i]);
 		i++;
 	}
-	*/
-	return 0;
 }
+
+char	**parse_program_and_args(char *line)
+{
+	char	**args;
+	char	*current_arg;
+	char	*new_line;
+	int		i;
+	int		argc;
+
+	i = 0;
+	argc = 0;
+	args = (char **) malloc(sizeof(char *) * (count_args(line) + 1));
+	if (!args)
+		return (NULL);
+	new_line = ft_strtrim(line, " \t\v\f\r");
+	free(line);
+	while (new_line[i])
+	{
+		while (new_line[i] && ft_isspace(new_line[i]))
+			i++;
+		if (!new_line[i])
+			break ;
+		current_arg = get_one_arg(new_line, &i);
+		if (current_arg)
+		{
+			args[argc++] = current_arg;
+			i += ft_strlen(current_arg);
+		}
+	}
+	args[argc] = NULL;
+	interpret_all_args(&args);
+	return (args);
+}
+
+//	// salut '$variable oronda' "$variable oronda"
+//	int main()
+//	{
+//		add_env_variable(ft_strdup("TEST"), ft_strdup("Grosse merde"));
+//		char *line = ft_strdup("\"Salut\" '' \"$TEST ''$_-TEST'\"");
+//		char **res = parsing(line);
+//	
+//	
+//		// input string = \"Salut\" '' \"$TEST ''$_-TEST'\"
+//		int i = 0;
+//		while(res[i])
+//		{
+//			res[i] = interpret_env_arg(res[i]);
+//			i++;
+//		}
+//		/*
+//			res[0] = "Salut"
+//			res[1] = "Grosse merde ''EST'"
+//			res[2] = NULL
+//		*/
+//		return 0;
+//	}
