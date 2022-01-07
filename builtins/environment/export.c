@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/18 15:30:21 by mframbou          #+#    #+#             */
-/*   Updated: 2021/11/22 18:05:52 by mframbou         ###   ########.fr       */
+/*   Updated: 2022/01/07 17:42:16 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,28 @@
 
 /*
 	Check arg validity
-	If not a single string, split on ':'
+	If not a single string, split on '='
 	Set key / value
 */
-int	main(int argc, char *argv[])
+void	export_command(char *argv[])
 {
-	char	*key;
-	char	*value;
+	char	**values;
+	int		i;
 
-	add_env_variable(key, value);
+	i = 1;
+	while (argv[i])
+	{
+		values = ft_split(argv[i], '=');
+		if (!values || !values[0])
+		{
+			free_ft_split(values);
+			printf("Invalid syntax\n");
+		}
+		if (values[1])
+			add_env_variable(ft_strdup(values[0]), ft_strdup(values[1]));
+		else
+			add_env_variable(ft_strdup(values[0]), ft_strdup(""));
+		free_ft_split(values);
+		i++;
+	}
 }

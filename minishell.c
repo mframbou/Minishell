@@ -5,14 +5,15 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/18 11:45:12 by mframbou          #+#    #+#             */
-/*   Updated: 2022/01/07 11:41:20 by mframbou         ###   ########.fr       */
+/*   Created: 2022/01/07 11:45:30 by mframbou          #+#    #+#             */
+/*   Updated: 2022/01/07 18:03:20 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#define PATH_STR "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
-char 	**parse(char *str);
+char	**parse_program_and_args(char *line);
 
 int	is_line_empty(char *str)
 {
@@ -37,7 +38,7 @@ void	init_basic_env_variables(void)
 	if (path_env)
 		add_env_variable("PATH", ft_strdup(path_env));
 	else
-		add_env_variable("PATH", ft_strdup("/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"));
+		add_env_variable("PATH", ft_strdup(PATH_STR));
 }
 
 int	main(int argc, char *argv[])
@@ -47,16 +48,23 @@ int	main(int argc, char *argv[])
 	init_basic_env_variables();
 	while (1)
 	{
-		line = readline("Minishell::::");
+		line = readline(MINISHELL_PROMPT);
 		if (line && line[0] != '\0' && !is_line_empty(line))
 		{
 			add_history(line);
 		}
-		char **args = parse(line);
-		for (int i = 0; args[i]; i++)
+		char **args = parse_program_and_args(line);
+		if (args[0])
 		{
-			printf("%s\n", args[i]);
-			
+			if (is_non_forked_command(args[0]))
+			{
+				exec_non_forked_command(args);
+			}
+			else if (is_forked_command(args[0]))
+			{
+				exec_forked_command(args);
+			}
+			//does_program_exists(args[0]);
 		}
 	}
 }

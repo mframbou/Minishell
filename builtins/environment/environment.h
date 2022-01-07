@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/18 13:47:39 by mframbou          #+#    #+#             */
-/*   Updated: 2021/11/22 18:05:00 by mframbou         ###   ########.fr       */
+/*   Updated: 2022/01/07 14:18:18 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ typedef struct s_env_link
 
 void	add_env_variable(char *key, char *value);
 void	remove_env_variable(char *key);
-char	*get_env_variable(char *key);
 void	free_var_list(void);
+char	*get_env_variable(char *key);
 char	**get_env_as_string_array(void);
 
 #endif

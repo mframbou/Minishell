@@ -3,7 +3,7 @@ ft_strlcat.c ft_strchr.c ft_strrchr.c ft_strnstr.c ft_isalpha.c ft_isdigit.c ft_
 ft_strncmp.c ft_tolower.c ft_toupper.c ft_striteri.c ft_strcmp.c\
 ft_strmapi.c ft_substr.c ft_strjoin.c ft_strtrim.c ft_split.c ft_itoa.c \
 ft_putchar_fd.c ft_putstr_fd.c ft_putendl_fd.c ft_putnbr_fd.c \
-ft_lstnew.c ft_lstadd_front.c ft_lstsize.c ft_lstlast.c ft_lstadd_back.c ft_lstdelone.c ft_lstclear.c ft_lstiter.c ft_lstmap.c ft_isspace.c
+ft_lstnew.c ft_lstadd_front.c ft_lstsize.c ft_lstlast.c ft_lstadd_back.c ft_lstdelone.c ft_lstclear.c ft_lstiter.c ft_lstmap.c ft_isspace.c free_ft_split.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -20,17 +20,17 @@ CFLAGS = -Wall -Wextra -Werror
 
 $(NAME):	$(OBJS)
 	@ar rc $(NAME) $(OBJS)
-	@echo "\033[1;92mDone compiling libft"
+	@echo "\033[1;92mDone compiling libft\033[0m"
 
 all:		$(NAME)
 
 clean:
 	@rm -f $(OBJS)
-	@echo "\033[0;91mRemoving \033[0;31m$(OBJS)"
+	@echo "\033[0;91mRemoving \033[0;31m$(OBJS)\033[0m"
 
 fclean:		clean
 	@rm -f $(NAME)
-	@echo "\033[0;91mRemoving \033[0;31m$(NAME)"
+	@echo "\033[0;91mRemoving \033[0;31m$(NAME)\033[0m"
 
 re:			fclean all
 

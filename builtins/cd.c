@@ -1,13 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cd.c                                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/01/07 17:54:20 by mframbou          #+#    #+#             */
+/*   Updated: 2022/01/07 18:03:41 by mframbou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtins.h"
 
-int	main(int argc, char *argv[])
+void	cd_cmd(char *argv[])
 {
 	int		res;
 	char	*home_path;
 
 	res = 0;
-	printf("pouet\n");
-	if (argc == 1)
+	if (argv[1] == NULL)
 	{
 		home_path = getenv("HOME");
 		if (home_path)

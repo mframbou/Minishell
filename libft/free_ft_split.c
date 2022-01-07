@@ -1,31 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   free_ft_split.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/18 16:40:17 by mframbou          #+#    #+#             */
-/*   Updated: 2022/01/07 17:37:19 by mframbou         ###   ########.fr       */
+/*   Created: 2021/12/14 15:48:13 by mframbou          #+#    #+#             */
+/*   Updated: 2022/01/07 17:32:33 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "environment.h"
+#include "libft.h"
+#include <stdlib.h>
 
-t_env_link	**get_var_list(void);
-
-void	env_command(void)
+void	free_ft_split(char **ft_split_return)
 {
-	t_env_link	**var_list;
-	t_env_link	*curr;
-	int			i;
+	int	i;
 
-	var_list = get_var_list();
-	curr = *var_list;
-	while (curr)
-	{
-		if (curr->var.value[0])
-			printf("%s=%s\n", curr->var.key, curr->var.value);
-		curr = curr->next;
-	}
+	i = 0;
+	if (!ft_split_return)
+		return ;
+	while (ft_split_return[i])
+		free(ft_split_return[i++]);
+	free(ft_split_return);
 }

@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/18 14:18:25 by mframbou          #+#    #+#             */
-/*   Updated: 2021/11/26 11:46:05 by mframbou         ###   ########.fr       */
+/*   Updated: 2022/01/07 17:44:58 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,7 @@ static void	overwrite_var_value(t_env_link *var, char *new_value)
 	i = 0;
 	if (var->var.value)
 		free(var->var.value);
-	free(var->var.key);
-	free(var);
+	var->var.value = new_value;
 }
 
 void	add_env_variable(char *key, char *value)

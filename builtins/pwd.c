@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/18 13:34:12 by mframbou          #+#    #+#             */
-/*   Updated: 2021/11/22 16:14:29 by mframbou         ###   ########.fr       */
+/*   Updated: 2022/01/07 18:00:41 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 	If n is 0, getcwd automatically malloc the required length
 	Returns the address of the buffer (which changed because it was malloc'ed)
 */
-int	main(int argc, char *argv[])
+void	pwd_cmd(void)
 {
 	char	*curr_path;
 
