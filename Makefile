@@ -1,5 +1,5 @@
 SRCS =	minishell.c \
-		parse/parse.c \
+		parse/parsing.c \
 			./builtins/environment/add_variable.c \
 			./builtins/environment/get_variable.c \
 			./builtins/environment/remove_variable.c \

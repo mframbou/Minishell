@@ -1,9 +1,4 @@
-#include "minishell.h"
-
-int	ft_isspace(char c)
-{
-	return (c == ' ' || c == '\t' || c == '\v');
-}
+#include "../minishell.h"
 
 int	is_closed_quote(char *str)
 {
@@ -214,7 +209,7 @@ static int	count_args(char *old_line)
 	return (count);
 }
 
-char	**parsing(char *old_line)
+char	**parse(char *old_line)
 {
 	char	**args;
 	char	*current_arg;
