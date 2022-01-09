@@ -1,5 +1,6 @@
 SRCS =	minishell.c \
 		search_executable.c \
+		execute_command.c \
 		parse/parsing.c \
 			./builtins/environment/add_variable.c \
 			./builtins/environment/get_variable.c \
@@ -25,7 +26,7 @@ CC = gcc #-Wall -Wextra -Werror
 	@$(CC) -c $< -o $@
 	@echo "\033[0;96mCompiling \033[1;96m$<\033[0m"
 
-$(NAME):	$(LIBFT) $(OBJS)
+$(NAME):	$(LIBFT) $(OBJS) echo
 	@echo "\033[0;95mLinking \033[0;95m($(OBJS)) into \033[1;35m$(NAME)\033[0m"
 	@$(CC) $(OBJS) $(LIBFT) -lreadline -o $(NAME)
 	@echo "\033[1;92mDONE"

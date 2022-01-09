@@ -39,16 +39,16 @@ int	is_builtin(char *program)
 /*
 	If successful return the path, else return NULL
 */
-char	*test_all_paths(char *path_variable, char *program)
+static char	*test_all_paths(char *path_variable, char *program)
 {
 	char	**paths;
 	char	full_path[PATH_MAX];
 	int		i;
+	int		file_exists;
 
+	i = -1;
 	paths = ft_split(path_variable, ':');
-	i = 0;
-	free_ft_split(paths);
-	while (paths[i])
+	while (paths[++i])
 	{
 		ft_bzero(full_path, PATH_MAX);
 		if (!is_line_empty(paths[i]))
@@ -57,14 +57,14 @@ char	*test_all_paths(char *path_variable, char *program)
 			ft_strlcat(full_path, "/", PATH_MAX);
 		}
 		ft_strlcat(full_path, program, PATH_MAX);
-		res = access(full_path, F_OK | X_OK);
-		if (res == 0)
+		file_exists = access(full_path, F_OK | X_OK);
+		if (file_exists == 0)
 		{
 			free_ft_split(paths);
 			return (ft_strdup(full_path));
 		}
-		i++;
 	}
+	free_ft_split(paths);
 	return (NULL);
 }
 

@@ -55,15 +55,21 @@ int	main(int argc, char *argv[])
 		char **args = parse_program_and_args(line);
 		if (args[0])
 		{
+			char *program = is_program_in_path(args[0]);
 			if (is_builtin(args[0]))
 			{
 				execute_builtin(args);
 			}
-			else if (is_forked_command(args[0]))
+			else if (program)
 			{
-				execute_program(args);
+				printf("Program not builtin but in path\n");
+				execute_program(program, args);
+				free(program);
 			}
-			//does_program_exists(args[0]);
+			else
+			{
+				printf("Program not found\n");
+			}
 		}
 	}
 }

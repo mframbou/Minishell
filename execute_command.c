@@ -12,29 +12,8 @@
 
 #include "minishell.h"
 #define EXECS_PATH "./execs/"
+
 /*
-	Get only the parsed string list as argument (eg: "echo" "Salut bg", "ca", "va?") 
-*/
-
-static int	is_builtin(char *program)
-{
-	if (ft_strcmp(program, "echo") == 0)
-		return (1);
-	else if (ft_strcmp(program, "cd") == 0)
-		return (1);
-	else if (ft_strcmp(program, "pwd") == 0)
-		return (1);
-	else if (ft_strcmp(program, "export") == 0)
-		return (1);
-	else if (ft_strcmp(program, "unset") == 0)
-		return (1);
-	else if (ft_strcmp(program, "env") == 0)
-		return (1);
-	else if (ft_strcmp(program, "exit") == 0)
-		return (1);
-	return (0);
-}
-
 void	execute_builtin(char *builtin, char **args)
 {
 	char	*program_path;
@@ -49,8 +28,8 @@ void	execute_builtin(char *builtin, char **args)
 	if (fork() == 0)
 		execve(program_path, args, NULL);
 	free(program_path);
-}
-
+}*/
+/*
 int	execute_command(char **args)
 {
 	char	*program;
@@ -63,7 +42,7 @@ int	execute_command(char **args)
 		
 	}
 }
-
+*/
 
 
 
@@ -89,7 +68,7 @@ void	execute_builtin(char **args)
 	else if (strcmp(args[0], "exit") == 0)
 	{
 		printf("Clean exit TODO\n");
-		exit();
+		exit(EXIT_SUCCESS);
 	}
 }
 
@@ -107,6 +86,5 @@ void	execute_program(char *program_path, char **args)
 		waitpid(-1, &return_val, 0);
 		printf("Returned value: %d\n", return_val);
 	}
-	free(program_path);
 }
 

@@ -24,14 +24,12 @@
 # include "./builtins/environment/environment.h"
 
 char	**parse_program_and_args(char *line);
-int		execute_command(char **args);
-int		does_program_exists(char *program);
 int		is_line_empty(char *str);
 
-void	exec_forked_command(char **args);
-void	exec_non_forked_command(char **args);
-int		is_forked_command(char *program);
-int		is_non_forked_command(char *program);
+void	execute_program(char *program_path, char **args);
+void	execute_builtin(char **args);
+int		is_builtin(char *program);
+char	*is_program_in_path(char *program);
 
 void	unset_command(char *argv[]);
 void	env_command(void);
