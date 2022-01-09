@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#define PATH_STR "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 char	**parse_program_and_args(char *line);
 
@@ -56,13 +55,13 @@ int	main(int argc, char *argv[])
 		char **args = parse_program_and_args(line);
 		if (args[0])
 		{
-			if (is_non_forked_command(args[0]))
+			if (is_builtin(args[0]))
 			{
-				exec_non_forked_command(args);
+				execute_builtin(args);
 			}
 			else if (is_forked_command(args[0]))
 			{
-				exec_forked_command(args);
+				execute_program(args);
 			}
 			//does_program_exists(args[0]);
 		}

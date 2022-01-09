@@ -14,6 +14,7 @@
 # define MINISHELL_H
 
 # define MINISHELL_PROMPT "minishell:"
+# define PATH_STR "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 # include <stdlib.h>
 # include <stdio.h>
