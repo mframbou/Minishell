@@ -2,3 +2,5 @@
 !*.c
 !*.h
 !*/
+!parse/*.c
+libft/*.o
