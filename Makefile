@@ -25,7 +25,7 @@ CC = gcc #-Wall -Wextra -Werror
 	@$(CC) -c $< -o $@
 	@echo "\033[0;96mCompiling \033[1;96m$<\033[0m"
 
-$(NAME):	$(LIBFT) $(OBJS) echo
+$(NAME):	$(LIBFT) $(OBJS)
 	@echo "\033[0;95mLinking \033[0;95m($(OBJS)) into \033[1;35m$(NAME)\033[0m"
 	@$(CC) $(OBJS) $(LIBFT) -lreadline -o $(NAME)
 	@echo "\033[1;92mDONE"
