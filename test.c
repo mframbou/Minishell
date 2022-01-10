@@ -17,9 +17,8 @@ int main()
 		args[0] = strdup("cat");
 		args[1] = NULL;
 		dup2(fd, STDIN_FILENO);
-		
-		execve("/bin/cat", args, NULL);
 		close(fd);
+		execve("/bin/cat", args, NULL);
 	}
 	else
 	{

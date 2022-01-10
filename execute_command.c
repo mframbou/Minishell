@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/27 12:20:59 by mframbou          #+#    #+#             */
-/*   Updated: 2022/01/10 15:51:08 by mframbou         ###   ########.fr       */
+/*   Updated: 2022/01/10 17:33:46 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ int	execute_program(int input_fd, char *program_path, char **args)
 		char buf;
 
 		// test redirecting to another pipe to simulate piping
-		int pipe_fd2[2];
+		/*int pipe_fd2[2];
 		
 		pipe(pipe_fd2);
 		if (fork() == 0)
@@ -120,11 +120,96 @@ int	execute_program(int input_fd, char *program_path, char **args)
 			while (read(pipe_fd[0], &buf, 1) > 0)
 				write(pipe_fd2[1], &buf, 1);
 			close(pipe_fd2[1]);
-		}
+		}*/
+		while (read(pipe_fd[0], &buf, 1) > 0)
+			write(pipe_fd[1], &buf, 1);
+		close(pipe_fd[0]);
 		//dup2(STDOUT_FILENO, /*fd*/ pipe_fd[0]);
 		// Do things
 		close(pipe_fd[0]);
 	}
+}
+
+
+
+
+
+
+static int	perror_return(char *str)
+{
+	perror(str);
+	return (-2);
+}
+
+static int	exec_and_redirect_stdout(int pipe_fd[2], char *program_path, \
+									char **args)
+{
+	char	**env;
+
+	close(pipe_fd[0]);
+	if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
+	{
+		close(pipe_fd[1]);
+		return (perror_return("dup2 failure"));
+	}
+	env = get_env_as_string_array();
+	free_ft_split(env);
+	close(pipe_fd[1]);
+	execve(program_path, args, env);
+	return (perror_return("execve failure"));
+}
+
+/*
+	pipe_fd[0] = read end
+	pipe_fd[1] = write end
+
+	Capture program stdout and redirect it into the pipe.
+	Returns the end to read from for next command.
+	Stays opened so caller MUST CLOSE FD
+
+	If we reach the return in the child process, it means execve has failed
+
+	When closing a FD, the pipe itself still exists, only the associated
+	descriptors are deleted from what I understood
+*/
+int	execute_program_from_args(char *program_path, char **args)
+{
+	int		pipe_fd[2];
+
+	if (pipe(pipe_fd) == -1)
+		return (perror_return("pipe failure"));
+	else
+	{
+		if (fork() == 0)
+		{
+			exec_and_redirect_stdout(pipe_fd, program_path, args);
+			return (-2);
+		}
+		else
+			close(pipe_fd[1]);
+	}
+	return (pipe_fd[0]);
+}
+
+/*
+	If input fd = -1, we only use args as input
+*/
+int	execute_program(int input_fd, char *program_path, char **args)
+{
+	int	output_read_fd;
+
+	output_read_fd = -1;
+	if (input_fd == -1)
+	{
+		output_read_fd = execute_program_from_args(program_path, args);
+		if (output_read_fd == -2)
+			return (-1);
+	}
+	else
+	{
+		
+	}
+	return (output_read_fd);
 }
 
 /*
