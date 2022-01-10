@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 13:58:30 by mframbou          #+#    #+#             */
-/*   Updated: 2022/01/07 18:01:14 by mframbou         ###   ########.fr       */
+/*   Updated: 2022/01/10 14:19:49 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static char	*test_all_paths(char *path_variable, char *program)
 	int		file_exists;
 
 	i = -1;
-	paths = ft_split(path_variable, ':');
+	paths = ft_split_single(path_variable, ':');
 	while (paths[++i])
 	{
 		ft_bzero(full_path, PATH_MAX);

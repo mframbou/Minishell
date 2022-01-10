@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/27 12:20:59 by mframbou          #+#    #+#             */
-/*   Updated: 2022/01/07 18:00:10 by mframbou         ###   ########.fr       */
+/*   Updated: 2022/01/10 15:51:08 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,17 +44,10 @@ int	execute_command(char **args)
 }
 */
 
-
-
-
-
-
-
-
 void	execute_builtin(char **args)
 {
 	if (strcmp(args[0], "echo") == 0)
-		execute_program("./execs/echo", args);
+		execute_program(0, "./execs/echo", args);
 	else if (strcmp(args[0], "export") == 0)
 		export_command(args);
 	else if (strcmp(args[0], "unset") == 0)
@@ -72,6 +65,69 @@ void	execute_builtin(char **args)
 	}
 }
 
+/*
+	pipe[0] = read
+	pipe[1] = write
+
+	dup2 makes arg2 "redirect" to arg1
+	so dup2(FD, STDOUT) redirects STDOUT to FD
+
+	Returns the pipe read fd for next pipe
+*/
+#include <fcntl.h>
+int	execute_program(int input_fd, char *program_path, char **args)
+{
+	int		pipe_success;
+	int		pipe_fd[2];
+	char	**env;
+
+	pipe_success = 0;
+	pipe_success = pipe(pipe_fd);
+	if (fork() == 0)
+	{
+		// Capture STDOUT and redirect to pipe output (so write to pipe input)
+		close(pipe_fd[0]); // We only write so close READ end
+		
+		dup2(pipe_fd[1], STDOUT_FILENO);
+		env = get_env_as_string_array();
+		execve(program_path, args, env);
+		free_ft_split(env);
+		close(pipe_fd[1]);
+	}
+	else
+	{
+		close(pipe_fd[1]); // We only read so close WRITE end
+		//printf("Pipe redirecting ...\n");
+		char buf;
+
+		// test redirecting to another pipe to simulate piping
+		int pipe_fd2[2];
+		
+		pipe(pipe_fd2);
+		if (fork() == 0)
+		{
+			close(pipe_fd2[1]);
+
+			while (read(pipe_fd2[0], &buf, 1) > 0)
+			{
+				write(STDOUT_FILENO, &buf, 1);
+			}
+			close(pipe_fd2[0]);
+		}
+		else
+		{
+			close (pipe_fd2[0]);
+			while (read(pipe_fd[0], &buf, 1) > 0)
+				write(pipe_fd2[1], &buf, 1);
+			close(pipe_fd2[1]);
+		}
+		//dup2(STDOUT_FILENO, /*fd*/ pipe_fd[0]);
+		// Do things
+		close(pipe_fd[0]);
+	}
+}
+
+/*
 void	execute_program(char *program_path, char **args)
 {
 	int		return_val;
@@ -84,7 +140,7 @@ void	execute_program(char *program_path, char **args)
 	else
 	{
 		waitpid(-1, &return_val, 0);
-		printf("Returned value: %d\n", return_val);
+		printf("Returned value: %d\n", WEXITSTATUS(return_val));
 	}
 }
-
+*/

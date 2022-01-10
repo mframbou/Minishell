@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 11:45:30 by mframbou          #+#    #+#             */
-/*   Updated: 2022/01/07 18:03:20 by mframbou         ###   ########.fr       */
+/*   Updated: 2022/01/10 15:50:44 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ int	main(int argc, char *argv[])
 			add_history(line);
 		}
 		char **args = parse_program_and_args(line);
+		printf("CMD: %s\n", args[0]);
 		if (args[0])
 		{
 			char *program = is_program_in_path(args[0]);
@@ -62,13 +63,13 @@ int	main(int argc, char *argv[])
 			}
 			else if (program)
 			{
-				printf("Program not builtin but in path\n");
-				execute_program(program, args);
+				//printf("Program not builtin but in path\n");
+				execute_program(0, program, args);
 				free(program);
 			}
 			else
 			{
-				printf("Program not found\n");
+				printf("%s%s: command not found\n", MINISHELL_PROMPT, args[0]);
 			}
 		}
 	}

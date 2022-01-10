@@ -6,19 +6,19 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/26 11:50:33 by mframbou          #+#    #+#             */
-/*   Updated: 2022/01/07 18:01:59 by mframbou         ###   ########.fr       */
+/*   Updated: 2022/01/10 15:50:31 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# define MINISHELL_PROMPT "minishell:"
+# define MINISHELL_PROMPT "minishell: "
 # define PATH_STR "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 # include <stdlib.h>
 # include <stdio.h>
-//# include <editline.h>
+# include <stdlib.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "./builtins/environment/environment.h"
@@ -26,7 +26,7 @@
 char	**parse_program_and_args(char *line);
 int		is_line_empty(char *str);
 
-void	execute_program(char *program_path, char **args);
+int		execute_program(int input_fd, char *program_path, char **args);
 void	execute_builtin(char **args);
 int		is_builtin(char *program);
 char	*is_program_in_path(char *program);

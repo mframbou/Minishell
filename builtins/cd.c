@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 17:54:20 by mframbou          #+#    #+#             */
-/*   Updated: 2022/01/07 18:03:41 by mframbou         ###   ########.fr       */
+/*   Updated: 2022/01/10 11:28:16 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,5 +27,5 @@ void	cd_cmd(char *argv[])
 	else
 		res = chdir(argv[1]);
 	if (res == -1)
-		perror(argv[1]);
+		printf("%scd: %s: %s\n", MINISHELL_PROMPT, argv[1], strerror(errno));
 }
