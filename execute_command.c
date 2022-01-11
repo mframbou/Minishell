@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_command.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/27 12:20:59 by mframbou          #+#    #+#             */
-/*   Updated: 2022/01/10 17:33:46 by mframbou         ###   ########.fr       */
+/*   Updated: 2022/01/11 11:13:18 by oronda           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ int	execute_program(int input_fd, char *program_path, char **args)
 	char	**env;
 
 	pipe_success = 0;
-	pipe_success = pipe(pipe_fd);
+	pipe_success = pipe(pipe_fd); ///// WTF ??
 	if (fork() == 0)
 	{
 		// Capture STDOUT and redirect to pipe output (so write to pipe input)

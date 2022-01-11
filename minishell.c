@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 11:45:30 by mframbou          #+#    #+#             */
-/*   Updated: 2022/01/10 15:50:44 by mframbou         ###   ########.fr       */
+/*   Updated: 2022/01/11 11:22:16 by oronda           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <signal.h>
 
 char	**parse_program_and_args(char *line);
 
@@ -40,12 +41,35 @@ void	init_basic_env_variables(void)
 		add_env_variable("PATH", ft_strdup(PATH_STR));
 }
 
+void handle_sigs(int sig, siginfo_t *siginfo, void *context)
+{
+	if(sig == SIGINT)
+	{
+		printf("ctrl + C");
+	}
+	if(sig == SIGQUIT)
+	{
+		printf("ctrl + /");
+	}
+		
+}
+
+void init_signals()
+{
+	struct sigaction sa;
+	sa.sa_sigaction = handle_sigs;
+	
+}
+
+
 int	main(int argc, char *argv[])
 {
 	char	*line;
 
+	init_signals();
+
 	init_basic_env_variables();
-	while (1)
+	while (1) 
 	{
 		line = readline(MINISHELL_PROMPT);
 		if (line && line[0] != '\0' && !is_line_empty(line))
