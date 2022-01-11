@@ -6,7 +6,7 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 11:45:30 by mframbou          #+#    #+#             */
-/*   Updated: 2022/01/11 11:28:24 by oronda           ###   ########.fr       */
+/*   Updated: 2022/01/11 11:28:53 by oronda           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void init_signals()
 {
 	struct sigaction sa;
 	sa.sa_sigaction = handle_sigs;
-	sa.sa_flags = SIGINFO;
+	sa.sa_flags = SA_SIGINFO;
 	sigaction(SIGINT, &sa,0);
 	sigaction(SIGQUIT, &sa,0);
 	
