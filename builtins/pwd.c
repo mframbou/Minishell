@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtins.h"
+#include "../includes/minishell.h"
 
 /*
 	If the string passed is null, getcwd allocates it with a buffer of size n,

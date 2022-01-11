@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "../../includes/minishell.h"
 
 static int	is_closed_quote(char *str)
 {
@@ -26,10 +26,10 @@ static int	is_closed_quote(char *str)
 	return (i);
 }
 
-/*
-	If we found a non-closing quote, then count it as part of the argument
-*/
-//char	*get_line_till_space_or_quote(char *str)
+//
+// =-=-=-=-= V1 FUNCTION (Better readability) =-=-=-=-=-=
+//
+//char	*get_line_till_space_or_quote(char *str) 
 //{
 //	int	i;
 //	int	j;
@@ -67,6 +67,9 @@ static int	is_closed_quote(char *str)
 //	return (ft_substr(str, 0, i));
 //}
 
+/*
+	If we found a non-closing quote, then count it as part of the argument
+*/
 static char	*get_line_till_space_or_quote(char *str)
 {
 	int	i;
@@ -95,7 +98,7 @@ static char	*get_line_till_space_or_quote(char *str)
 /*
 	test"i' ca' marche ou pas ?
 
-	special case
+	special case => ['test"i', 'ca', 'marche', 'ou', 'pas']
 */
 static char	*get_line_till_space(char *str)
 {
@@ -119,43 +122,6 @@ static char	*get_line_till_any_quote(char *str)
 		i++;
 	return (ft_substr(str, 0, i + 1));
 }
-
-/*
-	Bash variable names consist only of letters, digits or underscore,
-	and cannot start with a digit
-*/
-/*
-char	*extract_variable(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '$')
-		{
-			i++;
-			if (str[i])
-		}
-		i++;
-	}
-}
-*/
-/*
-char	*replace_env_variable(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '$')
-		{
-			
-		}
-	}
-}
-*/
 
 /*
 	Retrieve the argument, only special case is if the arg == '' or ""
@@ -364,6 +330,13 @@ char	**remove_empty_args(char **args)
 }
 
 
+/*
+	This takes a line 
+	(for instance "echo -e -n Salut ceci "est un test" "The USER is $USER"")
+
+	and returns it as a parsed string array :
+	["echo", "-e", "-n", "Salut", "ceci", "est un test", "The USER is mframbou"]
+*/
 char	**parse_program_and_args(char *line)
 {
 	char	**args;
@@ -398,28 +371,10 @@ char	**parse_program_and_args(char *line)
 	return (args);
 }
 
-// // salut '$variable oronda' "$variable oronda"
-// int main()
-// {
-// 	add_env_variable(ft_strdup("TEST"), ft_strdup("Grosse merde"));
-// 	char *line = ft_strdup("\"Salut\" '' \"$TEST ''$_-TEST'\"");
-// 	char **res = parse_program_and_args(line);
-// 
-// 
-// 	// input string = \"Salut\" '' \"$TEST ''$_-TEST'\"
-// 	int i = 0;
-// 	while(res[i])
-// 	{
-// 		res[i] = interpret_env_arg(res[i]);
-// 		i++;
-// 	}
-// 	/*
-// 		res[0] = "Salut"
-// 		res[1] = "Grosse merde ''EST'"
-// 		res[2] = NULL
-// 	*/
-// 	return 0;
-// }
+
+
+
+
 
 t_cmd	**get_cmd_lst(void)
 {

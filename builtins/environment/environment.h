@@ -13,8 +13,7 @@
 #ifndef ENVIRONMENT_H
 # define ENVIRONMENT_H
 
-# include "environment.h"
-# include "../builtins.h"
+# include "../../includes/minishell.h"
 
 typedef struct s_dic_variable
 {

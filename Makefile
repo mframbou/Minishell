@@ -1,19 +1,19 @@
-SRCS =	minishell.c \
-		search_executable.c \
-		execute_command.c \
-		cmd_list.c \
-		parse/parsing.c \
-			./builtins/environment/add_variable.c \
-			./builtins/environment/get_variable.c \
-			./builtins/environment/remove_variable.c \
-			./builtins/environment/var_list.c \
-			./builtins/environment/get_env.c \
-			./builtins/environment/env.c \
-			./builtins/environment/export.c \
-			./builtins/environment/unset.c \
-			./builtins/cd.c \
-			./builtins/pwd.c \
-
+SRCS =	srcs/minishell.c \
+			srcs/program_execution/search_executable.c \
+			srcs/program_execution/execute_command.c \
+			srcs/program_execution/cmd_list.c \
+			srcs/parsing/parsing.c \
+			srcs/parsing/is_valid_bash_var.c \
+				builtins/environment/add_variable.c \
+				builtins/environment/get_variable.c \
+				builtins/environment/remove_variable.c \
+				builtins/environment/var_list.c \
+				builtins/environment/get_env.c \
+				builtins/environment/env.c \
+				builtins/environment/export.c \
+				builtins/environment/unset.c \
+				builtins/cd.c \
+				builtins/pwd.c \
 
 LIBFT = ./libft/libft.a
 

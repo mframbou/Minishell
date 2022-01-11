@@ -13,8 +13,8 @@
 #ifndef BUILTINS_H
 # define BUILTINS_H
 
-# include "../libft/libft.h"
-# include "../minishell.h"
+# include "libft.h"
+# include "minishell.h"
 # include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>

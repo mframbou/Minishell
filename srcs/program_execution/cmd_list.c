@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-#include "cmd_list.h"
+#include "../../includes/minishell.h"
 
 static t_cmd	*get_last_cmd(t_cmd *lst)
 {

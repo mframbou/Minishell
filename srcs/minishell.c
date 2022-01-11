@@ -11,8 +11,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-#include <signal.h>
+#include "../includes/minishell.h"
 
 char	**parse_program_and_args(char *line);
 
