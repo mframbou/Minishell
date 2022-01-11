@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                           */
+/*                                  .-.                       .               */
+/*                                 / -'                      /                */
+/*                  .  .-. .-.   -/--).--..-.  .  .-. .-.   /-.  .-._.)  (    */
+/*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
+/*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
+/*   Created:   by            `-'                        `-'                  */
+/*   Updated:   by                                                            */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <unistd.h>
 #include <stdio.h>
 #include <fcntl.h>
@@ -22,9 +34,10 @@ int main()
 	}
 	else
 	{
-		printf("Salut ceci est un test, fd=%d\n", fd);
+		//printf("Salut ceci est un test, fd=%d\n", fd);
 		//dup2(fd, STDOUT_FILENO);
 		//printf("Salut ceci est un test 2\n");
 		close(fd);
+		//write(STDOUT_FILENO, "tt\n", 3);
 	}
 }

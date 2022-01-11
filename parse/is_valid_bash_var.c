@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   is_valid_bash_var.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/01/11 11:59:51 by mframbou          #+#    #+#             */
+/*   Updated: 2022/01/11 11:59:51 by mframbou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../minishell.h"
 
@@ -15,7 +26,8 @@ int	is_valid_variable_name(char *str)
 	i = 0;
 	if (ft_isdigit(str[i]))
 		return (0);
-	while (str[i] && (ft_isalpha(str[i]) || str[i] == '_' || ft_isdigit(str[i])))
+	while (str[i] && (ft_isalpha(str[i]) || str[i] == '_' || \
+						ft_isdigit(str[i])))
 		i++;
 	if (str[i])
 		return (0);

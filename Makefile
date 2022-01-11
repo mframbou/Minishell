@@ -1,6 +1,7 @@
 SRCS =	minishell.c \
 		search_executable.c \
 		execute_command.c \
+		cmd_list.c \
 		parse/parsing.c \
 			./builtins/environment/add_variable.c \
 			./builtins/environment/get_variable.c \

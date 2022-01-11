@@ -1,12 +1,13 @@
+
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 11:45:30 by mframbou          #+#    #+#             */
-/*   Updated: 2022/01/11 11:28:53 by oronda           ###   ########.fr       */
+/*   Updated: 2022/01/11 11:30:31 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +62,6 @@ void init_signals()
 	sa.sa_flags = SA_SIGINFO;
 	sigaction(SIGINT, &sa,0);
 	sigaction(SIGQUIT, &sa,0);
-	
 }
 
 
@@ -79,6 +79,31 @@ int	main(int argc, char *argv[])
 		{
 			add_history(line);
 		}
+
+
+		t_cmd *cmd_list = parse_cmds(line);
+
+		/* This prints parsed cmds, works fine
+		t_cmd *curr;
+		int j = 0;
+
+		curr = cmd_list;
+		while (curr)
+		{
+			char **args = curr->args;
+
+			printf("Program %d:\n", j++);
+			for (int i = 0; args[i]; i++)
+			{
+				printf("%s\n", args[i]);
+			}
+			curr = curr->next;
+		}
+		*/
+
+		
+		execute_cmd_lst(cmd_list);
+		/* old cmd execution
 		char **args = parse_program_and_args(line);
 		printf("CMD: %s\n", args[0]);
 		if (args[0])
@@ -99,5 +124,8 @@ int	main(int argc, char *argv[])
 				printf("%s%s: command not found\n", MINISHELL_PROMPT, args[0]);
 			}
 		}
+		*/
+
+		clear_cmds(); // Dont forget this otherwise it's getting worse each command
 	}
 }

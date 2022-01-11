@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                           */
+/*                                  .-.                       .               */
+/*                                 / -'                      /                */
+/*                  .  .-. .-.   -/--).--..-.  .  .-. .-.   /-.  .-._.)  (    */
+/*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
+/*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
+/*   Created:   by            `-'                        `-'                  */
+/*   Updated:   by                                                            */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 static int	is_closed_quote(char *str)
@@ -386,7 +398,6 @@ char	**parse_program_and_args(char *line)
 	return (args);
 }
 
-
 // // salut '$variable oronda' "$variable oronda"
 // int main()
 // {
@@ -409,3 +420,55 @@ char	**parse_program_and_args(char *line)
 // 	*/
 // 	return 0;
 // }
+
+t_cmd	**get_cmd_lst(void)
+{
+	static t_cmd *cmd_lst = NULL;
+
+	return (&cmd_lst);
+}
+
+void	add_cmd(char **args)
+{
+	t_cmd	**cmd_lst;
+
+	cmd_lst = get_cmd_lst();
+	add_cmd_to_lst(cmd_lst, create_cmd(args));
+}
+
+void	clear_cmds(void)
+{
+	t_cmd	**cmd_lst;
+	t_cmd	*curr;
+	t_cmd	*prev;
+
+	cmd_lst = get_cmd_lst();
+	curr = *cmd_lst;
+	while (curr)
+	{
+		prev = curr;
+		curr = curr->next;
+		prev->next = NULL;
+		free_ft_split(prev->args);
+		free(prev);
+	}
+	*cmd_lst = NULL;
+}
+
+
+t_cmd	*parse_cmds(char *line)
+{
+	char	**cmds;
+	int		i;
+
+	cmds = ft_split(line, '|');
+	i = 0;
+	if (!cmds)
+		return (NULL);
+	while (cmds[i])
+	{
+		add_cmd(parse_program_and_args(cmds[i]));
+		i++;
+	}
+	return (*(get_cmd_lst()));
+}

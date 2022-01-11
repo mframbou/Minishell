@@ -1,12 +1,12 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   execute_command.c                                  :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/27 12:20:59 by mframbou          #+#    #+#             */
-/*   Updated: 2022/01/11 11:13:18 by oronda           ###   ########.fr       */
+/*                                                                           */
+/*                                  .-.                       .               */
+/*                                 / -'                      /                */
+/*                  .  .-. .-.   -/--).--..-.  .  .-. .-.   /-.  .-._.)  (    */
+/*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
+/*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
+/*   Created:   by            `-'                        `-'                  */
+/*   Updated:   by                                                            */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,9 @@ void	execute_builtin(char **args)
 	}
 }
 
+
+
+
 /*
 	pipe[0] = read
 	pipe[1] = write
@@ -75,14 +78,19 @@ void	execute_builtin(char **args)
 	Returns the pipe read fd for next pipe
 */
 #include <fcntl.h>
+
+/*
 int	execute_program(int input_fd, char *program_path, char **args)
 {
 	int		pipe_success;
 	int		pipe_fd[2];
 	char	**env;
 
-	pipe_success = 0;
-	pipe_success = pipe(pipe_fd); ///// WTF ??
+	if (pipe(pipe_fd) == -1)
+	{
+		printf("erreur pipe");
+		return (-1);
+	}
 	if (fork() == 0)
 	{
 		// Capture STDOUT and redirect to pipe output (so write to pipe input)
@@ -90,9 +98,10 @@ int	execute_program(int input_fd, char *program_path, char **args)
 		
 		dup2(pipe_fd[1], STDOUT_FILENO);
 		env = get_env_as_string_array();
-		execve(program_path, args, env);
-		free_ft_split(env);
+		//free_ft_split(env);
 		close(pipe_fd[1]);
+		execve(program_path, args, env);
+		
 	}
 	else
 	{
@@ -101,39 +110,35 @@ int	execute_program(int input_fd, char *program_path, char **args)
 		char buf;
 
 		// test redirecting to another pipe to simulate piping
-		/*int pipe_fd2[2];
-		
-		pipe(pipe_fd2);
-		if (fork() == 0)
-		{
-			close(pipe_fd2[1]);
-
-			while (read(pipe_fd2[0], &buf, 1) > 0)
-			{
-				write(STDOUT_FILENO, &buf, 1);
-			}
-			close(pipe_fd2[0]);
-		}
-		else
-		{
-			close (pipe_fd2[0]);
-			while (read(pipe_fd[0], &buf, 1) > 0)
-				write(pipe_fd2[1], &buf, 1);
-			close(pipe_fd2[1]);
-		}*/
+		//int pipe_fd2[2];
+		//
+		//pipe(pipe_fd2);
+		//if (fork() == 0)
+		//{
+		//	close(pipe_fd2[1]);
+//
+		//	while (read(pipe_fd2[0], &buf, 1) > 0)
+		//	{
+		//		write(STDOUT_FILENO, &buf, 1);
+		//	}
+		//	close(pipe_fd2[0]);
+		//}
+		//else
+		//{
+		//	close (pipe_fd2[0]);
+		//	while (read(pipe_fd[0], &buf, 1) > 0)
+		//		write(pipe_fd2[1], &buf, 1);
+		//	close(pipe_fd2[1]);
+		//}
 		while (read(pipe_fd[0], &buf, 1) > 0)
-			write(pipe_fd[1], &buf, 1);
+			write(STDOUT_FILENO, &buf, 1);
 		close(pipe_fd[0]);
-		//dup2(STDOUT_FILENO, /*fd*/ pipe_fd[0]);
+		//dup2(STDOUT_FILENO, pipe_fd[0]);
 		// Do things
-		close(pipe_fd[0]);
+		//close(pipe_fd[0]);
 	}
 }
-
-
-
-
-
+*/
 
 static int	perror_return(char *str)
 {
@@ -191,6 +196,32 @@ int	execute_program_from_args(char *program_path, char **args)
 	return (pipe_fd[0]);
 }
 
+
+static int	execute_program_from_args_and_fd(int read_fd, char *program_path, \
+											char **args)
+{
+	int		pipe_fd[2];
+
+	if (pipe(pipe_fd) == -1)
+		return (perror_return("pipe failure"));
+	else
+	{
+		if (fork() == 0)
+		{
+			dup2(read_fd, STDIN_FILENO);
+			close(read_fd);
+			exec_and_redirect_stdout(pipe_fd, program_path, args);
+			return (-2);
+		}
+		else
+		{
+			close(read_fd);
+			close(pipe_fd[1]);
+		}
+	}
+	return (pipe_fd[0]);
+}
+
 /*
 	If input fd = -1, we only use args as input
 */
@@ -203,13 +234,52 @@ int	execute_program(int input_fd, char *program_path, char **args)
 	{
 		output_read_fd = execute_program_from_args(program_path, args);
 		if (output_read_fd == -2)
+		{
+			// Error already printed out
 			return (-1);
+		}
 	}
 	else
 	{
-		
+		output_read_fd = execute_program_from_args_and_fd(input_fd, program_path, args);
 	}
 	return (output_read_fd);
+}
+
+int execute_cmd_lst(t_cmd *cmd_lst)
+{
+	t_cmd	*curr;
+	int		read_fd;
+	char	*program;
+
+	curr = cmd_lst;
+	read_fd = -1;
+	while (curr)
+	{
+		program = is_program_in_path(curr->args[0]);
+		if (program)
+		{
+			/*printf("reading from fd %d\n", read_fd);
+			char buf;
+			while (read(read_fd, &buf, 1) > 0)
+				write(STDOUT_FILENO, &buf, 1);
+			printf("ended reading\n");*/
+			read_fd = execute_program(read_fd, program, curr->args);
+			if (read_fd == -1)
+			{
+				printf("An error occured while executing pipeline\n");
+				return (-1);
+			}
+		}
+		curr = curr->next;
+	}
+	char buf;
+	while (read(read_fd, &buf, 1) > 0)
+		write(STDOUT_FILENO, &buf, 1);
+	close(read_fd);
+	return (0);
+	// Here there is still 1 program to be executed, but this is the last one
+	// so we should redirect output to stdout
 }
 
 /*
