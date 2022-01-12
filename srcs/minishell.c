@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                       .-.                       .                          */
-/*                      / -'                      /                           */
-/*       .  .-. .-.   -/--).--..-.  .  .-. .-.   /-.  .-._.)  (               */
-/*        )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )         .    */
-/*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
-/*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
-/*   Created: 12-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 12-01-2022 18:45 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
-/*                                 `._;  `._;                   `-            */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
+/*   Updated: 2022/01/13 00:39:22 by mframbou         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
@@ -42,6 +42,8 @@ void	init_basic_env_variables(void)
 
 void handle_sigs(int sig, siginfo_t *siginfo, void *context)
 {
+	(void) siginfo;
+	(void) context;
 	if(sig == SIGINT)
 	{
 		printf("ctrl + C");
@@ -67,6 +69,9 @@ int	main(int argc, char *argv[])
 {
 	char	*line;
 
+	(void) argc;
+	(void) argv;
+
 	init_signals();
 
 	init_basic_env_variables();
@@ -82,7 +87,7 @@ int	main(int argc, char *argv[])
 			t_cmd *cmd_list = parse_cmds(line);
 			if (cmd_list)
 				execute_cmd_lst(cmd_list);
-			clear_cmds();
+			clear_cmd_list();
 		}
 
 

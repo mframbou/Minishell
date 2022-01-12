@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                       .-.                       .                          */
-/*                      / -'                      /                           */
-/*       .  .-. .-.   -/--).--..-.  .  .-. .-.   /-.  .-._.)  (               */
-/*        )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )         .    */
-/*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
-/*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
-/*   Created: 12-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 12-01-2022 18:37 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
-/*                                 `._;  `._;                   `-            */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   remove_variable.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
+/*   Updated: 2022/01/13 00:41:15 by mframbou         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "environment.h"
@@ -17,7 +17,6 @@ t_env_link	**get_var_list(void);
 static void	lst_remove_env_variable(t_env_link	**var_lst, t_env_link *var)
 {
 	t_env_link	*curr;
-	int			i;
 
 	if (!var_lst || !*var_lst || !var)
 		return ;
@@ -31,7 +30,6 @@ static void	lst_remove_env_variable(t_env_link	**var_lst, t_env_link *var)
 		if (curr && curr->next && curr->next == var)
 			curr->next = var->next;
 	}
-	i = 0;
 	if (var->var.value)
 	{
 		free(var->var.value);

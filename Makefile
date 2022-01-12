@@ -10,23 +10,31 @@
 
 
 SRCS =	srcs/minishell.c \
-			srcs/program_execution/search_executable.c \
-			srcs/program_execution/execute_command.c \
-			srcs/program_execution/cmd_list.c \
-			srcs/parsing/parsing.c \
-			srcs/parsing/is_valid_bash_var.c \
-				builtins/environment/add_variable.c \
-				builtins/environment/get_variable.c \
-				builtins/environment/remove_variable.c \
-				builtins/environment/var_list.c \
-				builtins/environment/get_env.c \
-				builtins/environment/env.c \
-				builtins/environment/export.c \
-				builtins/environment/unset.c \
-				builtins/cd.c \
-				builtins/pwd.c \
-				builtins/exit.c \
-				builtins/echo.c \
+		\
+		srcs/program_execution/search_executable.c \
+		srcs/program_execution/execute_command.c \
+		\
+		srcs/parsing/cmd_list_wrapper.c \
+		srcs/parsing/cmd_list.c \
+		srcs/parsing/get_one_arg.c \
+		srcs/parsing/interpret_arguments.c \
+		srcs/parsing/is_valid_bash_var.c \
+		srcs/parsing/parse_one_program.c \
+		srcs/parsing/parse_whole_line.c \
+		srcs/parsing/utils.c \
+		\
+		builtins/environment/add_variable.c \
+		builtins/environment/get_variable.c \
+		builtins/environment/remove_variable.c \
+		builtins/environment/var_list.c \
+		builtins/environment/get_env.c \
+		builtins/environment/env.c \
+		builtins/environment/export.c \
+		builtins/environment/unset.c \
+		builtins/cd.c \
+		builtins/pwd.c \
+		builtins/exit.c \
+		builtins/echo.c \
 
 LIBFT = ./libft/libft.a
 
@@ -34,7 +42,7 @@ OBJS = $(SRCS:.c=.o)
 
 NAME = minishell
 
-CC = gcc -g -fsanitize=address #-Wall -Wextra -Werror
+CC = gcc -g -fsanitize=address -Wall -Wextra -Werror
 
 %.o: %.c
 	@$(CC) -c $< -o $@

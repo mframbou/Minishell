@@ -33,9 +33,14 @@
 # include "builtins.h"
 
 // Parsing
-char	**parse_program_and_args(char *line);
-int		is_line_empty(char *str);
 t_cmd	*parse_cmds(char *line);
+char	**parse_program_and_args(char *line);
+char	*get_one_arg(char *str, int *i);
+char	*interpret_env_arg(char *str);
+
+// Parsing utils
+int		is_line_empty(char *str);
+int		is_closed_quote(char *str);
 
 // Program execution
 int		execute_program(int input_fd, char *program_path, char **args);

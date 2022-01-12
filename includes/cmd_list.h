@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_list.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 11:50:39 by mframbou          #+#    #+#             */
-/*   Updated: 2022/01/11 12:04:18 by mframbou         ###   ########.fr       */
+/*   Updated: 2022/01/12 23:42:33 by mframbou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,7 @@ enum	e_redirection_type
 	REDIRECT_OUTPUT_APPEND
 };
 
-void	add_cmd_to_lst(t_cmd **lst, t_cmd *new);
-t_cmd	*create_cmd(char **args);
-void	clear_cmds(void);
+void	add_cmd(char **args);
+void	clear_cmd_list(void);
 
 #endif
