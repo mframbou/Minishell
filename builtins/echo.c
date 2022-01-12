@@ -12,13 +12,17 @@
 
 #include "../includes/minishell.h"
 
-int	main(int argc, char *argv[])
+void	echo_command(char **argv, int output_fd)
 {
 	int	print_nl;
 	int	i;
+	int	argc;
 
 	i = 1;
 	print_nl = 1;
+	argc = 0;
+	while (argv[argc])
+		argc++;
 	if (argc >= 2 && ft_strcmp(argv[i], "-n") == 0)
 	{
 		i++;
@@ -26,11 +30,11 @@ int	main(int argc, char *argv[])
 	}
 	while (i < argc)
 	{
-		printf("%s", argv[i]);
+		ft_putstr_fd(argv[i], output_fd);
 		i++;
 		if (i != argc)
-			printf(" ");
+			ft_putchar_fd(' ', output_fd);
 	}
 	if (print_nl)
-		printf("\n");
+		ft_putchar_fd('\n', output_fd);;
 }

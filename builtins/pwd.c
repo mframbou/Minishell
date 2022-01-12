@@ -17,12 +17,14 @@
 	If n is 0, getcwd automatically malloc the required length
 	Returns the address of the buffer (which changed because it was malloc'ed)
 */
-void	pwd_cmd(void)
+void	pwd_command(char *argv[], int output_fd)
 {
 	char	*curr_path;
 
+	(void) argv;
 	curr_path = NULL;
 	curr_path = getcwd(curr_path, 0);
-	printf("%s\n", curr_path);
+	ft_putstr_fd(curr_path, output_fd);
+	ft_putchar_fd('\n', output_fd);
 	free(curr_path);
 }

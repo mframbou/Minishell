@@ -13,11 +13,15 @@
 #ifndef BUILTINS_H
 # define BUILTINS_H
 
-# include "libft.h"
 # include "minishell.h"
-# include <stdio.h>
-# include <unistd.h>
-# include <stdlib.h>
-# include <errno.h>
+
+// Builtins
+void	echo_command(char *argv[], int output_fd);
+void	unset_command(char *argv[], int output_fd);
+void	env_command(char *argv[], int output_fd);
+void	export_command(char *argv[], int output_fd);
+void	pwd_command(char *argv[], int output_fd);
+void	cd_command(char *argv[], int output_fd);
+void	exit_command(char *argv[], int output_fd);
 
 #endif

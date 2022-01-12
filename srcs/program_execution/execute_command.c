@@ -1,4 +1,5 @@
 /* ************************************************************************** */
+
 /*                                                                           */
 /*                                  .-.                       .               */
 /*                                 / -'                      /                */
@@ -44,28 +45,50 @@ int	execute_command(char **args)
 }
 */
 
-void	execute_builtin(char **args)
+static int	perror_return(char *str)
 {
-	if (strcmp(args[0], "echo") == 0)
-		execute_program(0, "./execs/echo", args);
-	else if (strcmp(args[0], "export") == 0)
-		export_command(args);
-	else if (strcmp(args[0], "unset") == 0)
-		unset_command(args);
-	else if (strcmp(args[0], "env") == 0)
-		env_command();
-	else if (strcmp(args[0], "cd") == 0)
-		cd_cmd(args);
-	else if (strcmp(args[0], "pwd") == 0)
-		pwd_cmd();
-	else if (strcmp(args[0], "exit") == 0)
-	{
-		printf("Clean exit TODO\n");
-		exit(EXIT_SUCCESS);
-	}
+	perror(str);
+	return (-2);
 }
 
+typedef void (*builtin_ptr)(char **args, int output_fd);
 
+builtin_ptr	get_builtin_function(char *name)
+{
+	if (strcmp(name, "echo") == 0)
+		return (&echo_command);
+	else if (strcmp(name, "export") == 0)
+		return (&export_command);
+	else if (strcmp(name, "unset") == 0)
+		return (&unset_command);
+	else if (strcmp(name, "env") == 0)
+		return (&env_command);
+	else if (strcmp(name, "cd") == 0)
+		return (&cd_command);
+	else if (strcmp(name, "pwd") == 0)
+		return (&pwd_command);
+	else if (strcmp(name, "exit") == 0)
+		return (&exit_command);
+	else
+		return (NULL);
+}
+
+int	execute_builtin(char **args)
+{
+	char		**env;
+	builtin_ptr builtin_func;
+	int			pipe_fd[2];
+
+	if (pipe(pipe_fd) == -1)
+			return (perror_return("pipe failure"));
+	// env = get_env_as_string_array(); I don't know if we should send env to functions, need to check
+	// free_ft_split(env);
+	builtin_func = get_builtin_function(args[0]);
+	if (builtin_func)
+		builtin_func(args, pipe_fd[1]);
+	close(pipe_fd[1]);
+	return(pipe_fd[0]);
+}
 
 
 /*
@@ -77,7 +100,6 @@ void	execute_builtin(char **args)
 
 	Returns the pipe read fd for next pipe
 */
-#include <fcntl.h>
 
 /*
 int	execute_program(int input_fd, char *program_path, char **args)
@@ -140,12 +162,6 @@ int	execute_program(int input_fd, char *program_path, char **args)
 }
 */
 
-static int	perror_return(char *str)
-{
-	perror(str);
-	return (-2);
-}
-
 static int	exec_and_redirect_stdout(int pipe_fd[2], char *program_path, \
 									char **args)
 {
@@ -154,11 +170,12 @@ static int	exec_and_redirect_stdout(int pipe_fd[2], char *program_path, \
 	close(pipe_fd[0]);
 	if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
 	{
+		write(1, "Error occured\n", 8);
 		close(pipe_fd[1]);
 		return (perror_return("dup2 failure"));
 	}
 	env = get_env_as_string_array();
-	free_ft_split(env);
+	//free_ft_split(env);
 	close(pipe_fd[1]);
 	execve(program_path, args, env);
 	return (perror_return("execve failure"));
@@ -236,7 +253,7 @@ int	execute_program(int input_fd, char *program_path, char **args)
 		if (output_read_fd == -2)
 		{
 			// Error already printed out
-			return (-1);
+			return (-2);
 		}
 	}
 	else
@@ -250,36 +267,42 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 {
 	t_cmd	*curr;
 	int		read_fd;
+	int		new_read_fd;
 	char	*program;
+	char	buf;
 
 	curr = cmd_lst;
 	read_fd = -1;
+	new_read_fd = -1;
 	while (curr)
 	{
-		program = is_program_in_path(curr->args[0]);
-		if (program)
+		if (is_builtin(curr->args[0]))
 		{
-			/*printf("reading from fd %d\n", read_fd);
-			char buf;
-			while (read(read_fd, &buf, 1) > 0)
-				write(STDOUT_FILENO, &buf, 1);
-			printf("ended reading\n");*/
-			read_fd = execute_program(read_fd, program, curr->args);
-			if (read_fd == -1)
+			new_read_fd = execute_builtin(curr->args);
+		}
+		else
+		{
+			program = is_program_in_path(curr->args[0]);
+			if (program)
 			{
-				printf("An error occured while executing pipeline\n");
-				return (-1);
+				new_read_fd = execute_program(read_fd, program, curr->args);
+				if (new_read_fd == -2)
+				{
+					printf("An error occured while executing pipeline\n");
+					return (-2);
+				}
 			}
 		}
+		if (read_fd >= 0)
+			close(read_fd);
+		read_fd = new_read_fd;
 		curr = curr->next;
 	}
-	char buf;
+	//printf("current print fd: %d\n", read_fd);
 	while (read(read_fd, &buf, 1) > 0)
 		write(STDOUT_FILENO, &buf, 1);
 	close(read_fd);
 	return (0);
-	// Here there is still 1 program to be executed, but this is the last one
-	// so we should redirect output to stdout
 }
 
 /*

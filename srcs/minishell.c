@@ -1,4 +1,3 @@
-
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -78,9 +77,15 @@ int	main(int argc, char *argv[])
 		{
 			add_history(line);
 		}
+		if (line)
+		{
+			t_cmd *cmd_list = parse_cmds(line);
+			if (cmd_list)
+				execute_cmd_lst(cmd_list);
+			clear_cmds();
+		}
 
 
-		t_cmd *cmd_list = parse_cmds(line);
 
 		/* This prints parsed cmds, works fine
 		t_cmd *curr;
@@ -101,7 +106,7 @@ int	main(int argc, char *argv[])
 		*/
 
 		
-		execute_cmd_lst(cmd_list);
+		
 		/* old cmd execution
 		char **args = parse_program_and_args(line);
 		printf("CMD: %s\n", args[0]);
@@ -124,7 +129,5 @@ int	main(int argc, char *argv[])
 			}
 		}
 		*/
-
-		clear_cmds(); // Dont forget this otherwise it's getting worse each command
 	}
 }

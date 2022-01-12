@@ -17,7 +17,7 @@
 	If not a single string, split on '='
 	Set key / value
 */
-void	export_command(char *argv[])
+void	export_command(char *argv[], int output_fd)
 {
 	char	**values;
 	int		i;
@@ -29,7 +29,7 @@ void	export_command(char *argv[])
 		if (!values || !values[0])
 		{
 			free_ft_split(values);
-			printf("Invalid syntax\n");
+			ft_putstr_fd("Invalid syntax\n", output_fd);
 		}
 		if (values[1])
 			add_env_variable(ft_strdup(values[0]), ft_strdup(values[1]));

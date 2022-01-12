@@ -25,10 +25,12 @@
 # include <signal.h>
 # include <unistd.h>
 # include <errno.h>
+# include <fcntl.h>
 
 // Local
 # include "cmd_list.h"
 # include "libft.h"
+# include "builtins.h"
 
 // Parsing
 char	**parse_program_and_args(char *line);
@@ -37,17 +39,10 @@ t_cmd	*parse_cmds(char *line);
 
 // Program execution
 int		execute_program(int input_fd, char *program_path, char **args);
-void	execute_builtin(char **args);
+int		execute_builtin(char **args);
 int		is_builtin(char *program);
 char	*is_program_in_path(char *program);
 int		execute_cmd_lst(t_cmd *cmd_lst);
-
-// Builtins
-void	unset_command(char *argv[]);
-void	env_command(void);
-void	export_command(char *argv[]);
-void	pwd_cmd(void);
-void	cd_cmd(char *argv[]);
 
 // Environment
 void	add_env_variable(char *key, char *value);

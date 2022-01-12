@@ -17,10 +17,11 @@
 	If not a single string, split on ':'
 	Set key / value
 */
-void	unset_command(char *argv[])
+void	unset_command(char *argv[], int output_fd)
 {
 	int	i;
 
+	(void) output_fd;
 	i = 1;
 	while (argv[i])
 		remove_env_variable(argv[i++]);
