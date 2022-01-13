@@ -6,22 +6,22 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 13-01-2022 13:22 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 13-01-2022 15:00 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
 t_cmd	**get_cmd_lst(void);
-t_cmd	*create_cmd(char **args);
+t_cmd	*create_cmd(char **args, int redirection_type);
 void	add_cmd_to_lst(t_cmd **lst, t_cmd *new);
 
-void	add_cmd(char **args)
+void	add_cmd(char **args, int redirection_type)
 {
 	t_cmd	**cmd_lst;
 
 	cmd_lst = get_cmd_lst();
-	add_cmd_to_lst(cmd_lst, create_cmd(args));
+	add_cmd_to_lst(cmd_lst, create_cmd(args, redirection_type));
 }
 
 void	clear_cmd_list(void)

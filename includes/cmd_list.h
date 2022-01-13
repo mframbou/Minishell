@@ -17,18 +17,22 @@ typedef struct s_cmd
 {
 	struct s_cmd	*next;
 	char			**args;
+	id_t			next_cmd_redirect;
+	char			*file_redirection;
 }	t_cmd;
 
 enum	e_redirection_type
 {
-	REDIRECT_PIPE,   		   // |
-	REDIRECT_OUTPUT,           // >
-	REDIRECT_INPUT,  		   // <
-	REDIRECT_INPUT_DELIMITER,  // <<
-	REDIRECT_OUTPUT_APPEND     // >>
+	REDIRECT_PIPE,   		 		// |
+	REDIRECT_OUTPUT_FILE,         	// >
+	REDIRECT_INPUT_FILE,  		 	// <
+	REDIRECT_INPUT_FILE_DELIMITER,	// <<
+	REDIRECT_OUTPUT_FILE_APPEND,   	// >>
+	REDIRECT_STDOUT,				// Print output
+	REDIRECT_UNKNOWN				// Unknown						
 };
 
-void	add_cmd(char **args);
+void	add_cmd(char **args, int redirection_type);
 void	clear_cmd_list(void);
 
 #endif

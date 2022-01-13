@@ -6,7 +6,7 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 2022/01/13 16:00:04 by oronda           ###   ########.fr       */
+/*   Updated: 13-01-2022 16:37 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,19 +53,9 @@ void handle_sigs(int sig, siginfo_t *siginfo, void *context)
 {
 	if(sig == SIGINT)
 	{
-		//rl_on_new_line();
-		//rl_replace_line("test");
-		//printf("Clean exit TODO ctrl c");
-		//write(1, "\n", 1);
-
-		// (void) sig;
-		// printf("\n%s", MINISHELL_PROMPT);
-		// rl_redisplay();
-		// rl_on_new_line();
-
 		printf("\n"); // Move to a new line
 		rl_on_new_line(); // Regenerate the prompt on a newline
-		rl_replace_line("", 0); // Clear the previous text
+		//rl_replace_line("", 0); // Clear the previous text
 		rl_redisplay();
 	}
 	if(sig == SIGQUIT)

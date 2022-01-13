@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 13-01-2022 13:21 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 13-01-2022 15:00 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static t_cmd	*get_last_cmd(t_cmd *lst)
 	return (prev);
 }
 
-t_cmd	*create_cmd(char **args)
+t_cmd	*create_cmd(char **args, int redirection_type)
 {
 	t_cmd	*new;
 
@@ -40,6 +40,7 @@ t_cmd	*create_cmd(char **args)
 	if (new)
 	{
 		new->args = args;
+		new->next_cmd_redirect = redirection_type;
 		new->next = NULL;
 	}
 	return (new);

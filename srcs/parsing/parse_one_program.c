@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 13-01-2022 13:28 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 13-01-2022 16:53 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -91,6 +91,11 @@ static char	**remove_empty_args(char **args)
 
 	and returns it as a parsed string array :
 	["echo", "-e", "-n", "Salut", "ceci", "est un test", "The USER is mframbou"]
+
+
+
+	Interpret ENV ($)
+	
 */
 char	**parse_program_and_args(char *line)
 {
