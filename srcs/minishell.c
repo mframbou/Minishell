@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
+/*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 2022/01/13 00:39:22 by mframbou         ###   ########.fr       */
+/*   Updated: 2022/01/13 12:10:15 by oronda           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,10 @@ int	main(int argc, char *argv[])
 	init_signals();
 
 	init_basic_env_variables();
+	line = strdup("ls | grep poeut | wc -l ");
 	while (1) 
 	{
-		line = readline(MINISHELL_PROMPT);
+		//line = readline(MINISHELL_PROMPT);
 		if (line && line[0] != '\0' && !is_line_empty(line))
 		{
 			add_history(line);
@@ -89,8 +90,6 @@ int	main(int argc, char *argv[])
 				execute_cmd_lst(cmd_list);
 			clear_cmd_list();
 		}
-
-
 
 		/* This prints parsed cmds, works fine
 		t_cmd *curr;
