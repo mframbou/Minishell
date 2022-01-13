@@ -6,7 +6,7 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 2022/01/13 12:10:15 by oronda           ###   ########.fr       */
+/*   Updated: 13-01-2022 14:41 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,10 +75,10 @@ int	main(int argc, char *argv[])
 	init_signals();
 
 	init_basic_env_variables();
-	line = strdup("ls | grep poeut | wc -l ");
+	//line = strdup("ls || grep poeut | wc -l ");
 	while (1) 
 	{
-		//line = readline(MINISHELL_PROMPT);
+		line = readline(MINISHELL_PROMPT);
 		if (line && line[0] != '\0' && !is_line_empty(line))
 		{
 			add_history(line);
