@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*                       .-.                       .                          */
-/*                      / -'                      /                           */
-/*       .  .-. .-.   -/--).--..-.  .  .-. .-.   /-.  .-._.)  (               */
-/*        )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )         .    */
-/*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
-/*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
-/*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 13-01-2022 14:30 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
-/*                                 `._;  `._;                   `-            */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_whole_line.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2013/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
+/*   Updated: 2022/01/13 15:03:17 by oronda           ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
@@ -45,71 +45,81 @@ typedef enum e_splitable_char
 int is_splitable_char(char c)
 {
 	if ( c == '|' || c == '>' || c == '<' || c == '&')
-		return 1;
-	return 0;
+		return (1);
+	return (0);
 }
+
+void	layout_pipe(t_cmd_layout *layout, char *line, int *index)
+{
+	if(line[(*index) + 1] == '|' && line[(*index) + 1])
+	{
+		layout->splitable_char[(*index)] = OR_CHAR;
+		layout->splitable_char_pos[(*index)] = (*index);
+		layout->nb_of_splitable_chars++;
+		((*index))++;
+	}
+	else
+	{
+		layout->splitable_char[(*index)] = PIPE_CHAR;
+		layout->splitable_char_pos[(*index)] = (*index);
+		layout->nb_of_splitable_chars++;
+	}
+}
+
+void layout_right_redirect(t_cmd_layout *layout, char *line, int *index)
+{
+	if(line[(*index) + 1] == '>' && line[(*index) + 1])
+	{
+		layout->splitable_char[(*index)] = DOUBLE_RIGHT_REDIRECT;
+		layout->splitable_char_pos[(*index)] = (*index);
+		layout->nb_of_splitable_chars++;
+		(*index)++;
+	}
+	else
+	{
+		layout->splitable_char[(*index)] = SINGLE_RIGHT_REDIRECT;
+		layout->splitable_char_pos[(*index)] = (*index);
+		layout->nb_of_splitable_chars++;
+	}
+}
+void layout_left_redirect(t_cmd_layout *layout, char *line, int *index)
+{
+	if(line[(*index) + 1] == '<' && line[(*index) + 1])
+	{
+		layout->splitable_char[(*index)] = DOUBLE_LEFT_REDIRECT;
+		layout->splitable_char_pos[(*index)] = (*index);
+		layout->nb_of_splitable_chars++;
+		(*index)++;
+	}
+	else
+	{
+		layout->splitable_char[(*index)] = SINGLE_LEFT_REDIRECT;
+		layout->splitable_char_pos[(*index)] = (*index);
+		layout->nb_of_splitable_chars++;
+	}
+}
+void layout_or(t_cmd_layout *layout, char *line, int *index)
+{
+	if(line[(*index) + 1] == '&' && line[(*index) + 1])
+	{
+		layout->splitable_char[(*index)] = AND_CHAR;
+		layout->splitable_char_pos[(*index)] = (*index);
+		(*index)++;
+		layout->nb_of_splitable_chars++;
+	}
+}
+
 
 void set_layout_char(t_cmd_layout *layout, char* line, int *index)
 {
 	if(line[(*index)] == '|')
-	{
-		if(line[(*index) + 1] == '|' && line[(*index) + 1])
-		{
-			layout->splitable_char[(*index)] = OR_CHAR;
-			layout->splitable_char_pos[(*index)] = (*index);
-			layout->nb_of_splitable_chars++;
-			((*index))++;
-		}
-		else
-		{
-			layout->splitable_char[(*index)] = PIPE_CHAR;
-			layout->splitable_char_pos[(*index)] = (*index);
-			layout->nb_of_splitable_chars++;
-		}
-		
-	}		
+		layout_pipe(layout,line,index);	
 	else if (line[(*index)] == '>')
-	{
-		if(line[(*index) + 1] == '>' && line[(*index) + 1])
-		{
-			layout->splitable_char[(*index)] = DOUBLE_RIGHT_REDIRECT;
-			layout->splitable_char_pos[(*index)] = (*index);
-			layout->nb_of_splitable_chars++;
-			(*index)++;
-		}
-		else
-		{
-			layout->splitable_char[(*index)] = SINGLE_RIGHT_REDIRECT;
-			layout->splitable_char_pos[(*index)] = (*index);
-			layout->nb_of_splitable_chars++;
-		}
-	}		
+		layout_right_redirect(layout,line,index);	
 	else if (line[(*index)] == '<')
-	{
-		if(line[(*index) + 1] == '<' && line[(*index) + 1])
-		{
-			layout->splitable_char[(*index)] = DOUBLE_LEFT_REDIRECT;
-			layout->splitable_char_pos[(*index)] = (*index);
-			layout->nb_of_splitable_chars++;
-			(*index)++;
-		}
-		else
-		{
-			layout->splitable_char[(*index)] = SINGLE_LEFT_REDIRECT;
-			layout->splitable_char_pos[(*index)] = (*index);
-			layout->nb_of_splitable_chars++;
-		}
-	}	
+		layout_left_redirect(layout,line,index);	
 	else if (line[(*index)] == '&')
-	{
-		if(line[(*index) + 1] == '&' && line[(*index) + 1])
-		{
-			layout->splitable_char[(*index)] = AND_CHAR;
-			layout->splitable_char_pos[(*index)] = (*index);
-			(*index)++;
-			layout->nb_of_splitable_chars++;
-		}
-	}		
+		layout_or(layout,line,index);
 }
 
 void create_cmd_layout(t_cmd_layout *layout, char *line)

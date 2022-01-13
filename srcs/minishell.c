@@ -6,13 +6,17 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 13-01-2022 14:41 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 2022/01/13 16:00:04 by oronda           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <termios.h>
+
+struct termios termios_save;
 
 char	**parse_program_and_args(char *line);
+void	rl_replace_line(char*, int);
 
 int	is_line_empty(char *str)
 {
@@ -40,40 +44,80 @@ void	init_basic_env_variables(void)
 		add_env_variable("PATH", ft_strdup(PATH_STR));
 }
 
+void reset_the_terminal(void)
+{
+	tcsetattr(0, 0, &termios_save );
+}
+
 void handle_sigs(int sig, siginfo_t *siginfo, void *context)
 {
-	(void) siginfo;
-	(void) context;
 	if(sig == SIGINT)
 	{
-		printf("ctrl + C");
+		//rl_on_new_line();
+		//rl_replace_line("test");
+		//printf("Clean exit TODO ctrl c");
+		//write(1, "\n", 1);
+
+		// (void) sig;
+		// printf("\n%s", MINISHELL_PROMPT);
+		// rl_redisplay();
+		// rl_on_new_line();
+
+		printf("\n"); // Move to a new line
+		rl_on_new_line(); // Regenerate the prompt on a newline
+		rl_replace_line("", 0); // Clear the previous text
+		rl_redisplay();
 	}
 	if(sig == SIGQUIT)
 	{
-		printf("ctrl + /");
+		printf("Clean exit TODO ctrl \\\n");
+		exit(0);
 	}
 		
 }
 
 void init_signals()
 {
+	int tmp;
+	struct termios termios_new;
+	
+
+	tmp = tcgetattr(0, &termios_save );
+	if (tmp) {
+		perror("tcgetattr"); 
+		exit(1); 
+	}
+
+	tmp = atexit(reset_the_terminal);
+	if (tmp) {
+		perror("atexit"); 
+		exit(1); 
+	}
+
+	termios_new = termios_save;
+	
+
+	termios_new.c_lflag &= ~ECHOCTL; // Removes flag
+	
+	tmp = tcsetattr(0, 0, &termios_new );
+	if (tmp) {
+		perror("tcsetattr");
+		exit(1);
+	}
+
 	struct sigaction sa;
-	sa.sa_sigaction = handle_sigs;
-	sa.sa_flags = SA_SIGINFO;
-	sigaction(SIGINT, &sa,0);
-	sigaction(SIGQUIT, &sa,0);
+	sa.sa_sigaction = handle_sigs;	
+	sa.sa_flags = 0;
+	sigaction(SIGINT, &sa, 0);
+	sigaction(SIGQUIT, &sa, 0);
 }
 
 
-int	main(int argc, char *argv[])
+int	main()
 {
 	char	*line;
-
-	(void) argc;
-	(void) argv;
-
+	
 	init_signals();
-
 	init_basic_env_variables();
 	//line = strdup("ls || grep poeut | wc -l ");
 	while (1) 
