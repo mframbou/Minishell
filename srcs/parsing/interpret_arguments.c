@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 13-01-2022 13:26 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 13-01-2022 21:35 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -97,8 +97,10 @@ static char	*interpret_one_dollar_var_2(char *src, int res_size, \
 
 /*
 	If there are quotes AND they are closed -> remove them, otherwise keep them
+
+	Realloc the string directly
 */
-static char	*get_unquoted_arg(char *str)
+char	*get_unquoted_arg(char *str)
 {
 	char	*res;
 
@@ -142,5 +144,6 @@ char	*interpret_env_arg(char *str)
 		}
 		free(str);
 	}
-	return (get_unquoted_arg(result));
+	// OLD return (get_unquoted_arg(result));
+	return (result); // NEW
 }

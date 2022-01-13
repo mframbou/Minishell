@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 13-01-2022 16:53 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 13-01-2022 21:34 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 	Takes pointer to array of string (triple pointer)
 	the interpret the arguments (ex echo $USER => echo walidou)
 */
-static void	interpret_all_args(char	***args)
+void	interpret_all_args(char	***args)
 {
 	int	i;
 
@@ -25,6 +25,17 @@ static void	interpret_all_args(char	***args)
 	{
 		(*args)[i] = interpret_env_arg((*args)[i]);
 		i++;
+	}
+}
+
+void	unquote_all_args(char **args)
+{
+	int	i;
+
+	i = 0;
+	while (args[i])
+	{
+		args[i] = get_unquoted_arg(args[i]);
 	}
 }
 
@@ -56,7 +67,7 @@ static int	count_args(char *old_line)
 	return (count);
 }
 
-static char	**remove_empty_args(char **args)
+char	**remove_empty_args(char **args)
 {
 	int		valid_count;
 	int		i;

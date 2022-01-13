@@ -6,7 +6,7 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 13-01-2022 16:37 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 13-01-2022 21:21 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 struct termios termios_save;
 
 char	**parse_program_and_args(char *line);
-void	rl_replace_line(char*, int);
+//void	rl_replace_line(char*, int);
 
 int	is_line_empty(char *str)
 {

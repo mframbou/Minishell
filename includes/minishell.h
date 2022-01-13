@@ -6,7 +6,7 @@
 /*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
 /*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
 /*   Created:   by            `-'                        `-'                  */
-/*   Updated:   by                                                            */
+/*   Updated: 13-01-2022 21:34 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,11 @@ t_cmd	*parse_cmds(char *line);
 char	**parse_program_and_args(char *line);
 char	*get_one_arg(char *str, int *i);
 char	*interpret_env_arg(char *str);
+
+// Parsing redirections
+char	**remove_empty_args(char **args);
+char	*get_unquoted_arg(char *str);
+void	unquote_all_args(char **args);
 
 // Parsing utils
 int		is_line_empty(char *str);
