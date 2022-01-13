@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                       .-.                       .                          */
+/*                      / -'                      /                           */
+/*       .  .-. .-.   -/--).--..-.  .  .-. .-.   /-.  .-._.)  (               */
+/*        )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )         .    */
+/*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
+/*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
+/*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
+/*   Updated: 13-01-2022 13:28 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*                                 `._;  `._;                   `-            */
+/* ************************************************************************** */
+
 #include "../../includes/minishell.h"
 
 /*
@@ -52,13 +64,10 @@ static char	**remove_empty_args(char **args)
 	char	**new_args;
 
 	valid_count = 0;
-	i = 0;
-	while (args[i])
-	{
+	i = -1;
+	while (args[++i])
 		if (args[i][0] != '\0')
 			valid_count++;
-		i++;
-	}
 	new_args = (char **) malloc(sizeof (char *) * (valid_count + 1));
 	i = 0;
 	j = 0;
@@ -75,9 +84,9 @@ static char	**remove_empty_args(char **args)
 	return (new_args);
 }
 
-
 /*
-	This takes a line (right not not the full line but only 1 progran (split on pipes))
+	This takes a line (right not not the full line but only 1 progran 
+		(split on pipes))
 	(for instance "echo -e -n Salut ceci "est un test" "The USER is $USER"")
 
 	and returns it as a parsed string array :
