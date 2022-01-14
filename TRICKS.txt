@@ -1,7 +1,6 @@
 echo "test">test.txt > test.txt>test.txt
 echo pouet > "test 1".txt (should create a file named "test 1.txt")
 :: in PATH (should use current directory as a part of path)
-
 export TEST=">"
-
 echo salut $TEST test.txt (should output Salut > test.txt and not redirect)
+export POUET=$PATH (echo $POUET should print the PATH)

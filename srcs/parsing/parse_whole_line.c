@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 14-01-2022 17:58 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 14-01-2022 23:56 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -434,8 +434,23 @@ char	*remove_substr(char *str, int start, int end)
 	To: Hello test
 
 	As real bash
+
+	If double quotes are in simple quotes, keep them
+
+	salut.'"test"''
+
+	i = 6, str[i] = '
+	is_closed_quote = 7
+
+	newstr = salut."test"''
+	newstr = salut."test"'
+
+	i += 7-1 = 6 + 6 = 12
+
+	result should be = salut."test"'
+	
 */
-void	remove_quotes(char **str)
+void	remove_double_quotes(char **str)
 {
 	int	i;
 	int	end_quote;
@@ -443,13 +458,27 @@ void	remove_quotes(char **str)
 	i = 0;
 	while ((*str)[i])
 	{
-		if ((*str)[i] == '\'' || (*str)[i] == '"')
+		if ((*str)[i] == '\'') // If we have single quotes, don't interpret anything inside of it
 		{
 			end_quote = is_closed_quote(&((*str)[i]));
 			if (end_quote)
 			{
 				*str = remove_char_from_string(*str, i);
 				*str = remove_char_from_string(*str, i + end_quote - 1);// since we removed 1 quote, closing quote is previous character than before
+				i += end_quote - 1;	// echo 'test' => echo test
+									//      ^-- i=5            ^-- i=9 end_quote = 5, new i = old_i + end_quote - 2; 9 = 5 + 5 - 1
+				continue;
+			}
+			
+		}
+		else if ((*str)[i] == '"')
+		{
+			end_quote = is_closed_quote(&((*str)[i]));
+			if (end_quote)
+			{
+				*str = remove_char_from_string(*str, i);
+				*str = remove_char_from_string(*str, i + end_quote - 1);// since we removed 1 quote, closing quote is previous character than before
+				i += end_quote - 1;	// echo 'test' => echo test
 				continue ;
 			}
 		}
@@ -492,12 +521,8 @@ char	*get_redirection_filename(char **line)
 			j++;
 		}
 		filename = ft_substr(filename, 0, j); // Retrieve our filename of j size
-		//printf("filename before: %s\n", filename);
-		//printf("\nline before: \"%s\"\n", line);
 		(*line) = remove_substr((*line), get_next_redirect_operator_index((*line), 0), i + j); // j = filename size
-		//printf("line after: \"%s\"\n\n", line);
-		remove_quotes(&filename);
-		//printf("filename after unquote: %s\n\n", filename);
+		// remove_quotes(&filename); TODO: put this after, first interpret env args if any, then remove any quotes left
 	}	
 	return (filename);
 }
@@ -511,22 +536,35 @@ char	*get_redirection_filename(char **line)
 t_cmd	*parse_cmds(char *line)
 {
 	t_cmd	*commands;
-	char	**args;
+	char	**cmds;
 
-	args = split_command_operands(line);
-	interpret_all_args(&args); // Puts quotes around every arg, must remove it after parsing redirection
-
-	for (int i = 0; args[i]; i++)
+	cmds = split_command_operands(line);
+	for (int i = 0; cmds[i]; i++)
 	{
 		char *filename = NULL;
-		printf("arg before: \"%s\"\n", args[i]);
-		while ((filename = get_redirection_filename(&(args[i]))))
+		printf("arg before: \"%s\"\n", cmds[i]);
+		while ((filename = get_redirection_filename(&(cmds[i]))))
 		{
-			printf("filename found: \"%s\"\n", filename);
+			printf("filename found: %s\n", filename);
+			remove_double_quotes(&filename);
+			//filename = interpret_env_arg(filename);
+			
+			printf("Parsed filename: %s\n", filename);
 		}
-		printf("arg before: \"%s\"\n", args[i]);
+		printf("arg now: \"%s\"\n", cmds[i]);
 		//printf("\nLast filename: \"%s\"\n", filename);
+
+		char **args = parse_program_and_args(cmds[i]);
+		for (int j = 0; args[j]; j++)
+		{
+			printf("%s\n", args[j]);
+		}
+		printf("\n\n");
 	}
+
+	
+		
+	//interpret_all_args(&args); // Puts quotes around every arg, must remove it after parsing redirection
 	//return(0);
 	//for (int i = 0; args[i]; i++)
 	//{

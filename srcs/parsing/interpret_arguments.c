@@ -6,7 +6,7 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2013/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 2022/01/14 15:21:58 by oronda           ###   ########.fr       */
+/*   Updated: 14-01-2022 20:37 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,5 +144,6 @@ char	*interpret_env_arg(char *str)
 		}
 		free(str);
 	}
-	return (result);
+	return (get_unquoted_arg(result));
+	//return (result);
 }
