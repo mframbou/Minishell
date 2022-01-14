@@ -4,3 +4,5 @@
 !*/
 !parse/*.c
 libft/*.o
+!TRICKS.txt
+!test.sh

@@ -6,7 +6,7 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 2022/01/14 15:20:59 by oronda           ###   ########.fr       */
+/*   Updated: 14-01-2022 17:57 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,10 @@ void	init_signals(void)
 	sigaction(SIGQUIT, &sa, 0);
 }
 
+
+/*
+	Au final tous les double quotes sont supprimés sauf si ils sont dans des simples quotes
+*/
 int	main()
 {
 	char	*line;
@@ -104,7 +108,8 @@ int	main()
 
 	init_signals();
 	init_basic_env_variables();
-	//line = strdup("echo \"||\" > test.txt > 'gros_bg.txt > oronda\".txt");
+	add_env_variable(ft_strdup("TEST"), ft_strdup(">"));
+	//line = strdup("echo test > test.txt > pouet.txt> prout.txt>tes2r2rtwe\"oui\".txt");
 	while (1)
 	{
 		line = readline(MINISHELL_PROMPT);
@@ -115,9 +120,9 @@ int	main()
 		if (line)
 		{
 			cmd_list = parse_cmds(line);
-			if (cmd_list)
-				execute_cmd_lst(cmd_list);
-			clear_cmd_list();
+			//if (cmd_list)
+			//	execute_cmd_lst(cmd_list);
+			//clear_cmd_list();
 		}
 	}
 }
