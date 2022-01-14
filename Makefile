@@ -42,7 +42,7 @@ OBJS = $(SRCS:.c=.o)
 
 NAME = minishell
 
-CC = gcc #-g -fsanitize=address -Wall -Wextra -Werror
+CC = gcc #-g -fsanitize=address #-Wall -Wextra -Werror
 
 %.o: %.c
 	@$(CC) -c $< -o $@
@@ -52,6 +52,7 @@ $(NAME):	$(LIBFT) $(OBJS)
 	@echo "\033[0;95mLinking \033[0;95m($(OBJS)) into \033[1;35m$(NAME)\033[0m"
 	@$(CC) $(OBJS) $(LIBFT) -lreadline -o $(NAME)
 	@echo "\033[1;92mDONE"
+	@say -v Amelie pouette
 
 $(LIBFT):
 	$(MAKE) -j -C libft

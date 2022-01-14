@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 13-01-2022 21:34 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 14-01-2022 15:01 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	interpret_all_args(char	***args)
 	i = 0;
 	while ((*args)[i])
 	{
+		printf("interpreting: %s\n", (*args)[i]);
 		(*args)[i] = interpret_env_arg((*args)[i]);
 		i++;
 	}
@@ -103,10 +104,7 @@ char	**remove_empty_args(char **args)
 	and returns it as a parsed string array :
 	["echo", "-e", "-n", "Salut", "ceci", "est un test", "The USER is mframbou"]
 
-
-
 	Interpret ENV ($)
-	
 */
 char	**parse_program_and_args(char *line)
 {

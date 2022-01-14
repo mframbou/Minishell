@@ -6,14 +6,14 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 13-01-2022 21:21 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 14-01-2022 12:56 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 #include <termios.h>
 
-struct termios termios_save;
+struct termios	termios_save;
 
 char	**parse_program_and_args(char *line);
 //void	rl_replace_line(char*, int);
@@ -109,7 +109,7 @@ int	main()
 	
 	init_signals();
 	init_basic_env_variables();
-	//line = strdup("ls || grep poeut | wc -l ");
+	//line = strdup("echo \"||\" > test.txt > 'gros_bg.txt > oronda\".txt");
 	while (1) 
 	{
 		line = readline(MINISHELL_PROMPT);

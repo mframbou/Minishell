@@ -17,8 +17,8 @@ typedef struct s_cmd
 {
 	struct s_cmd	*next;
 	char			**args;
-	id_t			next_cmd_redirect;
-	char			*file_redirection;
+	int				redirect_type;
+	char			*redirect_filename;
 }	t_cmd;
 
 enum	e_redirection_type

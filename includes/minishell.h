@@ -37,6 +37,7 @@ t_cmd	*parse_cmds(char *line);
 char	**parse_program_and_args(char *line);
 char	*get_one_arg(char *str, int *i);
 char	*interpret_env_arg(char *str);
+void	interpret_all_args(char	***args);
 
 // Parsing redirections
 char	**remove_empty_args(char **args);

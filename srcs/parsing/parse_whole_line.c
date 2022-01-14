@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 13-01-2022 23:03 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 14-01-2022 15:05 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -26,10 +26,9 @@ t_cmd	**get_cmd_lst(void);
 
 typedef struct s_cmd_layout
 {
-	int splitable_char_pos[4096];
-	int splitable_char[4096];
-	int nb_of_splitable_chars;
-	int	nb_of_non_redirect_splitable_chars;
+	int operator_chars[4096];
+	int operators_nb;
+	int	non_redirect_operators_nb;
 } t_cmd_layout;
 
 typedef enum e_splitable_char
@@ -50,89 +49,63 @@ int is_splitable_char(char c)
 	return (0);
 }
 
-void	layout_pipe(t_cmd_layout *layout, char *line, int *index)
+static void	layout_pipe(t_cmd_layout *layout, char *line, int *index)
 {
 	if(line[(*index) + 1] == '|' && line[(*index) + 1])
 	{
-		layout->splitable_char[(*index)] = OR_CHAR;
-		layout->splitable_char_pos[(*index)] = (*index);
-		layout->nb_of_splitable_chars++;
-		layout->nb_of_non_redirect_splitable_chars++;
+		layout->operator_chars[(*index)] = OR_CHAR;
+		layout->operators_nb++;
+		layout->non_redirect_operators_nb++;
 		((*index))++;
 	}
 	else
 	{
-		layout->splitable_char[(*index)] = PIPE_CHAR;
-		layout->splitable_char_pos[(*index)] = (*index);
-		layout->nb_of_splitable_chars++;
-		layout->nb_of_non_redirect_splitable_chars++;
+		layout->operator_chars[(*index)] = PIPE_CHAR;
+		layout->operators_nb++;
+		layout->non_redirect_operators_nb++;
 	}
 }
 
-// void	layout_or(t_cmd_layout *layout, char *line, int *index)
-// {
-// 	if(line[(*index) + 1] && line[(*index) + 1] == '|')
-// 	{
-// 		layout->splitable_char[(*index)] = OR_CHAR;
-// 		layout->splitable_char_pos[(*index)] = (*index);
-// 		layout->nb_of_splitable_chars++;
-// 		layout->nb_of_non_redirect_splitable_chars++;
-// 		((*index))++;
-// 	}
-// 	if (line[(*index) + 1] && line[(*index) + 1] != '|')
-// 	{
-// 		layout->splitable_char[(*index)] = PIPE_CHAR;
-// 		layout->splitable_char_pos[(*index)] = (*index);
-// 		layout->nb_of_splitable_chars++;
-// 		layout->nb_of_non_redirect_splitable_chars++;
-// 	}
-// }
-
-void layout_right_redirect(t_cmd_layout *layout, char *line, int *index)
+static void layout_right_redirect(t_cmd_layout *layout, char *line, int *index)
 {
-	if(line[(*index) + 1] == '>' && line[(*index) + 1])
+	if (line[(*index) + 1] == '>' && line[(*index) + 1])
 	{
-		layout->splitable_char[(*index)] = DOUBLE_RIGHT_REDIRECT;
-		layout->splitable_char_pos[(*index)] = (*index);
-		layout->nb_of_splitable_chars++;
+		layout->operator_chars[(*index)] = DOUBLE_RIGHT_REDIRECT;
+		layout->operators_nb++;
 		(*index)++;
 	}
 	else
 	{
-		layout->splitable_char[(*index)] = SINGLE_RIGHT_REDIRECT;
-		layout->splitable_char_pos[(*index)] = (*index);
-		layout->nb_of_splitable_chars++;
+		layout->operator_chars[(*index)] = SINGLE_RIGHT_REDIRECT;
+		layout->operators_nb++;
 	}
 }
-void layout_left_redirect(t_cmd_layout *layout, char *line, int *index)
+static void layout_left_redirect(t_cmd_layout *layout, char *line, int *index)
 {
 	if(line[(*index) + 1] == '<' && line[(*index) + 1])
 	{
-		layout->splitable_char[(*index)] = DOUBLE_LEFT_REDIRECT;
-		layout->splitable_char_pos[(*index)] = (*index);
-		layout->nb_of_splitable_chars++;
+		layout->operator_chars[(*index)] = DOUBLE_LEFT_REDIRECT;
+		layout->operators_nb++;
 		(*index)++;
 	}
 	else
 	{
-		layout->splitable_char[(*index)] = SINGLE_LEFT_REDIRECT;
-		layout->splitable_char_pos[(*index)] = (*index);
-		layout->nb_of_splitable_chars++;
+		layout->operator_chars[(*index)] = SINGLE_LEFT_REDIRECT;
+		layout->operators_nb++;
 	}
 }
-void layout_and(t_cmd_layout *layout, char *line, int *index)
+static void layout_and(t_cmd_layout *layout, char *line, int *index)
 {
 	if(line[(*index) + 1] == '&' && line[(*index) + 1])
 	{
-		layout->splitable_char[(*index)] = AND_CHAR;
-		layout->splitable_char_pos[(*index)] = (*index);
+		layout->operator_chars[(*index)] = AND_CHAR;
 		(*index)++;
-		layout->nb_of_splitable_chars++;
-		layout->nb_of_non_redirect_splitable_chars++;
+		layout->operators_nb++;
+		layout->non_redirect_operators_nb++;
 	}
 }
 
-void set_layout_char(t_cmd_layout *layout, char* line, int *index)
+static void set_layout_char(t_cmd_layout *layout, char* line, int *index)
 {
 	if (line[(*index)] == '|')
 		layout_pipe(layout,line,index);	
@@ -148,9 +121,16 @@ void create_cmd_layout(t_cmd_layout *layout, char *line)
 {
 	int i;
 
+	layout->non_redirect_operators_nb = 0;
+	layout->operators_nb = 0;
+	ft_bzero(layout->operator_chars, 4096);
 	i = 0;
 	while(line[i])
 	{
+		if ((line[i] == '\'' || line[i] == '"') && is_closed_quote(&line[i]))
+			i += is_closed_quote(&line[i]) + 1; // Goes after the second quote
+		if (!line[i])
+			break;
 		if (is_splitable_char(line[i]))
 		{
 			if(is_splitable_char(line[i]) && line[i])
@@ -208,17 +188,19 @@ static int	is_quoted_arg(char *str)
 	k = filename index (current char in filename)
 
 */
-char	*get_first_redirection_file(char **args)
+char	*get_last_redirection_filename(t_cmd *cmd, char **args)
 {
 	int		i;
 	int		j;
 	int		k;
-	char	*filename;
 	int		filename_length;
 	int		has_another_redirect;
 
+	char	*filename;
 	char	*final_filename;
 	char	*last_filename;
+
+	t_cmd_layout	layout;
 
 	i = 1;
 	has_another_redirect = 0;
@@ -228,18 +210,17 @@ char	*get_first_redirection_file(char **args)
 	while (args[i])
 	{
 		filename = NULL;
-		if (is_quoted_arg(args[i])) // If we have a closed quote, we don't interpret the redirection
+		if (!is_quoted_arg(args[i])) // If we have a closed quote, we don't interpret the redirection
 		{
-			printf("Redirection is in quote, don't interpret\n");
-			//return (NULL);
-		}
-		else
-		{
-			while (args[i][j] && !(args[i][j] == '<' || args[i][j] == '>')) // While we do not encounter redirect chars, continue
+			create_cmd_layout(&layout, args[i]);
+			while (args[i][j] && layout.operator_chars[j] == 0 /*args[i][j] && !(args[i][j] == '<' || args[i][j] == '>')*/) // While we do not encounter redirect chars, continue
 				j++;
 			if (args[i][j]) // If a redirection is found
 			{
-				if (args[i][j + 1] == '>' || args[i][j + 1] == '<') // If we have a double redirection (<< or >>), length is 2 not 1
+				/*if (args[i][j + 1] == '>' || args[i][j + 1] == '<') // If we have a double redirection (<< or >>), length is 2 not 
+					j += 2;*/
+				int type = args[i][j];
+				if (type == DOUBLE_LEFT_REDIRECT || type == DOUBLE_RIGHT_REDIRECT)
 					j += 2;
 				else
 					j += 1; // Skip the '>' char
@@ -262,6 +243,8 @@ char	*get_first_redirection_file(char **args)
 					k++;
 				final_filename = ft_substr(filename, 0, k);
 
+				cmd->redirect_filename = final_filename;
+				cmd->redirect_type = type;
 
 				// SHOULD MOVE THIS TO ANOTHER FUNCTION
 				/*
@@ -275,14 +258,14 @@ char	*get_first_redirection_file(char **args)
 				open("some-file", O_WRONLY|O_CREAT|O_APPEND, 0666) = 3
 				No file named "some-file" existed in the directory in which I ran the echo command.
 				*/
-				//int fd = open (final_filename,  O_WRONLY | O_CREAT);
-				//close(fd);
+			
+				int fd = open (final_filename,  O_WRONLY | O_CREAT, 0666);
+				close(fd);
 				
 				if (final_filename)
 				{
 					free(last_filename);
 					last_filename = ft_strdup(final_filename);
-					
 				}
 				final_filename = NULL;
 				
@@ -303,115 +286,104 @@ char	*get_first_redirection_file(char **args)
 		}
 		i++;
 	}
-	printf("last redirect=\"%s\"\n", last_filename);
+	return (last_filename);
 }
-
-
-t_cmd	*split_cmds(t_cmd_layout *layout, char *line)
-{
-	
-	int 	i;
-	int		cmd_start;
-	int		cmd_end;
-	char	*program;
-	int		redirect_type;
-
-	i = 0;
-	cmd_start = 0;
-	while (line[i] && !(layout->splitable_char[i] == PIPE_CHAR || layout->splitable_char[i] == OR_CHAR || layout->splitable_char[i] == AND_CHAR))
-		i++;
-	cmd_end = i;
-	//redirect_type = get_redirect_type_associated_with_redirect_char(layout->splitable_char[i]);
-	i++;
-	while(layout->nb_of_non_redirect_splitable_chars-- >= 0)
-	{
-		program = ft_substr(line, cmd_start, cmd_end - cmd_start);
-		//if (is_line_empty(program))
-		//{
-		//	printf("%sError ma boi (wrong syntax)\n", MINISHELL_PROMPT);
-		//	return (NULL);
-		//}
-
-		
-		//if (layout->nb_of_splitable_chars == -1) // Last program
-		//	redirect_type = REDIRECT_STDOUT;
-		
-
-		//re_parse(program);
-		char **args = parse_program_and_args(program);
-		get_first_redirection_file(args);
-		/*
-		echo
-		>test.txt prout>pouet.txt
-
-		>
-		test.txt
-		prout
-		>
-		pouet.txt
-
-
-
-		*/
-
-		//add_cmd
-		
-		int split_char = layout->splitable_char[cmd_end];
-		if (split_char == PIPE_CHAR) // |
-			cmd_start = cmd_end + 1;
-		else // || or &&
-			cmd_start = cmd_end + 2;
-		while (line[i] && !(layout->splitable_char[i] == PIPE_CHAR || layout->splitable_char[i] == OR_CHAR || layout->splitable_char[i] == AND_CHAR))
-			i++;
-		cmd_end = i;
-		//redirect_type = get_redirect_type_associated_with_redirect_char(layout->splitable_char[i]);
-		i++;
-	}
-	return (*(get_cmd_lst()));
-}
-
-t_cmd	*parse_cmds(char *line)
-{
-	t_cmd			*cmds;
-	int				i;
-	t_cmd_layout	layout;
-
-	layout.nb_of_splitable_chars = 0;
-	layout.nb_of_non_redirect_splitable_chars = 0;
-	ft_bzero(layout.splitable_char, 4096);
-	ft_bzero(layout.splitable_char_pos, 4096);
-	
-	create_cmd_layout(&layout, line);
-	cmds = split_cmds(&layout, line);
-	//cmds = ft_split(line, '|'); // TODO: Better parsing (more error checks, <<, <, > and >> characters)
-
-	i = 0;
-	if (!cmds)
-		return (NULL);
-	/*while (cmds[i])
-	{
-		add_cmd(parse_program_and_args(cmds[i]));
-		i++;
-	}*/
-	return (cmds);
-}
-
 
 /*
-	echo "pouet" | grep pouet > test.txt  || cat 
+	Takes our line (eg. echo "test" > test.txt | cat)
+                                    ^          ^
+				cmd layout =>  RIGHT_REDIR    PIPE
 
-	&& ||
+	Returns a list of commands (just separated on |, || and &&)
+	(in this case "echo "test" > test.txt", "cat")
+*/
+static int	is_operator_but_not_redirection(char c)
+{
+	return (c == PIPE_CHAR || c == OR_CHAR || c == AND_CHAR);
+}
 
-	|
+static int	get_operator_str_len(char c)
+{
+	if (c == PIPE_CHAR || c == SINGLE_RIGHT_REDIRECT \
+	|| c == SINGLE_LEFT_REDIRECT)
+		return (1);
+	else if (c == OR_CHAR || c == AND_CHAR || c == DOUBLE_LEFT_REDIRECT \
+	|| c == DOUBLE_RIGHT_REDIRECT)
+		return (2);
+	return (0);
+}
 
-	< << > >>
+static int	get_next_non_redirect_operator(char *line, int index, t_cmd_layout layout)
+{
+	while (line[index] \
+	&& !is_operator_but_not_redirection(layout.operator_chars[index]))
+		index++;
+	return (index);
+}
 
-	"echo pouet"
-	"grep pouet > test.txt > test2.txt salut123 && sjkgdskflgb"
-	"sjkgdskflgb"
+/*
+	Input = "echo test | cat > test.txt"
 
-	echo pouet
-	grep pouet
-	text.txt
-	test2.txt salut123
+	Output = ["echo test", "cat > test.txt"]
+*/
+char	**split_command_operands(char *line)
+{
+	t_cmd_layout	layout;
+	int				i;
+	int				cmd_start;
+	int				cmd_end;
+	char			**programs_list;
+
+	create_cmd_layout(&layout, line);
+	i = 0;
+	cmd_start = 0;
+	cmd_end = get_next_non_redirect_operator(line, 0, layout);
+	programs_list = malloc(sizeof(char *) * (layout.non_redirect_operators_nb + 2)); // If 1 program, our redirect nb = 0, so malloc 2 (1 prog + NULL at the end)
+	while (layout.non_redirect_operators_nb-- >= 0)
+	{
+		programs_list[i++] = ft_substr(line, cmd_start, cmd_end - cmd_start);
+		cmd_start = cmd_end + get_operator_str_len(layout.operator_chars[cmd_end]);
+		if (line[cmd_end])
+			cmd_end++; // Skip the current operator to go to the next cmd
+		cmd_end = get_next_non_redirect_operator(line, cmd_end, layout);
+	}
+	programs_list[i] = NULL;
+	return (programs_list);
+}
+
+/*
+	Takes our line return a list of fully parsed programs
+*/
+t_cmd	*parse_cmds(char *line)
+{
+	t_cmd	*commands;
+	char	**args;
+
+	args = split_command_operands(line);
+	interpret_all_args(&args);
+
+	for (int i = 0; args[i]; i++)
+	{
+		printf("arg=\"%s\"\n", args[i]);
+	}
+	printf("\n");
+	return (commands);
+}
+
+/*
+	"echo "$USER" | cat > pouet.txt"
+
+	
+	["echo "$USER" (output fd = input of "cat"), "cat > pouet.txt"]
+	["echo "mframbou"" | cat > pouet.txt"]
+	["echo "mframbou"" (output fd = input of "cat"), "cat" (output fd = "pouet.txt")]
+	[["echo", "mframbou" (output fd = input of "cat")], ["cat"]]
+
+	Execute
+
+	- Split programs
+	- interpret environment
+	- Remove redirections
+	- Fully parse program
+	- Execute
 */
