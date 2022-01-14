@@ -6,14 +6,14 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 14-01-2022 12:56 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 2022/01/14 15:20:59 by oronda           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 #include <termios.h>
 
-struct termios	termios_save;
+struct termios	g_termios_save;
 
 char	**parse_program_and_args(char *line);
 //void	rl_replace_line(char*, int);
@@ -44,73 +44,68 @@ void	init_basic_env_variables(void)
 		add_env_variable("PATH", ft_strdup(PATH_STR));
 }
 
-void reset_the_terminal(void)
+void	reset_the_terminal(void)
 {
-	tcsetattr(0, 0, &termios_save );
+	tcsetattr(0, 0, &g_termios_save);
 }
 
-void handle_sigs(int sig, siginfo_t *siginfo, void *context)
+void	handle_sigs(int sig, siginfo_t *siginfo, void *context)
 {
-	if(sig == SIGINT)
+	if (sig == SIGINT)
 	{
-		printf("\n"); // Move to a new line
-		rl_on_new_line(); // Regenerate the prompt on a newline
+		printf("\n");
+		rl_on_new_line();
 		//rl_replace_line("", 0); // Clear the previous text
 		rl_redisplay();
 	}
-	if(sig == SIGQUIT)
+	if (sig == SIGQUIT)
 	{
 		printf("Clean exit TODO ctrl \\\n");
 		exit(0);
 	}
-		
 }
 
-void init_signals()
+void	init_signals(void)
 {
-	int tmp;
-	struct termios termios_new;
-	
+	int					tmp;
+	struct termios		termios_new;
+	struct sigaction	sa;
 
-	tmp = tcgetattr(0, &termios_save );
-	if (tmp) {
-		perror("tcgetattr"); 
-		exit(1); 
+	tmp = tcgetattr(0, &g_termios_save);
+	if (tmp)
+	{
+		perror("tcgetattr");
+		exit(1);
 	}
-
 	tmp = atexit(reset_the_terminal);
-	if (tmp) {
-		perror("atexit"); 
-		exit(1); 
+	if (tmp)
+	{
+		perror("atexit");
+		exit(1);
 	}
-
-	termios_new = termios_save;
-	
-
-	termios_new.c_lflag &= ~ECHOCTL; // Removes flag
-	
-	tmp = tcsetattr(0, 0, &termios_new );
-	if (tmp) {
+	termios_new = g_termios_save;
+	termios_new.c_lflag &= ~ECHOCTL;
+	tmp = tcsetattr(0, 0, &termios_new);
+	if (tmp)
+	{
 		perror("tcsetattr");
 		exit(1);
 	}
-
-	struct sigaction sa;
-	sa.sa_sigaction = handle_sigs;	
+	sa.sa_sigaction = handle_sigs;
 	sa.sa_flags = 0;
 	sigaction(SIGINT, &sa, 0);
 	sigaction(SIGQUIT, &sa, 0);
 }
 
-
 int	main()
 {
 	char	*line;
-	
+	t_cmd	*cmd_list;
+
 	init_signals();
 	init_basic_env_variables();
 	//line = strdup("echo \"||\" > test.txt > 'gros_bg.txt > oronda\".txt");
-	while (1) 
+	while (1)
 	{
 		line = readline(MINISHELL_PROMPT);
 		if (line && line[0] != '\0' && !is_line_empty(line))
@@ -119,53 +114,10 @@ int	main()
 		}
 		if (line)
 		{
-			t_cmd *cmd_list = parse_cmds(line);
+			cmd_list = parse_cmds(line);
 			if (cmd_list)
 				execute_cmd_lst(cmd_list);
 			clear_cmd_list();
 		}
-
-		/* This prints parsed cmds, works fine
-		t_cmd *curr;
-		int j = 0;
-
-		curr = cmd_list;
-		while (curr)
-		{
-			char **args = curr->args;
-
-			printf("Program %d:\n", j++);
-			for (int i = 0; args[i]; i++)
-			{
-				printf("%s\n", args[i]);
-			}
-			curr = curr->next;
-		}
-		*/
-
-		
-		
-		/* old cmd execution
-		char **args = parse_program_and_args(line);
-		printf("CMD: %s\n", args[0]);
-		if (args[0])
-		{
-			char *program = is_program_in_path(args[0]);
-			if (is_builtin(args[0]))
-			{
-				execute_builtin(args);
-			}
-			else if (program)
-			{
-				//printf("Program not builtin but in path\n");
-				execute_program(0, program, args);
-				free(program);
-			}
-			else
-			{
-				printf("%s%s: command not found\n", MINISHELL_PROMPT, args[0]);
-			}
-		}
-		*/
 	}
 }

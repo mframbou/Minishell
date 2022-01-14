@@ -3,13 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   search_executable.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
+/*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 2022/01/13 00:39:41 by mframbou         ###   ########.fr       */
+/*   Updated: 2022/01/14 15:23:16 by oronda           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "../../includes/minishell.h"
 #include <dirent.h>
@@ -19,7 +18,8 @@
 
 /*
 	Max path length is PATH_MAX bytes
-	https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_271
+	https://pubs.opengroup.org/onlinepubs
+	/9699919799/basedefs/V1_chap03.html#tag_03_271
 */
 
 // /bin:/oronda::/bin
@@ -27,7 +27,8 @@
 
 int	is_builtin(char *program)
 {
-	static char	*envs[] = {"export", "unset", "env", "cd", "pwd", "exit", "echo", NULL};
+	static char	*envs[] = {"export", "unset", "env", "cd",
+		"pwd", "exit", "echo", NULL};
 	int			i;
 
 	i = 0;

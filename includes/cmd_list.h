@@ -6,7 +6,7 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 11:50:39 by mframbou          #+#    #+#             */
-/*   Updated: 2022/01/13 11:33:02 by oronda           ###   ########.fr       */
+/*   Updated: 2022/01/14 15:09:54 by oronda           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,13 @@ typedef struct s_cmd
 
 enum	e_redirection_type
 {
-	REDIRECT_PIPE,   		 		// |
-	REDIRECT_OUTPUT_FILE,         	// >
-	REDIRECT_INPUT_FILE,  		 	// <
-	REDIRECT_INPUT_FILE_DELIMITER,	// <<
-	REDIRECT_OUTPUT_FILE_APPEND,   	// >>
-	REDIRECT_STDOUT,				// Print output
-	REDIRECT_UNKNOWN				// Unknown						
+	REDIRECT_PIPE,	
+	REDIRECT_OUTPUT_FILE,
+	REDIRECT_INPUT_FILE,
+	REDIRECT_INPUT_FILE_DELIMITER,	
+	REDIRECT_OUTPUT_FILE_APPEND,
+	REDIRECT_STDOUT,				
+	REDIRECT_UNKNOWN								
 };
 
 void	add_cmd(char **args, int redirection_type);
