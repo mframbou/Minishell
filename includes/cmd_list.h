@@ -6,19 +6,28 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 11:50:39 by mframbou          #+#    #+#             */
-/*   Updated: 2022/01/14 15:09:54 by oronda           ###   ########.fr       */
+/*   Updated: 15-01-2022 18:31 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CMD_LIST_H
 # define CMD_LIST_H
 
+# include "minishell.h"
+
+
+typedef	struct s_redirection
+{
+	int		fd;
+	char	*filename;
+	int		type;
+}	t_redirection;
+
 typedef struct s_cmd
 {
 	struct s_cmd	*next;
 	char			**args;
-	int				redirect_type;
-	char			*redirect_filename;
+	t_redirection	redirection;
 }	t_cmd;
 
 enum	e_redirection_type
@@ -32,7 +41,7 @@ enum	e_redirection_type
 	REDIRECT_UNKNOWN								
 };
 
-void	add_cmd(char **args, int redirection_type);
+void	add_cmd(char **args, t_redirection redirection);
 void	clear_cmd_list(void);
 
 #endif

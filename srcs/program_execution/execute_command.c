@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 15-01-2022 00:29 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 15-01-2022 19:02 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -277,7 +277,7 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 	printf("types: \n%d=PIPE\n%d=OUTPUT\n%d=INPUT\n%d=INPUT2\n%d=OUTPUT2\n%d=STDOUT\n%d=UNKNOWN\n\n", REDIRECT_PIPE, REDIRECT_OUTPUT_FILE, REDIRECT_INPUT_FILE, REDIRECT_INPUT_FILE_DELIMITER, REDIRECT_OUTPUT_FILE_APPEND, REDIRECT_STDOUT, REDIRECT_UNKNOWN);
 	while (curr)
 	{
-		printf("cmd (\"%s\") redirection type: %d\n", curr->args[0], curr->redirect_type);
+		//printf("cmd (\"%s\") redirection type: %d\n", curr->args[0], curr->redirect_type);
 		if (is_builtin(curr->args[0]))
 		{
 			new_read_fd = execute_builtin(curr->args);

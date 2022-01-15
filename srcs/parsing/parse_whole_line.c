@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 15-01-2022 02:20 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 15-01-2022 20:56 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -31,16 +31,16 @@ typedef struct s_cmd_layout
 	int	non_redirect_operators_nb;
 } t_cmd_layout;
 
-typedef enum e_splitable_char
+typedef enum e_interpreted_char
 {
-	 PIPE_CHAR = 1, 			// |
-	 SINGLE_RIGHT_REDIRECT,		// >
-	 SINGLE_LEFT_REDIRECT, 		// <
-	 OR_CHAR, 					// ||
-	 AND_CHAR, 					// &&
-	 DOUBLE_LEFT_REDIRECT, 		// <<
-	 DOUBLE_RIGHT_REDIRECT 		// >>
-}	t_splitable_char;
+	PIPE_CHAR = 1, 			// |
+	SINGLE_RIGHT_REDIRECT,		// >
+	DOUBLE_RIGHT_REDIRECT, 		// >>
+	SINGLE_LEFT_REDIRECT, 		// <
+	DOUBLE_LEFT_REDIRECT, 		// <<
+	OR_CHAR, 					// ||
+	AND_CHAR, 					// &&
+}	t_interpreted_char;
 
 int is_splitable_char(char c)
 {
@@ -185,11 +185,16 @@ static int	is_not_redirection_operator(char c)
 	return (c == PIPE_CHAR || c == OR_CHAR || c == AND_CHAR);
 }
 
-static int	get_operator_str_len(char c)
+static int	get_operator_str_len(int operator)
 {
-	if (c == '|' || c == '>' || c == '<')
+	if (operator == PIPE_CHAR || operator == SINGLE_LEFT_REDIRECT || \
+	operator == SINGLE_RIGHT_REDIRECT)
 		return (1);
-	return (2);
+	else if (operator == DOUBLE_LEFT_REDIRECT || \
+	operator == DOUBLE_RIGHT_REDIRECT || \
+	operator == AND_CHAR || operator == OR_CHAR)
+		return (2);
+	return (0);
 }
 
 static int	get_next_non_redirect_operator(char *line, int index, t_cmd_layout layout)
@@ -247,12 +252,26 @@ static int	get_next_redirect_operator(char *line, int index, t_cmd_layout layout
 	return (index);
 }
 
+/*
+	Returns the index of the next operator
+*/
 static int	get_next_redirect_operator_index(char *line, int current_index)
 {
 	t_cmd_layout	layout;
 
 	create_cmd_layout(&layout, line);
 	return (get_next_redirect_operator(line, current_index, layout));
+}
+
+/*
+	Returns the type of the next operator
+*/
+static int	get_next_redirect_operator_type(char *line, int current_index)
+{
+	t_cmd_layout	layout;
+
+	create_cmd_layout(&layout, line);
+	return (layout.operator_chars[get_next_redirect_operator(line, current_index, layout)]);
 }
 
 /*
@@ -367,14 +386,39 @@ void	interpret_quotes(char **str)
 	}
 }
 
+
+static int	get_redirection_chars_len(char *op_index)
+{
+	char	first;
+	char	second;
+
+	first = '\0';
+	second = '\0';
+	if (op_index[0] != '\0')
+	{
+		first = op_index[0];
+		if (op_index[1] != '\0')
+			second = op_index[1];
+	}
+	if (first == '>' || first == '<')
+	{
+		if (second == first)
+			return (2);
+		return (1);
+	}
+	return (0);
+}
 /*
 	Takes pointer to line
 
 	Extract the filename and remove it from the line
 
 	"echo > test.txt" => Return: "test.txt", line = "echo"
+
+	Takes pointer to line string (because it removes the filename)
+	and pointer to redirection type, which is set if any is found
 */
-char	*get_first_redirection_filename(char **line)
+char	*get_first_redirection_filename(char **line, int *redirection_type)
 {
 	int		i;
 	int		j;
@@ -384,7 +428,8 @@ char	*get_first_redirection_filename(char **line)
 	i = get_next_redirect_operator_index((*line), 0);
 	if ((*line)[i]) // If we have a redirection
 	{
-		i += get_operator_str_len((*line)[i]);	// Skip the operator
+		*redirection_type = get_next_redirect_operator_type((*line), 0);
+		i += get_redirection_chars_len(&((*line)[i]));	// Skip the operator
 		while ((*line)[i] && ft_isspace((*line)[i]))
 			i++;
 		if (!(*line)[i])
@@ -409,42 +454,35 @@ char	*get_first_redirection_filename(char **line)
 
 
 /*
-	Takes pointer to program line
-
-
-	echo test > Salut'olivie"r'.t"xt''"'
-	should create file name: Salutolivie"r.txt'''
-
-
-	echo test > salut'$PATH""'"$HOME".txt''
-	should search for salut$PATH""$HOME.txt
-	which expands to salut$PATH""/Users/mframbou.txt
+	Opens the file according to the redirection type and returns the fd
 */
-int	create_files_and_return_output_fd(char **line)
-{
-	char	*filename;
-	char	*prev_filename;
-	int		fd;
 
-	filename = get_first_redirection_filename(line);
-	prev_filename = NULL;
-	fd = -1;
-	while (filename)
+static int	open_file_for_redirection(char *filename, int redirection_type)
+{
+	int	fd;
+	int	flags;
+	int	mode;
+
+	mode = 0;
+	if (redirection_type == SINGLE_LEFT_REDIRECT || redirection_type == DOUBLE_LEFT_REDIRECT)
+		flags = O_RDONLY;
+	else if (redirection_type == SINGLE_RIGHT_REDIRECT)
 	{
-		prev_filename = filename;
-		printf("filename from parsing: %s\n", filename);
-		filename = interpret_env_args(filename);
-		printf("interpreted filename: %s\n", filename);
-		interpret_quotes(&filename);
-		fd = open (filename, O_WRONLY | O_CREAT, 0666);
-		if (fd == -1)
-			return(perror_return("Error while opening file"));
-		filename = get_first_redirection_filename(line);
-		if (filename) // If we have another file, else keep the fd opened
-			close(fd);
+		flags = O_CREAT | O_WRONLY | O_TRUNC;
+		mode = 0666;
 	}
-	return (fd);
+	else if (redirection_type == DOUBLE_RIGHT_REDIRECT)
+	{
+		flags = O_CREAT | O_WRONLY | O_APPEND;
+		mode = 0666;
+	}
+	else
+		return (-1);
+	return (open(filename, flags, mode));
 }
+
+
+
 /*
 	Takes our line return a list of fully parsed programs
 
@@ -452,17 +490,23 @@ int	create_files_and_return_output_fd(char **line)
 */
 t_cmd	*parse_cmds(char *line)
 {
-	t_cmd	*commands;
-	char	**cmds;
-	int		redirect_fd;
+	t_cmd			*commands;
+	char			**cmds;
+	t_redirection	redirection;
 
 	cmds = split_command_operands(line);
 	
 	for (int i = 0; cmds[i]; i++)
 	{
-		redirect_fd = create_files_and_return_output_fd(&(cmds[i]));
-		if (redirect_fd >= 0)
-			write(redirect_fd, "Salut pouet", 12);
+		if (get_redirection_and_create_files(&(cmds[i]), &redirection) == -1)
+		{
+			// Error happened, otherwise we have a correct redirection
+			return (NULL);
+		}
+		printf("Redirection types:\n> = %d\n >> = %d\n< = %d\n<< = %d\n\n", SINGLE_RIGHT_REDIRECT, DOUBLE_RIGHT_REDIRECT, SINGLE_LEFT_REDIRECT, DOUBLE_LEFT_REDIRECT);
+		printf("Found redirection type: %d\n", redirection.type);
+		if (redirection.fd >= 0)
+			write(redirection.fd, "Salut pouet", 12);
 		// Need to add command with correct redirection type, redirection fd and args
 		// parse_program_and_args for args, redirect_fd for fd, need a function for redirection type
 	}

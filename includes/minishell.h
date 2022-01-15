@@ -6,7 +6,7 @@
 /*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
 /*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
 /*   Created:   by            `-'                        `-'                  */
-/*   Updated: 13-01-2022 21:34 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 15-01-2022 20:57 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,25 @@ void	interpret_quotes(char **str);
 char	**remove_empty_args(char **args);
 void	unquote_all_args(char **args);
 int		perror_return(char *str);
+int		get_redirection_and_create_files(char **line, t_redirection *redirection);
+typedef struct s_cmd_layout
+{
+	int operator_chars[4096];
+	int operators_nb;
+	int	non_redirect_operators_nb;
+} t_cmd_layout;
+
+typedef enum e_interpreted_char
+{
+	PIPE_CHAR = 1, 			// |
+	SINGLE_RIGHT_REDIRECT,		// >
+	DOUBLE_RIGHT_REDIRECT, 		// >>
+	SINGLE_LEFT_REDIRECT, 		// <
+	DOUBLE_LEFT_REDIRECT, 		// <<
+	OR_CHAR, 					// ||
+	AND_CHAR, 					// &&
+}	t_interpreted_char;
+
 
 // Parsing utils
 int		is_line_empty(char *str);
