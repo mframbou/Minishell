@@ -36,13 +36,15 @@
 t_cmd	*parse_cmds(char *line);
 char	**parse_program_and_args(char *line);
 char	*get_one_arg(char *str, int *i);
-char	*interpret_env_arg(char *str);
+char	*interpret_env_args(char *str);
 void	interpret_all_args(char	***args);
+void	interpret_quotes(char **str);
+
 
 // Parsing redirections
 char	**remove_empty_args(char **args);
-char	*get_unquoted_arg(char *str);
 void	unquote_all_args(char **args);
+int		perror_return(char *str);
 
 // Parsing utils
 int		is_line_empty(char *str);

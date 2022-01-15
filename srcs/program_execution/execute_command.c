@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 14-01-2022 13:52 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 15-01-2022 00:29 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	execute_command(char **args)
 }
 */
 
-static int	perror_return(char *str)
+int	perror_return(char *str)
 {
 	perror(str);
 	return (-2);

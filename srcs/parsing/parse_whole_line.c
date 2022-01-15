@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 14-01-2022 23:56 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 15-01-2022 02:20 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -231,125 +231,6 @@ char	**split_command_operands(char *line)
 }
 
 
-/*
-	Args need to NOT be unquoted (">" should stay ">" and not become only >)
-	So that we can make difference between literal string (">") 
-		and redirect char (>)
-	This takes args as input (eg. ["echo", "salut bg", ">", "test.txt"]) and :
-
-	- Remove the redirection from args (new args = ["echo", "salut bg"])
-	- Returns the file ("test.txt")
-	args[0] = program_name, so skip it
-
-	filename = pointer to first char of filename (string)
-	filename_length is the length for the substr'
-
-	i = args index (current arg)
-	j = string index (current char)
-	k = filename index (current char in filename)
-
-*/
-char	*get_last_redirection_filename(t_cmd *cmd, char **args)
-{
-	int		i;
-	int		j;
-	int		k;
-	int		filename_length;
-	int		has_another_redirect;
-
-	char	*filename;
-	char	*final_filename;
-	char	*last_filename;
-
-	t_cmd_layout	layout;
-
-	i = 1;
-	has_another_redirect = 0;
-	j = 0;
-	last_filename = NULL;
-	final_filename = NULL;
-	while (args[i])
-	{
-		filename = NULL;
-		//if (!is_quoted_arg(args[i])) // If we have a closed quote, we don't interpret the redirection
-		//{
-			create_cmd_layout(&layout, args[i]);
-			while (args[i][j] && layout.operator_chars[j] == 0 /*args[i][j] && !(args[i][j] == '<' || args[i][j] == '>')*/) // While we do not encounter redirect chars, continue
-				j++;
-			if (args[i][j]) // If a redirection is found
-			{
-				/*if (args[i][j + 1] == '>' || args[i][j + 1] == '<') // If we have a double redirection (<< or >>), length is 2 not 
-					j += 2;*/
-				int type = args[i][j];
-				if (type == DOUBLE_LEFT_REDIRECT || type == DOUBLE_RIGHT_REDIRECT)
-					j += 2;
-				else
-					j += 1; // Skip the '>' char
-				while (args[i][j] && ft_isspace(args[i][j]))
-					j++;
-				if (args[i][j]) // We reached a character in the arg (It's either a ">file.txt or >  file.txt" case)
-					filename = &(args[i][j]);
-				else // Our arg was only composed of a ">", so file is in next arg;
-				{
-					if (!args[i + 1]) // If there is no next argument, we have an error
-					{
-						printf("Missing filename. TODO\n");
-						return (NULL);
-					}
-					else
-						filename = args[i + 1];
-				}
-				k = 0; // Now that we have our string filename, start from first char
-				while (filename[k] && is_valid_in_filename(filename[k]))
-					k++;
-				final_filename = ft_substr(filename, 0, k);
-
-				cmd->redirect_filename = final_filename;
-				cmd->redirect_type = type;
-
-				// SHOULD MOVE THIS TO ANOTHER FUNCTION
-				/*
-				Appended output redirection shall cause the file whose name results from the expansion of word to be opened for output on the designated file descriptor.
-				 The file is opened as if the open() function as defined in the System Interfaces volume of POSIX.1-2008 was called with the O_APPEND flag. 
-				 If the file does not exist, it shall be created.
-
-
-				I ran this: strace -o spork.out bash -c "echo 1234 >> some-file" to figure out your question. This is what I found:
-
-				open("some-file", O_WRONLY|O_CREAT|O_APPEND, 0666) = 3
-				No file named "some-file" existed in the directory in which I ran the echo command.
-				*/
-			
-				int fd = open (final_filename,  O_WRONLY | O_CREAT, 0666);
-				close(fd);
-				
-				if (final_filename)
-				{
-					free(last_filename);
-					last_filename = ft_strdup(final_filename);
-				}
-				final_filename = NULL;
-				
-				while (filename[k] && !(filename[k] == '>' || filename[k] == '<')) // Check if we have another redirection next
-					k++;
-				if (filename[k]) // Here we have another redirection next
-				{
-					// Stay at the same index in the same string and operate once more
-					// Preserve the index j for the next iteration
-					continue; // Since we continue there is no i++ so we run the loop again but with j != 0 this time (not starting from the beginning of the string)
-				}
-				else
-					j = 0; // Go back at the beginning of the new string
-				// If we reached here, we have our filename no matter what case we are in
-			}
-			else
-				j = 0;
-		//}
-		i++;
-	}
-	return (last_filename);
-}
-
 static int	is_redirection_operator(int operator)
 {
 	return (operator == SINGLE_LEFT_REDIRECT \
@@ -450,7 +331,7 @@ char	*remove_substr(char *str, int start, int end)
 	result should be = salut."test"'
 	
 */
-void	remove_double_quotes(char **str)
+void	interpret_quotes(char **str)
 {
 	int	i;
 	int	end_quote;
@@ -493,7 +374,7 @@ void	remove_double_quotes(char **str)
 
 	"echo > test.txt" => Return: "test.txt", line = "echo"
 */
-char	*get_redirection_filename(char **line)
+char	*get_first_redirection_filename(char **line)
 {
 	int		i;
 	int		j;
@@ -512,7 +393,6 @@ char	*get_redirection_filename(char **line)
 			return (NULL);
 		}
 		filename = &((*line)[i]);
-		//printf("TODO interpret quotes in filename\n");
 		j = 0;
 		while (filename[j] && !(ft_isspace(filename[j]) || !is_valid_in_filename(filename[j]))) // If there is '>' or '|' or ':' or whatever not valid that is not in quotes, we interpret it, if it's in quote it get skipped
 		{
@@ -522,12 +402,49 @@ char	*get_redirection_filename(char **line)
 		}
 		filename = ft_substr(filename, 0, j); // Retrieve our filename of j size
 		(*line) = remove_substr((*line), get_next_redirect_operator_index((*line), 0), i + j); // j = filename size
-		// remove_quotes(&filename); TODO: put this after, first interpret env args if any, then remove any quotes left
+		// interpret_quotes(&filename); TODO: put this after, first interpret env args if any, then remove any quotes left
 	}	
 	return (filename);
 }
 
 
+/*
+	Takes pointer to program line
+
+
+	echo test > Salut'olivie"r'.t"xt''"'
+	should create file name: Salutolivie"r.txt'''
+
+
+	echo test > salut'$PATH""'"$HOME".txt''
+	should search for salut$PATH""$HOME.txt
+	which expands to salut$PATH""/Users/mframbou.txt
+*/
+int	create_files_and_return_output_fd(char **line)
+{
+	char	*filename;
+	char	*prev_filename;
+	int		fd;
+
+	filename = get_first_redirection_filename(line);
+	prev_filename = NULL;
+	fd = -1;
+	while (filename)
+	{
+		prev_filename = filename;
+		printf("filename from parsing: %s\n", filename);
+		filename = interpret_env_args(filename);
+		printf("interpreted filename: %s\n", filename);
+		interpret_quotes(&filename);
+		fd = open (filename, O_WRONLY | O_CREAT, 0666);
+		if (fd == -1)
+			return(perror_return("Error while opening file"));
+		filename = get_first_redirection_filename(line);
+		if (filename) // If we have another file, else keep the fd opened
+			close(fd);
+	}
+	return (fd);
+}
 /*
 	Takes our line return a list of fully parsed programs
 
@@ -537,29 +454,17 @@ t_cmd	*parse_cmds(char *line)
 {
 	t_cmd	*commands;
 	char	**cmds;
+	int		redirect_fd;
 
 	cmds = split_command_operands(line);
+	
 	for (int i = 0; cmds[i]; i++)
 	{
-		char *filename = NULL;
-		printf("arg before: \"%s\"\n", cmds[i]);
-		while ((filename = get_redirection_filename(&(cmds[i]))))
-		{
-			printf("filename found: %s\n", filename);
-			remove_double_quotes(&filename);
-			//filename = interpret_env_arg(filename);
-			
-			printf("Parsed filename: %s\n", filename);
-		}
-		printf("arg now: \"%s\"\n", cmds[i]);
-		//printf("\nLast filename: \"%s\"\n", filename);
-
-		char **args = parse_program_and_args(cmds[i]);
-		for (int j = 0; args[j]; j++)
-		{
-			printf("%s\n", args[j]);
-		}
-		printf("\n\n");
+		redirect_fd = create_files_and_return_output_fd(&(cmds[i]));
+		if (redirect_fd >= 0)
+			write(redirect_fd, "Salut pouet", 12);
+		// Need to add command with correct redirection type, redirection fd and args
+		// parse_program_and_args for args, redirect_fd for fd, need a function for redirection type
 	}
 
 	

@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 14-01-2022 20:36 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 15-01-2022 01:41 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	interpret_all_args(char	***args)
 	i = 0;
 	while ((*args)[i])
 	{
-		(*args)[i] = interpret_env_arg((*args)[i]);
+		(*args)[i] = interpret_env_args((*args)[i]);
 		i++;
 	}
 }
@@ -35,7 +35,8 @@ void	unquote_all_args(char **args)
 	i = 0;
 	while (args[i])
 	{
-		args[i] = get_unquoted_arg(args[i]);
+		interpret_quotes(&(args[i]));
+		//args[i] = get_unquoted_arg(args[i]);
 	}
 }
 
