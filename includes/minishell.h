@@ -6,7 +6,7 @@
 /*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
 /*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
 /*   Created:   by            `-'                        `-'                  */
-/*   Updated: 15-01-2022 20:57 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 16-01-2022 20:49 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,17 @@ char	*interpret_env_args(char *str);
 void	interpret_all_args(char	***args);
 void	interpret_quotes(char **str);
 
-
 // Parsing redirections
 char	**remove_empty_args(char **args);
 void	unquote_all_args(char **args);
 int		perror_return(char *str);
-int		get_redirection_and_create_files(char **line, t_redirection *redirection);
+int		parse_redirectoins_and_create_files(char **line, t_redirection *redirection);
+int		get_next_redirect_operator_index(char *line, int current_index);
+int		get_next_redirect_operator_type(char *line, int current_index);
+int		get_next_non_redirect_operator_index(char *line, int current_index);
+int		get_operator_str_len(int operator);
+
+
 typedef struct s_cmd_layout
 {
 	int operator_chars[4096];
@@ -55,7 +60,7 @@ typedef struct s_cmd_layout
 
 typedef enum e_interpreted_char
 {
-	PIPE_CHAR = 1, 			// |
+	PIPE_CHAR = 1, 				// |
 	SINGLE_RIGHT_REDIRECT,		// >
 	DOUBLE_RIGHT_REDIRECT, 		// >>
 	SINGLE_LEFT_REDIRECT, 		// <
@@ -68,6 +73,11 @@ typedef enum e_interpreted_char
 // Parsing utils
 int		is_line_empty(char *str);
 int		is_closed_quote(char *str);
+void	remove_substr_from_string(char **str, int start, int end);
+void	remove_char_from_string(char **str, int index);
+void	interpret_quotes(char **str);
+void	unquote_all_args(char **args);
+int		is_valid_in_filename(char c);
 
 // Program execution
 int		execute_program(int input_fd, char *program_path, char **args);

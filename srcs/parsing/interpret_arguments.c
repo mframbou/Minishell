@@ -6,14 +6,11 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2013/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 15-01-2022 02:20 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 16-01-2022 22:04 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-static char	*interpret_one_dollar_var_2(char *src, int res_size, \
-										char *env_name, char *env_value, int dollar_index);
 
 /*
 	This function in only called if a $ sign is found
@@ -48,8 +45,16 @@ static char	*interpret_one_dollar_var_2(char *src, int res_size, \
 			start index
 	- result = "echo bar"
 
-	Also "skip" the value of the $val with the index (set it to after the value name)
+	Also set the index at the index to right after $VAR (Before in was on '$')
+		(start_index - 1 = initial index ($ char), so add the length of the
+		replace variable (foo = length 3)) so that our loop can continue easily
+	Give the dollar char index to the second part of the function so that
+	instead of searching for the first '$' (which might be in quotes) we already
+	have it
 */
+static char	*interpret_one_dollar_var_2(char *src, int res_size, \
+										char *env_name, int dollar_char_index);
+
 static char	*interpret_one_dollar_var(char *str, int *index)
 {
 	int		start_index;
@@ -72,24 +77,27 @@ static char	*interpret_one_dollar_var(char *str, int *index)
 	env_value = get_env_variable(env_name);
 	res_size = (sizeof(char) * (ft_strlen(str) - (ft_strlen(env_name) + 1) \
 				+ ft_strlen(env_value) + 1));
-	*index = start_index - 1 + ft_strlen(env_value); // startindex-1 = '$' sign (start of env variable replacement) This takes our original index form '$' to the end of the expanded value
-	return (interpret_one_dollar_var_2(str, res_size, env_name, env_value, start_index - 1)); // give the dollar index instead of beginning because we could be in a case where we have '$FOO' "$BAR" and we only want to interpret $BAR
+	*index = start_index - 1 + ft_strlen(env_value);
+	return (interpret_one_dollar_var_2(str, res_size, env_name, \
+										start_index - 1));
 }
 
 static char	*interpret_one_dollar_var_2(char *src, int res_size, \
-										char *env_name, char *env_value, int dollar_index)
+										char *env_name, int dollar_char_index)
 {
 	char	*result;
 	int		j;
+	char	*env_value;
 
 	result = malloc(sizeof(char) * res_size);
 	j = 0;
-	while (src[j] && j < dollar_index)
+	while (src[j] && j < dollar_char_index)
 	{
 		result[j] = src[j];
 		j++;
 	}
 	result[j] = '\0';
+	env_value = get_env_variable(env_name);
 	if (env_value)
 		ft_strlcat(result, env_value, res_size);
 	j += (ft_strlen(env_name) + 1);
@@ -102,7 +110,10 @@ static char	*interpret_one_dollar_var_2(char *src, int res_size, \
 	If there are quotes AND they are closed -> remove them, otherwise keep them
 
 	Realloc the string directly
-*//* NEW FUNCTION interpret_quotes (char **str)
+
+	NEW BETTER FUNCTION interpret_quotes (char **str)
+	this one is deprecated but we keep it just in case
+
 char	*get_unquoted_arg(char *str)
 {
 	char	*res;
@@ -116,7 +127,6 @@ char	*get_unquoted_arg(char *str)
 		res = str;
 	return (res);
 }*/
-
 /*
 	If it's a string starting with simple quotes, don't interpret it,
 		otherwise interpret $ signs
@@ -133,7 +143,26 @@ char	*get_unquoted_arg(char *str)
 							    15         27
 
 	final res expected = salut$PATH""/Users/mframbou.txt
+
+	If we have simple quotes inside double quotes (eg. "test '$PATH'")"
+	We still need to interpret the $PATH (since simple quotes are inside
+	double they just count as regular character, that's why the variable
+	is_in_double_quotes exists)
 */
+
+/*
+	Just for norminette, if we are in doubles quotes return 1, if we just left
+	double quotes, return 0, otherwise nothing changed
+*/
+static int	check_if_in_double_quotes(int is_in_double_quotes, char *quotes_str)
+{
+	if (!is_in_double_quotes && is_closed_quote(quotes_str))
+		return (1);
+	else if (is_in_double_quotes)
+		return (0);
+	return (is_in_double_quotes);
+}
+
 char	*interpret_env_args(char *str)
 {
 	char	*tmp;
@@ -144,24 +173,15 @@ char	*interpret_env_args(char *str)
 	is_in_double_quote = 0;
 	while (str[i])
 	{
-		//printf("current char : %c [%d]\n", str[i], i);
-		if (str[i] == '\'')
-		{
-			if (!is_in_double_quote)
-				i += is_closed_quote(&(str[i])); // Skip the single quotes if they are not inside double quotes (variable should_be_interpreted, false = skip, true = interpret)
-			// No need to do i++ since it's executed at the end of the while
-		}
-		else if (str[i] == '"') // Everytime we hit a double quotes which closes, toggle the variable, first time means everything in the double quotes should be interpreted, and when exiting the quotes it shouldn't anymore
-		{
-			if (!is_in_double_quote && is_closed_quote(&(str[i])))
-				is_in_double_quote = 1;
-			else if (is_in_double_quote)
-				is_in_double_quote = 0;
-		}
+		if (str[i] == '\'' && !is_in_double_quote)
+			i += is_closed_quote(&(str[i]));
+		else if (str[i] == '"')
+			is_in_double_quote = check_if_in_double_quotes(is_in_double_quote, \
+															&(str[i]));
 		else if (str[i] == '$')
 		{
 			tmp = str;
-			str = interpret_one_dollar_var(tmp, &i); // Replace $FOO with bar and moves the index from '$' to right after "bar"
+			str = interpret_one_dollar_var(tmp, &i);
 			free (tmp);
 			continue ;
 		}
@@ -169,7 +189,8 @@ char	*interpret_env_args(char *str)
 	}
 	interpret_quotes(&str);
 	return (str);
-	/*
+}
+/* Old version of this function (with issues)
 	if (str[0] == '\'' && is_closed_quote(&(str[0])))
 		return (str);
 	else
@@ -189,5 +210,4 @@ char	*interpret_env_args(char *str)
 	}
 	return (get_unquoted_arg(result));
 	//return (result);
-	*/
-}
+*/

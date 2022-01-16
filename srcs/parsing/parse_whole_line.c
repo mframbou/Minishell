@@ -6,171 +6,13 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 15-01-2022 20:56 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 16-01-2022 20:49 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
 t_cmd	**get_cmd_lst(void);
-
-// #define PIPE_CHAR 1
-// #define OR_CHAR 2;
-// #define SINGLE_AMPERSTAND 4; // &&
-// #define DOUBLE_AMPERSTAND 4; // &&
-// #define AND_CHAR 5;
-// #define SINGLE_LEFT_REDIRECT 6;
-// #define DOUBLE_LEFT_REDIRECT 7;
-// #define SINGLE_RIGHT_REDIRECT 8;
-// #define DOUBLE_RIGHT_REDIRECT 9;
-
-typedef struct s_cmd_layout
-{
-	int operator_chars[4096];
-	int operators_nb;
-	int	non_redirect_operators_nb;
-} t_cmd_layout;
-
-typedef enum e_interpreted_char
-{
-	PIPE_CHAR = 1, 			// |
-	SINGLE_RIGHT_REDIRECT,		// >
-	DOUBLE_RIGHT_REDIRECT, 		// >>
-	SINGLE_LEFT_REDIRECT, 		// <
-	DOUBLE_LEFT_REDIRECT, 		// <<
-	OR_CHAR, 					// ||
-	AND_CHAR, 					// &&
-}	t_interpreted_char;
-
-int is_splitable_char(char c)
-{
-	if ( c == '|' || c == '>' || c == '<' || c == '&')
-		return (1);
-	return (0);
-}
-
-static void	layout_pipe(t_cmd_layout *layout, char *line, int *index)
-{
-	if(line[(*index) + 1] == '|' && line[(*index) + 1])
-	{
-		layout->operator_chars[(*index)] = OR_CHAR;
-		layout->operators_nb++;
-		layout->non_redirect_operators_nb++;
-		((*index))++;
-	}
-	else
-	{
-		layout->operator_chars[(*index)] = PIPE_CHAR;
-		layout->operators_nb++;
-		layout->non_redirect_operators_nb++;
-	}
-}
-
-static void layout_right_redirect(t_cmd_layout *layout, char *line, int *index)
-{
-	if (line[(*index) + 1] == '>' && line[(*index) + 1])
-	{
-		layout->operator_chars[(*index)] = DOUBLE_RIGHT_REDIRECT;
-		layout->operators_nb++;
-		(*index)++;
-	}
-	else
-	{
-		layout->operator_chars[(*index)] = SINGLE_RIGHT_REDIRECT;
-		layout->operators_nb++;
-	}
-}
-static void layout_left_redirect(t_cmd_layout *layout, char *line, int *index)
-{
-	if(line[(*index) + 1] == '<' && line[(*index) + 1])
-	{
-		layout->operator_chars[(*index)] = DOUBLE_LEFT_REDIRECT;
-		layout->operators_nb++;
-		(*index)++;
-	}
-	else
-	{
-		layout->operator_chars[(*index)] = SINGLE_LEFT_REDIRECT;
-		layout->operators_nb++;
-	}
-}
-static void layout_and(t_cmd_layout *layout, char *line, int *index)
-{
-	if(line[(*index) + 1] == '&' && line[(*index) + 1])
-	{
-		layout->operator_chars[(*index)] = AND_CHAR;
-		(*index)++;
-		layout->operators_nb++;
-		layout->non_redirect_operators_nb++;
-	}
-}
-
-static void set_layout_char(t_cmd_layout *layout, char* line, int *index)
-{
-	if (line[(*index)] == '|')
-		layout_pipe(layout,line,index);	
-	else if (line[(*index)] == '>')
-		layout_right_redirect(layout,line,index);	
-	else if (line[(*index)] == '<')
-		layout_left_redirect(layout,line,index);	
-	else if (line[(*index)] == '&')
-		layout_and(layout,line,index);
-}
-
-void create_cmd_layout(t_cmd_layout *layout, char *line)
-{
-	int i;
-
-	layout->non_redirect_operators_nb = 0;
-	layout->operators_nb = 0;
-	ft_bzero(layout->operator_chars, 4096);
-	i = 0;
-	while(line[i])
-	{
-		if ((line[i] == '\'' || line[i] == '"') && is_closed_quote(&line[i]))
-			i += is_closed_quote(&line[i]) + 1; // Goes after the second quote
-		if (!line[i])
-			break;
-		if (is_splitable_char(line[i]))
-		{
-			if(is_splitable_char(line[i]) && line[i])
-			{
-				set_layout_char(layout, line, &i);
-			}
-		}
-		i++;
-	}
-}
-
-int	get_redirect_type_associated_with_redirect_char(int redirect_char)
-{
-	if (redirect_char == PIPE_CHAR)
-		return (REDIRECT_PIPE);
-	else if (redirect_char == SINGLE_RIGHT_REDIRECT)
-		return (REDIRECT_OUTPUT_FILE);
-	else if (redirect_char == DOUBLE_RIGHT_REDIRECT)
-		return (REDIRECT_OUTPUT_FILE_APPEND);
-	else if (redirect_char == SINGLE_LEFT_REDIRECT)
-		return (REDIRECT_INPUT_FILE);
-	else if (redirect_char == DOUBLE_LEFT_REDIRECT)
-		return (REDIRECT_INPUT_FILE_DELIMITER);
-	else
-		return (REDIRECT_UNKNOWN);
-}
-
-int	is_valid_in_filename(char c)
-{
-	return (!(c == '>' || c == '<' || c == '|' || c == ':' || c == '&'));
-}
-
-
-//"echo >test.txt pouet pouet"
-
-static int	is_quoted_arg(char *str)
-{
-	return ((str[0] == '\'' || str[0] == '\"') && is_closed_quote(str));
-}
-
 
 /*
 	Takes our line (eg. echo "test" > test.txt | cat)
@@ -180,30 +22,9 @@ static int	is_quoted_arg(char *str)
 	Returns a list of commands (just separated on |, || and &&)
 	(in this case "echo "test" > test.txt", "cat")
 */
-static int	is_not_redirection_operator(char c)
-{
-	return (c == PIPE_CHAR || c == OR_CHAR || c == AND_CHAR);
-}
 
-static int	get_operator_str_len(int operator)
-{
-	if (operator == PIPE_CHAR || operator == SINGLE_LEFT_REDIRECT || \
-	operator == SINGLE_RIGHT_REDIRECT)
-		return (1);
-	else if (operator == DOUBLE_LEFT_REDIRECT || \
-	operator == DOUBLE_RIGHT_REDIRECT || \
-	operator == AND_CHAR || operator == OR_CHAR)
-		return (2);
-	return (0);
-}
 
-static int	get_next_non_redirect_operator(char *line, int index, t_cmd_layout layout)
-{
-	while (line[index] \
-	&& !is_not_redirection_operator(layout.operator_chars[index]))
-		index++;
-	return (index);
-}
+
 
 /*
 	Input = "echo test | cat > test.txt"
@@ -221,7 +42,7 @@ char	**split_command_operands(char *line)
 	create_cmd_layout(&layout, line);
 	i = 0;
 	cmd_start = 0;
-	cmd_end = get_next_non_redirect_operator(line, 0, layout);
+	cmd_end = get_next_non_redirect_operator_index(line, 0);
 	programs_list = malloc(sizeof(char *) * (layout.non_redirect_operators_nb + 2)); // If 1 program, our redirect nb = 0, so malloc 2 (1 prog + NULL at the end)
 	while (layout.non_redirect_operators_nb-- >= 0)
 	{
@@ -229,259 +50,11 @@ char	**split_command_operands(char *line)
 		cmd_start = cmd_end + get_operator_str_len(layout.operator_chars[cmd_end]);
 		if (line[cmd_end])
 			cmd_end++; // Skip the current operator to go to the next cmd
-		cmd_end = get_next_non_redirect_operator(line, cmd_end, layout);
+		cmd_end = get_next_non_redirect_operator_index(line, cmd_end);
 	}
 	programs_list[i] = NULL;
 	return (programs_list);
 }
-
-
-static int	is_redirection_operator(int operator)
-{
-	return (operator == SINGLE_LEFT_REDIRECT \
-	|| operator == SINGLE_RIGHT_REDIRECT \
-	|| operator == DOUBLE_LEFT_REDIRECT \
-	|| operator == DOUBLE_RIGHT_REDIRECT);
-}
-
-static int	get_next_redirect_operator(char *line, int index, t_cmd_layout layout)
-{
-	while (line[index] \
-	&& !is_redirection_operator(layout.operator_chars[index]))
-		index++;
-	return (index);
-}
-
-/*
-	Returns the index of the next operator
-*/
-static int	get_next_redirect_operator_index(char *line, int current_index)
-{
-	t_cmd_layout	layout;
-
-	create_cmd_layout(&layout, line);
-	return (get_next_redirect_operator(line, current_index, layout));
-}
-
-/*
-	Returns the type of the next operator
-*/
-static int	get_next_redirect_operator_type(char *line, int current_index)
-{
-	t_cmd_layout	layout;
-
-	create_cmd_layout(&layout, line);
-	return (layout.operator_chars[get_next_redirect_operator(line, current_index, layout)]);
-}
-
-/*
-	"echo test > test.txt > prout> salut.txt"
-
-
-	"salut.txt"
-	"echo test"
-	
-	Takes a pointer to the arg list (because it modifies it)
-
-	Return the filename if found, otherwise NULL
-
-	"Salut", 2
-	=> "Saut"
-
-	"Sa"
-	"ut"
-
-	"Test", 3
-	"Tes"
-
-	"test", 0
-	"est"
-
-	Temporarily replace char with '\0' for easier strlcat
-*/
-static char	*remove_char_from_string(char *str, int index)
-{
-	char	*res;
-	int		new_len;
-	char	old_char;
-
-	if (index > ft_strlen(str) - 1 || index < 0)
-		return (str);
-	new_len = ft_strlen(str) - 1;
-	res = malloc(sizeof(char) * (new_len + 1));
-	ft_bzero(res, new_len + 1);
-	old_char = str[index];
-	str[index] = '\0';
-	ft_strlcat(res, str, new_len + 1);
-	str[index] = old_char;
-	ft_strlcat(res, str + index + 1, new_len + 1);
-	free(str);
-	return (res);
-}
-
-// > t
-// ^ ^
-char	*remove_substr(char *str, int start, int end)
-{
-	while (--end >= start)
-		str = remove_char_from_string(str, start);
-	return (str);
-}
-
-
-/*
-	From : "Hello "test""
-	To: Hello test
-
-	As real bash
-
-	If double quotes are in simple quotes, keep them
-
-	salut.'"test"''
-
-	i = 6, str[i] = '
-	is_closed_quote = 7
-
-	newstr = salut."test"''
-	newstr = salut."test"'
-
-	i += 7-1 = 6 + 6 = 12
-
-	result should be = salut."test"'
-	
-*/
-void	interpret_quotes(char **str)
-{
-	int	i;
-	int	end_quote;
-
-	i = 0;
-	while ((*str)[i])
-	{
-		if ((*str)[i] == '\'') // If we have single quotes, don't interpret anything inside of it
-		{
-			end_quote = is_closed_quote(&((*str)[i]));
-			if (end_quote)
-			{
-				*str = remove_char_from_string(*str, i);
-				*str = remove_char_from_string(*str, i + end_quote - 1);// since we removed 1 quote, closing quote is previous character than before
-				i += end_quote - 1;	// echo 'test' => echo test
-									//      ^-- i=5            ^-- i=9 end_quote = 5, new i = old_i + end_quote - 2; 9 = 5 + 5 - 1
-				continue;
-			}
-			
-		}
-		else if ((*str)[i] == '"')
-		{
-			end_quote = is_closed_quote(&((*str)[i]));
-			if (end_quote)
-			{
-				*str = remove_char_from_string(*str, i);
-				*str = remove_char_from_string(*str, i + end_quote - 1);// since we removed 1 quote, closing quote is previous character than before
-				i += end_quote - 1;	// echo 'test' => echo test
-				continue ;
-			}
-		}
-		i++;
-	}
-}
-
-
-static int	get_redirection_chars_len(char *op_index)
-{
-	char	first;
-	char	second;
-
-	first = '\0';
-	second = '\0';
-	if (op_index[0] != '\0')
-	{
-		first = op_index[0];
-		if (op_index[1] != '\0')
-			second = op_index[1];
-	}
-	if (first == '>' || first == '<')
-	{
-		if (second == first)
-			return (2);
-		return (1);
-	}
-	return (0);
-}
-/*
-	Takes pointer to line
-
-	Extract the filename and remove it from the line
-
-	"echo > test.txt" => Return: "test.txt", line = "echo"
-
-	Takes pointer to line string (because it removes the filename)
-	and pointer to redirection type, which is set if any is found
-*/
-char	*get_first_redirection_filename(char **line, int *redirection_type)
-{
-	int		i;
-	int		j;
-	char	*filename;
-
-	filename = NULL;
-	i = get_next_redirect_operator_index((*line), 0);
-	if ((*line)[i]) // If we have a redirection
-	{
-		*redirection_type = get_next_redirect_operator_type((*line), 0);
-		i += get_redirection_chars_len(&((*line)[i]));	// Skip the operator
-		while ((*line)[i] && ft_isspace((*line)[i]))
-			i++;
-		if (!(*line)[i])
-		{
-			printf("TODO NO FILENAME\n");
-			return (NULL);
-		}
-		filename = &((*line)[i]);
-		j = 0;
-		while (filename[j] && !(ft_isspace(filename[j]) || !is_valid_in_filename(filename[j]))) // If there is '>' or '|' or ':' or whatever not valid that is not in quotes, we interpret it, if it's in quote it get skipped
-		{
-			if (filename[j] == '"' || filename[j] == '\'')
-				j += is_closed_quote(&(filename[j])); // If is not closed quote, stay here, if it is, simply skip it (this allow to have spaces in filename)
-			j++;
-		}
-		filename = ft_substr(filename, 0, j); // Retrieve our filename of j size
-		(*line) = remove_substr((*line), get_next_redirect_operator_index((*line), 0), i + j); // j = filename size
-		// interpret_quotes(&filename); TODO: put this after, first interpret env args if any, then remove any quotes left
-	}	
-	return (filename);
-}
-
-
-/*
-	Opens the file according to the redirection type and returns the fd
-*/
-
-static int	open_file_for_redirection(char *filename, int redirection_type)
-{
-	int	fd;
-	int	flags;
-	int	mode;
-
-	mode = 0;
-	if (redirection_type == SINGLE_LEFT_REDIRECT || redirection_type == DOUBLE_LEFT_REDIRECT)
-		flags = O_RDONLY;
-	else if (redirection_type == SINGLE_RIGHT_REDIRECT)
-	{
-		flags = O_CREAT | O_WRONLY | O_TRUNC;
-		mode = 0666;
-	}
-	else if (redirection_type == DOUBLE_RIGHT_REDIRECT)
-	{
-		flags = O_CREAT | O_WRONLY | O_APPEND;
-		mode = 0666;
-	}
-	else
-		return (-1);
-	return (open(filename, flags, mode));
-}
-
-
 
 /*
 	Takes our line return a list of fully parsed programs
@@ -496,9 +69,10 @@ t_cmd	*parse_cmds(char *line)
 
 	cmds = split_command_operands(line);
 	
+	// Interpret wildcards
 	for (int i = 0; cmds[i]; i++)
 	{
-		if (get_redirection_and_create_files(&(cmds[i]), &redirection) == -1)
+		if (parse_redirectoins_and_create_files(&(cmds[i]), &redirection) == -1)
 		{
 			// Error happened, otherwise we have a correct redirection
 			return (NULL);
