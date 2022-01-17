@@ -15,8 +15,7 @@
 
 # include "minishell.h"
 
-
-typedef	struct s_redirection
+typedef struct s_redirection
 {
 	char	*out_filename;
 	char	*in_filename;

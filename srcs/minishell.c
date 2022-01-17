@@ -6,7 +6,7 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 17-01-2022 18:43 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 17-01-2022 18:47 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,13 +49,19 @@ void	reset_the_terminal(void)
 	tcsetattr(0, 0, &g_termios_save);
 }
 
+/*
+	Move to a new line
+	Regenerate prompt on newline
+	Clear previous text
+	redisplay
+*/
 void	handle_sigs(int sig, siginfo_t *siginfo, void *context)
 {
 	if (sig == SIGINT)
 	{
 		printf("\n");
 		rl_on_new_line();
-		//rl_replace_line("", 0); // Clear the previous text
+		//rl_replace_line("", 0);
 		rl_redisplay();
 	}
 	if (sig == SIGQUIT)
@@ -108,12 +114,7 @@ int	main()
 
 	init_signals();
 	init_basic_env_variables();
-	add_env_variable(ft_strdup("TEST"), ft_strdup(">"));
-	//line = strdup("echo test > test.txt > pouet.txt> prout.txt>tes2r2rtwe\"oui\".txt");
-
-	//printf("Redirection types:\n> = %d\n >> = %d\n< = %d\n<< = %d\n\n", SINGLE_RIGHT_REDIRECT, DOUBLE_RIGHT_REDIRECT, SINGLE_LEFT_REDIRECT, DOUBLE_LEFT_REDIRECT);
-
-		
+	add_env_variable(ft_strdup("TEST"), ft_strdup(">"));	
 	while (1)
 	{
 		line = readline(MINISHELL_PROMPT);
@@ -125,14 +126,6 @@ int	main()
 			t_cmd *curr = cmd_list;
 			while (curr)
 			{
-				/*printf("command %s\n", curr->args[0]);
-				for (int j = 0; curr->args[j]; j++)
-				{
-					printf("%s\n", curr->args[j]);
-				}
-				printf("\n");
-				printf("Output redirection type: %d, file: %s\n", curr->redirection.out_redir_type, curr->redirection.out_filename);
-				printf("Input  redirection type: %d, file: %s\n", curr->redirection.in_redir_type, curr->redirection.in_filename);*/
 				curr = curr->next;
 			}
 			if (cmd_list)

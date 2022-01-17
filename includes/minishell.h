@@ -6,7 +6,7 @@
 /*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
 /*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
 /*   Created:   by            `-'                        `-'                  */
-/*   Updated: 17-01-2022 17:33 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 17-01-2022 18:46 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,8 @@ void	interpret_quotes(char **str);
 char	**remove_empty_args(char **args);
 void	unquote_all_args(char **args);
 int		perror_return(char *str);
-int		parse_redirectoins_and_create_files(char **line, t_redirection *redirection);
+int		parse_redirectoins_and_create_files(char **line, \
+											t_redirection *redirection);
 int		get_next_redirect_operator_index(char *line, int current_index);
 int		get_next_redirect_operator_type(char *line, int current_index);
 int		get_next_non_redirect_operator_index(char *line, int current_index);
@@ -54,24 +55,32 @@ int		open_file_for_redirection(char *filename, int redirection_type);
 
 typedef struct s_cmd_layout
 {
-	int operator_chars[4096];
-	int operators_nb;
+	int	operator_chars[4096];
+	int	operators_nb;
 	int	non_redirect_operators_nb;
-} t_cmd_layout;
+}	t_cmd_layout;
 
 void	create_cmd_layout(t_cmd_layout *layout, char *line);
 
+/*
+	|
+	>
+	>>
+	<
+	<<
+	||
+	&&
+*/
 typedef enum e_interpreted_char
 {
-	PIPE_CHAR = 1, 				// |
-	SINGLE_RIGHT_REDIRECT,		// >
-	DOUBLE_RIGHT_REDIRECT, 		// >>
-	SINGLE_LEFT_REDIRECT, 		// <
-	DOUBLE_LEFT_REDIRECT, 		// <<
-	OR_CHAR, 					// ||
-	AND_CHAR, 					// &&
+	PIPE_CHAR = 1,
+	SINGLE_RIGHT_REDIRECT,
+	DOUBLE_RIGHT_REDIRECT,
+	SINGLE_LEFT_REDIRECT,
+	DOUBLE_LEFT_REDIRECT,
+	OR_CHAR,
+	AND_CHAR,
 }	t_interpreted_char;
-
 
 // Parsing utils
 int		is_line_empty(char *str);

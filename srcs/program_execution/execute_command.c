@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 17-01-2022 18:40 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 17-01-2022 18:50 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,9 @@ int	perror_return(char *str)
 	return (-2);
 }
 
-typedef void (*builtin_ptr)(char **args, int output_fd);
+typedef void	(*t_builtin_ptr)(char **args, int output_fd);
 
-builtin_ptr	get_builtin_function(char *name)
+t_builtin_ptr	get_builtin_function(char *name)
 {
 	if (strcmp(name, "echo") == 0)
 		return (&echo_command);
@@ -74,22 +74,21 @@ builtin_ptr	get_builtin_function(char *name)
 
 int	execute_builtin(char **args)
 {
-	char		**env;
-	builtin_ptr builtin_func;
-	int			pipe_fd[2];
+	char			**env;
+	t_builtin_ptr	builtin_func;
+	int				pipe_fd[2];
 
 	if (pipe(pipe_fd) == -1)
-			return (perror_return("pipe failure"));
+		return (perror_return("pipe failure"));
 	(void) env;
-	// env = get_env_as_string_array(); I don't know if we should send env to functions, need to check
+	// TODO env = get_env_as_string_array(); I don't know if we should send env to functions, need to check
 	// free_ft_split(env);
 	builtin_func = get_builtin_function(args[0]);
 	if (builtin_func)
 		builtin_func(args, pipe_fd[1]);
 	close(pipe_fd[1]);
-	return(pipe_fd[0]);
+	return (pipe_fd[0]);
 }
-
 
 /*
 	pipe[0] = read
@@ -175,7 +174,7 @@ static int	exec_and_redirect_stdout(int pipe_fd[2], char *program_path, \
 		return (perror_return("dup2 failure"));
 	}
 	env = get_env_as_string_array();
-	//free_ft_split(env);
+	//free_ft_split(env) TODO;
 	close(pipe_fd[1]);
 	execve(program_path, args, env);
 	return (perror_return("execve failure"));
@@ -212,7 +211,6 @@ int	execute_program_from_args(char *program_path, char **args)
 	}
 	return (pipe_fd[0]);
 }
-
 
 static int	execute_program_from_args_and_fd(int read_fd, char *program_path, \
 											char **args)
@@ -280,7 +278,6 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 	new_read_fd = -1;
 	while (curr)
 	{
-		//printf("cmd (\"%s\") redirection type: %d\n", curr->args[0], curr->redirect_type);
 		if (curr->redirection.in_filename != NULL)
 		{
 			int fd = open_file_for_redirection(curr->redirection.in_filename, curr->redirection.in_redir_type);
