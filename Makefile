@@ -13,9 +13,17 @@ SRCS =	srcs/minishell.c \
 		\
 		srcs/program_execution/search_executable.c \
 		srcs/program_execution/execute_command.c \
+		srcs/program_execution/cmd_list.c \
+		srcs/program_execution/cmd_list_wrapper.c \
 		\
-		srcs/parsing/cmd_list_wrapper.c \
-		srcs/parsing/cmd_list.c \
+		srcs/parsing/cmd_layout/generate_operators_layout.c \
+		srcs/parsing/cmd_layout/get_next_operator.c \
+		srcs/parsing/cmd_layout/get_operator_strlen.c \
+		\
+		srcs/parsing/quotes/parse_quotes.c \
+		\
+		srcs/parsing/redirections/parse_redirections.c \
+		\
 		srcs/parsing/get_one_arg.c \
 		srcs/parsing/interpret_arguments.c \
 		srcs/parsing/is_valid_bash_var.c \

@@ -51,12 +51,15 @@ int		get_next_non_redirect_operator_index(char *line, int current_index);
 int		get_operator_str_len(int operator);
 
 
+
 typedef struct s_cmd_layout
 {
 	int operator_chars[4096];
 	int operators_nb;
 	int	non_redirect_operators_nb;
 } t_cmd_layout;
+
+void	create_cmd_layout(t_cmd_layout *layout, char *line);
 
 typedef enum e_interpreted_char
 {

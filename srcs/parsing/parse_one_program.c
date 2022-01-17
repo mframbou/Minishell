@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 16-01-2022 17:54 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 17-01-2022 12:49 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -84,6 +84,30 @@ char	**remove_empty_args(char **args)
 	return (new_args);
 }
 
+void	fill_args_of_one_program(char *program, char **args)
+{
+	int		i;
+	int		argc;
+	char	*current_arg;
+
+	i = 0;
+	argc = 0;
+	while (program[i])
+	{
+		while (program[i] && ft_isspace(program[i]))
+			i++;
+		if (!program[i])
+			break ;
+		current_arg = get_one_arg(program, &i);
+		if (current_arg)
+		{
+			args[argc++] = current_arg;
+			i += ft_strlen(current_arg);
+		}
+	}
+	args[argc] = NULL;
+}
+
 /*
 	This takes a line (right not not the full line but only 1 progran 
 		(split on pipes))
@@ -99,30 +123,13 @@ char	**parse_program_and_args(char *line)
 	char	**args;
 	char	*current_arg;
 	char	*new_line;
-	int		i;
-	int		argc;
 
-	i = 0;
-	argc = 0;
 	args = (char **) malloc(sizeof(char *) * (count_args(line) + 1));
 	if (!args)
 		return (NULL);
 	new_line = ft_strtrim(line, " \t\v\f\r");
 	free(line);
-	while (new_line[i])
-	{
-		while (new_line[i] && ft_isspace(new_line[i]))
-			i++;
-		if (!new_line[i])
-			break ;
-		current_arg = get_one_arg(new_line, &i);
-		if (current_arg)
-		{
-			args[argc++] = current_arg;
-			i += ft_strlen(current_arg);
-		}
-	}
-	args[argc] = NULL;
+	fill_args_of_one_program(new_line, args);
 	interpret_all_args(&args);
 	args = remove_empty_args(args);
 	return (args);

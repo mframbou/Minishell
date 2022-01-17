@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 16-01-2022 20:21 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 17-01-2022 13:04 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -28,17 +28,20 @@ void	remove_char_from_string(char **str, int index)
 	char	old_char;
 
 	if (index > ft_strlen(*str) - 1 || index < 0)
-		return (*str);
+		return ;
 	new_len = ft_strlen(*str) - 1;
 	res = malloc(sizeof(char) * (new_len + 1));
-	ft_bzero(res, new_len + 1);
-	old_char = (*str)[index];
-	(*str)[index] = '\0';
-	ft_strlcat(res, *str, new_len + 1);
-	(*str)[index] = old_char;
-	ft_strlcat(res, &((*str)[index + 1]), new_len + 1);
-	free(*str);
-	*str = res;
+	if (res)
+	{
+		ft_bzero(res, new_len + 1);
+		old_char = (*str)[index];
+		(*str)[index] = '\0';
+		ft_strlcat(res, *str, new_len + 1);
+		(*str)[index] = old_char;
+		ft_strlcat(res, &((*str)[index + 1]), new_len + 1);
+		free(*str);
+		*str = res;
+	}
 }
 
 /*
