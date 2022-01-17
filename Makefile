@@ -23,6 +23,7 @@ SRCS =	srcs/minishell.c \
 		srcs/parsing/quotes/parse_quotes.c \
 		\
 		srcs/parsing/redirections/parse_redirections.c \
+		srcs/parsing/redirections/open_file.c \
 		\
 		srcs/parsing/get_one_arg.c \
 		srcs/parsing/interpret_arguments.c \

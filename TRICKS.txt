@@ -4,3 +4,4 @@ echo pouet > "test 1".txt (should create a file named "test 1.txt")
 export TEST=">"
 echo salut $TEST test.txt (should output Salut > test.txt and not redirect)
 export POUET=$PATH (echo $POUET should print the PATH)
+echo POUET | cat < .gitignore (Should only read from .gitignore and not consider the pipe)

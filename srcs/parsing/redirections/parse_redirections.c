@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 15-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 17-01-2022 13:03 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 17-01-2022 17:40 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -37,34 +37,6 @@ static int	get_redirection_chars_len(char *op_index)
 	return (0);
 }
 
-/*
-	Opens the file according to the redirection type and returns the fd
-*/
-static int	open_file_for_redirection(char *filename, int redirection_type)
-{
-	int	fd;
-	int	flags;
-	int	mode;
-
-	mode = 0;
-	if (redirection_type == SINGLE_LEFT_REDIRECT || \
-	redirection_type == DOUBLE_LEFT_REDIRECT)
-		flags = O_RDONLY;
-	else if (redirection_type == SINGLE_RIGHT_REDIRECT)
-	{
-		flags = O_CREAT | O_WRONLY | O_TRUNC;
-		mode = 0666;
-	}
-	else if (redirection_type == DOUBLE_RIGHT_REDIRECT)
-	{
-		flags = O_CREAT | O_WRONLY | O_APPEND;
-		mode = 0666;
-	}
-	else
-		return (-1);
-	return (open(filename, flags, mode));
-}
-
 static int	get_filename_length(char *filename)
 {
 	int	j;
@@ -85,9 +57,9 @@ static int	get_filename_length(char *filename)
 	get_next_redirect_operator_index returns either the good index, or the index
 	of the end of the string ('\0')
 
-	- If we find a redirection, retrieve the type and skip the operator,
-		then retrieve the next argument which is the filename,
-		the end of the filename is marked by either a space or an invalid char
+	- If we find a redirectio, retrieve the type and skip the operator, 
+		then retrieve the next argument which is the filename
+		The end of the filename is marked by either a space or an invalid char
 		(pipe etc.) except if it's in quotes
 	- Remove the extracted string + the operator from the line, and put
 		the type in the int pointed by argument, and return the filename
@@ -101,7 +73,7 @@ static int	get_filename_length(char *filename)
 	Takes pointer to line string (because it removes the filename)
 	and pointer to redirection type, which is set if any is found
 */
-static char	*get_first_redirection_filename(char **line, int *redirection_type)
+static char	*get_first_redirection_filename(char **line, int *redir_type)
 {
 	int		i;
 	int		j;
@@ -111,7 +83,7 @@ static char	*get_first_redirection_filename(char **line, int *redirection_type)
 	i = get_next_redirect_operator_index((*line), 0);
 	if ((*line)[i])
 	{
-		*redirection_type = get_next_redirect_operator_type((*line), 0);
+		*redir_type = get_next_redirect_operator_type((*line), 0);
 		i += get_redirection_chars_len(&((*line)[i]));
 		while ((*line)[i] && ft_isspace((*line)[i]))
 			i++;
@@ -124,9 +96,61 @@ static char	*get_first_redirection_filename(char **line, int *redirection_type)
 		filename = ft_substr(filename, 0, get_filename_length(filename));
 		remove_substr_from_string(line, \
 								get_next_redirect_operator_index((*line), 0), \
-								i + j);
+								i + ft_strlen(filename));
 	}
 	return (filename);
+}
+
+/* OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD
+int	parse_redirectoins_and_create_files(char **line, t_redirection *redir)
+{
+	init_redirection_struct(redir);
+	redir->out_filename = get_first_redirection_filename(line, \
+														&redir->out_redir_type);
+	while (redir->out_filename)
+	{
+		redir->out_filename = interpret_env_args(redir->out_filename);
+		interpret_quotes(&redir->out_filename);
+		redir->out_fd = open_file_for_redirection(redir->out_filename, \
+													redir->out_redir_type);
+		if (redir->out_fd == -1)
+		{
+			perror("TODO: FREE EVERYTHING Error while opening file");
+			return (-1);
+		}
+		redir->out_filename = get_first_redirection_filename(line, \
+														&redir->out_redir_type);
+		if (redir->out_filename)
+			close(redir->out_fd);
+	}
+	if (redir->out_fd != -1)
+		return (0);
+	return (1);
+}*/
+static int	fill_struct_and_create_files(char *filename, int redir_type, \
+												t_redirection *redir)
+{
+	int	fd;
+
+	if (redir_type == SINGLE_RIGHT_REDIRECT \
+	|| redir_type == DOUBLE_RIGHT_REDIRECT)
+	{
+		redir->out_filename = filename;
+		redir->out_redir_type = redir_type;
+		fd = open_file_for_redirection(filename, redir_type);
+		if (fd == -1)
+		{
+			perror("TODO: FREE EVERYTHING Error while opening file");
+			return (-1);
+		}
+		close(fd);
+	}
+	else if (redir_type == SINGLE_LEFT_REDIRECT \
+	|| redir_type == DOUBLE_LEFT_REDIRECT)
+	{
+		redir->in_filename = filename;
+		redir->in_redir_type = redir_type;
+	}
 }
 
 /*
@@ -140,34 +164,23 @@ static char	*get_first_redirection_filename(char **line, int *redirection_type)
 	
 	Return value:
 		-1 = Error
-		0 = Success
-		1 = No filename found (no redirections in program)
+		0 = Success (either no filename found or well parsed)
 */
-int	parse_redirectoins_and_create_files(char **line, t_redirection *redirection)
+int	parse_redirectoins_and_create_files(char **line, t_redirection *redir)
 {
-	redirection->type = 0;
-	redirection->filename = NULL;
-	redirection->fd = -1;
-	redirection->filename = get_first_redirection_filename(line, \
-															&redirection->type);
-	redirection->fd = -1;
-	while (redirection->filename)
+	char	*filename;
+	int		redir_type;
+	int		fd;
+
+	init_redirection_struct(redir);
+	filename = get_first_redirection_filename(line, &redir_type);
+	while (filename)
 	{
-		redirection->filename = interpret_env_args(redirection->filename);
-		interpret_quotes(&redirection->filename);
-		redirection->fd = open_file_for_redirection(redirection->filename, \
-													redirection->type);
-		if (redirection->fd == -1)
-		{
-			perror("TODO: FREE EVERYTHING Error while opening file");
+		filename = interpret_env_args(filename);
+		interpret_quotes(&filename);
+		if (fill_struct_and_create_files(filename, redir_type, redir) == -1)
 			return (-1);
-		}
-		redirection->filename = get_first_redirection_filename(line, \
-															&redirection->type);
-		if (redirection->filename)
-			close(redirection->fd);
+		filename = get_first_redirection_filename(line, &redir_type);
 	}
-	if (redirection->fd != -1)
-		return (0);
-	return (1);
+	return (0);
 }

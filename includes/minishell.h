@@ -6,7 +6,7 @@
 /*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
 /*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
 /*   Created:   by            `-'                        `-'                  */
-/*   Updated: 16-01-2022 20:49 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 17-01-2022 17:33 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,8 @@ int		get_next_redirect_operator_index(char *line, int current_index);
 int		get_next_redirect_operator_type(char *line, int current_index);
 int		get_next_non_redirect_operator_index(char *line, int current_index);
 int		get_operator_str_len(int operator);
-
-
+void	init_redirection_struct(t_redirection *redirection);
+int		open_file_for_redirection(char *filename, int redirection_type);
 
 typedef struct s_cmd_layout
 {

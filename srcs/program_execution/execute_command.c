@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 15-01-2022 19:02 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 17-01-2022 18:40 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,6 +263,10 @@ int	execute_program(int input_fd, char *program_path, char **args)
 	return (output_read_fd);
 }
 
+/*
+	read_fd = fd to read from for next command
+	new_read_fd = fd the first command has written to
+*/
 int execute_cmd_lst(t_cmd *cmd_lst)
 {
 	t_cmd	*curr;
@@ -274,10 +278,19 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 	curr = cmd_lst;
 	read_fd = -1;
 	new_read_fd = -1;
-	printf("types: \n%d=PIPE\n%d=OUTPUT\n%d=INPUT\n%d=INPUT2\n%d=OUTPUT2\n%d=STDOUT\n%d=UNKNOWN\n\n", REDIRECT_PIPE, REDIRECT_OUTPUT_FILE, REDIRECT_INPUT_FILE, REDIRECT_INPUT_FILE_DELIMITER, REDIRECT_OUTPUT_FILE_APPEND, REDIRECT_STDOUT, REDIRECT_UNKNOWN);
 	while (curr)
 	{
 		//printf("cmd (\"%s\") redirection type: %d\n", curr->args[0], curr->redirect_type);
+		if (curr->redirection.in_filename != NULL)
+		{
+			int fd = open_file_for_redirection(curr->redirection.in_filename, curr->redirection.in_redir_type);
+	
+			if (fd == -1)
+			{
+				return (-1);
+			}
+			read_fd = fd;
+		}
 		if (is_builtin(curr->args[0]))
 		{
 			new_read_fd = execute_builtin(curr->args);
@@ -298,6 +311,19 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 		if (read_fd >= 0)
 			close(read_fd);
 		read_fd = new_read_fd;
+		if (curr->redirection.out_filename != NULL)
+		{
+			int fd = open_file_for_redirection(curr->redirection.out_filename, curr->redirection.out_redir_type);
+			if (fd == -1)
+			{
+				perror("Error while opening file for writing");
+				return (-2);
+			}
+			while (read(new_read_fd, &buf, 1) > 0)
+				write(fd, &buf, 1);
+			new_read_fd = -1;
+			read_fd = -1;
+		}
 		curr = curr->next;
 	}
 	//printf("current print fd: %d\n", read_fd);

@@ -18,9 +18,10 @@
 
 typedef	struct s_redirection
 {
-	int		fd;
-	char	*filename;
-	int		type;
+	char	*out_filename;
+	char	*in_filename;
+	int		out_redir_type;
+	int		in_redir_type;
 }	t_redirection;
 
 typedef struct s_cmd

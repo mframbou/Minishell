@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 17-01-2022 12:59 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 17-01-2022 17:29 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ char	**split_command_operands(char *line)
 */
 t_cmd	*parse_cmds(char *line)
 {
-	t_cmd			*commands;
 	char			**cmds;
 	t_redirection	redirection;
 	int				i;
@@ -76,11 +75,12 @@ t_cmd	*parse_cmds(char *line)
 			return (NULL);
 		}
 		//printf("Redirection types:\n> = %d\n >> = %d\n< = %d\n<< = %d\n\n", SINGLE_RIGHT_REDIRECT, DOUBLE_RIGHT_REDIRECT, SINGLE_LEFT_REDIRECT, DOUBLE_LEFT_REDIRECT);
-		//printf("Found redirection type: %d\n", redirection.type);
-		if (redirection.fd >= 0)
-			write(redirection.fd, "Salut pouet", 12);
+		//printf("Found redirection type in: %d\n", redirection.type);
+		//if (redirection.out_fd >= 0)
+		//	write(redirection.out_fd, "Salut pouet", 12);
 		// Need to add command with correct redirection type, redirection fd and args
 		// parse_program_and_args for args, redirect_fd for fd, need a function for redirection type
+		add_cmd(parse_program_and_args(cmds[i]), redirection);
 		i++;
 	}
 	//interpret_all_args(&args); // Puts quotes around every arg, must remove it after parsing redirection
@@ -90,7 +90,7 @@ t_cmd	*parse_cmds(char *line)
 	//	printf("arg=\"%s\"\n", args[i]);
 	//}
 	//printf("\n");
-	return (commands);
+	return (*get_cmd_lst());
 }
 /*
 	"echo "$USER" | cat > pouet.txt"

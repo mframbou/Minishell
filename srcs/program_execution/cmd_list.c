@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 15-01-2022 18:33 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 17-01-2022 17:29 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -32,6 +32,14 @@ static t_cmd	*get_last_cmd(t_cmd *lst)
 	return (prev);
 }
 
+void	init_redirection_struct(t_redirection *redirection)
+{
+	redirection->out_filename = NULL;
+	redirection->in_filename = NULL;
+	redirection->out_redir_type = 0;
+	redirection->in_redir_type = 0;
+}
+
 t_cmd	*create_cmd(char **args, t_redirection redirection)
 {
 	t_cmd	*new;
@@ -40,9 +48,10 @@ t_cmd	*create_cmd(char **args, t_redirection redirection)
 	if (new)
 	{
 		new->args = args;
-		new->redirection.fd = -1;
-		new->redirection.filename = NULL;
-		new->redirection.type = -1;
+		new->redirection.out_filename = redirection.out_filename;
+		new->redirection.in_filename = redirection.in_filename;
+		new->redirection.out_redir_type = redirection.out_redir_type;
+		new->redirection.in_redir_type = redirection.in_redir_type;
 		new->next = NULL;
 	}
 	return (new);

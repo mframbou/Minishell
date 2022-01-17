@@ -1,3 +1,4 @@
+#!/bin/bash
 num=$(( ( RANDOM % 8 )  + 1 ))
 if (($num == 1))
 	then say -v Amelie "Belle bite"

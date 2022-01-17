@@ -6,7 +6,7 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 14-01-2022 17:57 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 17-01-2022 18:43 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,19 +110,34 @@ int	main()
 	init_basic_env_variables();
 	add_env_variable(ft_strdup("TEST"), ft_strdup(">"));
 	//line = strdup("echo test > test.txt > pouet.txt> prout.txt>tes2r2rtwe\"oui\".txt");
+
+	//printf("Redirection types:\n> = %d\n >> = %d\n< = %d\n<< = %d\n\n", SINGLE_RIGHT_REDIRECT, DOUBLE_RIGHT_REDIRECT, SINGLE_LEFT_REDIRECT, DOUBLE_LEFT_REDIRECT);
+
+		
 	while (1)
 	{
 		line = readline(MINISHELL_PROMPT);
 		if (line && line[0] != '\0' && !is_line_empty(line))
 		{
 			add_history(line);
-		}
-		if (line)
-		{
+
 			cmd_list = parse_cmds(line);
-			//if (cmd_list)
-			//	execute_cmd_lst(cmd_list);
-			//clear_cmd_list();
+			t_cmd *curr = cmd_list;
+			while (curr)
+			{
+				/*printf("command %s\n", curr->args[0]);
+				for (int j = 0; curr->args[j]; j++)
+				{
+					printf("%s\n", curr->args[j]);
+				}
+				printf("\n");
+				printf("Output redirection type: %d, file: %s\n", curr->redirection.out_redir_type, curr->redirection.out_filename);
+				printf("Input  redirection type: %d, file: %s\n", curr->redirection.in_redir_type, curr->redirection.in_filename);*/
+				curr = curr->next;
+			}
+			if (cmd_list)
+				execute_cmd_lst(cmd_list);
+			clear_cmd_list();
 		}
 	}
 }
