@@ -25,12 +25,16 @@ SRCS =	srcs/minishell.c \
 		srcs/parsing/redirections/parse_redirections.c \
 		srcs/parsing/redirections/open_file.c \
 		\
+		srcs/parsing/wildcards/interpret_wildcards.c \
+		srcs/parsing/wildcards/retrieve_files.c \
+		\
 		srcs/parsing/get_one_arg.c \
 		srcs/parsing/interpret_arguments.c \
 		srcs/parsing/is_valid_bash_var.c \
 		srcs/parsing/parse_one_program.c \
 		srcs/parsing/parse_whole_line.c \
 		srcs/parsing/utils.c \
+		srcs/parsing/utils_2.c \
 		\
 		builtins/environment/add_variable.c \
 		builtins/environment/get_variable.c \

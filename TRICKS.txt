@@ -5,3 +5,5 @@ export TEST=">"
 echo salut $TEST test.txt (should output Salut > test.txt and not redirect)
 export POUET=$PATH (echo $POUET should print the PATH)
 echo POUET | cat < .gitignore (Should only read from .gitignore and not consider the pipe)
+Wildcard should expand to multiple arguments ("test.txt", "pouet.txt") instead of a big single one (which would be "test.txt pouet.txt"), can verify this by doing cd * (should output too many arguments and not file not found)
+export TEST="s -la" then execute l$TEST (should do the same as ls -la)

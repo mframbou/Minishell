@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 16-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 16-01-2022 20:12 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 18-01-2022 19:50 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -70,6 +70,12 @@ static void	layout_and(t_cmd_layout *layout, char *line, int *index)
 	}
 }
 
+void	layout_wildcard(t_cmd_layout *layout, char *line, int *index)
+{
+	layout->operator_chars[(*index)] = WILDCARD_CHAR;
+	layout->operators_nb++;
+}
+
 /*
 	Generates the command layout (find operators like pipe, redirect etc.)
 		If we find a quote, don't include the content of the quotes 
@@ -99,6 +105,8 @@ void	create_cmd_layout(t_cmd_layout *layout, char *line)
 			layout_left_redirect(layout, line, &i);
 		else if (line[i] == '&')
 			layout_and(layout, line, &i);
+		else if (line[i] == '*')
+			layout_wildcard(layout, line, &i);
 		i++;
 	}
 }

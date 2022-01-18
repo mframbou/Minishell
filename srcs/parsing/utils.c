@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 17-01-2022 13:04 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 18-01-2022 22:04 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -65,4 +65,41 @@ int	is_closed_quote(char *str)
 	if (!str[i])
 		return (0);
 	return (i);
+}
+
+
+/*
+	Inserts str into src at index index.
+
+	"Test chad", "giga ", 5 => "Test giga chad"
+
+	i = res index
+	j = src index
+*/
+char	*insert_str_in_str(char *src, char *str, int index)
+{
+	char	*res;
+	int		i;
+	int		j;
+	int		k;
+
+	res = malloc(sizeof(char) * (ft_strlen(src) + ft_strlen(str) + 1));
+	if (index < 0 || index > ft_strlen(src))
+		return (NULL);
+	if (res)
+	{
+		i = 0;
+		j = 0;
+		k = 0;
+		while (src[j] && j < index)
+			res[i++] = src[j++];
+		while (str[k])
+			res[i++] = str[k++];
+		while (src[j])
+			res[i++] = src[j++];
+		res[i] = '\0';
+	}
+	free(src);
+	free(str);
+	return (res);
 }

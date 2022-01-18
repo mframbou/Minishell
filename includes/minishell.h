@@ -6,7 +6,7 @@
 /*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
 /*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
 /*   Created:   by            `-'                        `-'                  */
-/*   Updated: 17-01-2022 18:46 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 18-01-2022 22:10 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 # include <unistd.h>
 # include <errno.h>
 # include <fcntl.h>
-
+# include <dirent.h>
 // Local
 # include "cmd_list.h"
 # include "libft.h"
@@ -80,6 +80,7 @@ typedef enum e_interpreted_char
 	DOUBLE_LEFT_REDIRECT,
 	OR_CHAR,
 	AND_CHAR,
+	WILDCARD_CHAR
 }	t_interpreted_char;
 
 // Parsing utils
@@ -90,6 +91,11 @@ void	remove_char_from_string(char **str, int index);
 void	interpret_quotes(char **str);
 void	unquote_all_args(char **args);
 int		is_valid_in_filename(char c);
+char	*insert_str_in_str(char *src, char *str, int index);
+char	*convert_str_array_to_one_line(char **array);
+
+// Wildcard
+void	interpret_wildcards(char **line);
 
 // Program execution
 int		execute_program(int input_fd, char *program_path, char **args);

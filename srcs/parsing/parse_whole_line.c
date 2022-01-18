@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 17-01-2022 17:29 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 18-01-2022 22:10 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ t_cmd	*parse_cmds(char *line)
 	// TODO: Interpret wildcards
 	while (cmds[i])
 	{
+		interpret_wildcards(&(cmds[i]));
 		if (parse_redirectoins_and_create_files(&(cmds[i]), &redirection) == -1)
 		{
 			// TODO: Error happened, otherwise we have a correct redirection

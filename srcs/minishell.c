@@ -6,12 +6,14 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 17-01-2022 18:47 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 19-01-2022 00:18 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 #include <termios.h>
+
+#define _GNU_SOURCE // linux
 
 struct termios	g_termios_save;
 
@@ -61,7 +63,7 @@ void	handle_sigs(int sig, siginfo_t *siginfo, void *context)
 	{
 		printf("\n");
 		rl_on_new_line();
-		//rl_replace_line("", 0);
+		rl_replace_line("", 0);
 		rl_redisplay();
 	}
 	if (sig == SIGQUIT)
@@ -112,6 +114,9 @@ int	main()
 	char	*line;
 	t_cmd	*cmd_list;
 
+	// TODO IMPORTANT Redirect STDOUT but also STDERR
+	// todo if we have time, interpret env args before splittigs cmds args (on single line)
+	// so that TEST=cho pouet then e$TEST would work but need to keep quotes so it's annoying with eg TEST='cho pouet' which should result in e cho pouet and not echo pouet since its single quotes
 	init_signals();
 	init_basic_env_variables();
 	add_env_variable(ft_strdup("TEST"), ft_strdup(">"));	
@@ -123,11 +128,11 @@ int	main()
 			add_history(line);
 
 			cmd_list = parse_cmds(line);
-			t_cmd *curr = cmd_list;
+			/*t_cmd *curr = cmd_list;
 			while (curr)
 			{
 				curr = curr->next;
-			}
+			}*/
 			if (cmd_list)
 				execute_cmd_lst(cmd_list);
 			clear_cmd_list();

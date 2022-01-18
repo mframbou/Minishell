@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 17-01-2022 18:50 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 19-01-2022 00:29 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,6 +261,55 @@ int	execute_program(int input_fd, char *program_path, char **args)
 	return (output_read_fd);
 }
 
+
+/*
+	Read from STDIN until given delimiter is found (or EOF since we can't do
+		anything about it), then return the fd for the next program to read from
+
+	input_filename is just the thing we found right after our operator, so in the
+		case of '<<' even though it's not a filename, it's already the value that
+		we want (it's the delimiter but it has the right value)
+
+	Create a pipe so it's easier to handle the fd
+	Write into it after the check, so that if the line matches, it is not
+		included
+
+	We also need to write EOF after our file because otherwise our command
+		we redirect to will never end (eg cat << test we need to send EOF
+		to tell cat we found it)
+
+	Also write a \n between each line as bash does
+*/
+int	read_until_delimiter(char *delimiter)
+{
+	char	*line;
+	int		match;
+	int		pipe_fd[2];
+
+	if (pipe(pipe_fd) == -1)
+		perror("Pipe error while waiting for delimiter");
+	match = 0;
+	line = readline("> ");
+	while (line)
+	{
+		if (ft_strcmp(delimiter, line) == 0)
+		{
+			match = 1;
+			break ;
+		}
+		write(pipe_fd[1], line, ft_strlen(line));
+		write(pipe_fd[1], "\n", 1);
+		line = readline("> ");
+	}
+	close(pipe_fd[1]);
+	/*printf("\n");
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();*/
+	if (!match)
+		printf("Warning, EOF encountered while waiting for '%s'\n", delimiter);
+	return (pipe_fd[0]);
+}
 /*
 	read_fd = fd to read from for next command
 	new_read_fd = fd the first command has written to
@@ -280,13 +329,20 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 	{
 		if (curr->redirection.in_filename != NULL)
 		{
-			int fd = open_file_for_redirection(curr->redirection.in_filename, curr->redirection.in_redir_type);
-	
-			if (fd == -1)
+			if (curr->redirection.in_redir_type == SINGLE_LEFT_REDIRECT)
 			{
-				return (-1);
+				int fd = open_file_for_redirection(curr->redirection.in_filename, curr->redirection.in_redir_type);
+		
+				if (fd == -1)
+				{
+					return (-1);
+				}
+				read_fd = fd;
 			}
-			read_fd = fd;
+			else if (curr->redirection.in_redir_type == DOUBLE_LEFT_REDIRECT)
+			{
+				read_fd = read_until_delimiter(curr->redirection.in_filename);
+			}
 		}
 		if (is_builtin(curr->args[0]))
 		{
@@ -321,12 +377,14 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 			new_read_fd = -1;
 			read_fd = -1;
 		}
+		
 		curr = curr->next;
 	}
 	//printf("current print fd: %d\n", read_fd);
 	while (read(read_fd, &buf, 1) > 0)
 		write(STDOUT_FILENO, &buf, 1);
 	close(read_fd);
+	
 	return (0);
 }
 

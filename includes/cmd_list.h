@@ -30,7 +30,7 @@ typedef struct s_cmd
 	t_redirection	redirection;
 }	t_cmd;
 
-enum	e_redirection_type
+enum	e_operator
 {
 	REDIRECT_PIPE,	
 	REDIRECT_OUTPUT_FILE,
@@ -38,7 +38,7 @@ enum	e_redirection_type
 	REDIRECT_INPUT_FILE_DELIMITER,	
 	REDIRECT_OUTPUT_FILE_APPEND,
 	REDIRECT_STDOUT,				
-	REDIRECT_UNKNOWN								
+	REDIRECT_UNKNOWN
 };
 
 void	add_cmd(char **args, t_redirection redirection);
