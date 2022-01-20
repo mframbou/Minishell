@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 12-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 12-01-2022 18:37 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 19-01-2022 14:20 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -19,12 +19,23 @@
 */
 void	pwd_command(char *argv[], int output_fd)
 {
-	char	*curr_path;
+	char		*curr_path;
+	static char	*empty_cd[2] = {"cd", NULL};
 
 	(void) argv;
 	curr_path = NULL;
 	curr_path = getcwd(curr_path, 0);
-	ft_putstr_fd(curr_path, output_fd);
-	ft_putchar_fd('\n', output_fd);
-	free(curr_path);
+	if (curr_path)
+	{
+		ft_putstr_fd(curr_path, output_fd);
+		ft_putchar_fd('\n', output_fd);
+		free(curr_path);
+		set_exit_status(EXIT_SUCCESS);
+	}
+	else
+	{
+		perror("Unable to retrieve current directory");
+		cd_command(empty_cd, STDOUT_FILENO);
+		set_exit_status(errno);
+	}
 }

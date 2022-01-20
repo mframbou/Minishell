@@ -6,7 +6,7 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 2022/01/14 15:23:16 by oronda           ###   ########.fr       */
+/*   Updated: 19-01-2022 20:48 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,8 @@ static char	*test_all_paths(char *path_variable, char *program)
 			ft_strlcat(full_path, "/", PATH_MAX);
 		}
 		ft_strlcat(full_path, program, PATH_MAX);
-		file_exists = access(full_path, F_OK | X_OK);
-		if (file_exists == 0)
+		file_exists = access(full_path, F_OK);
+		if (file_exists == 0 && is_regular_file_or_symlink(full_path))
 		{
 			free_ft_split(paths);
 			return (ft_strdup(full_path));

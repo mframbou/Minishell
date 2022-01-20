@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 19-01-2022 00:29 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 20-01-2022 01:13 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,6 +166,7 @@ static int	exec_and_redirect_stdout(int pipe_fd[2], char *program_path, \
 {
 	char	**env;
 
+
 	close(pipe_fd[0]);
 	if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
 	{
@@ -196,18 +197,24 @@ static int	exec_and_redirect_stdout(int pipe_fd[2], char *program_path, \
 int	execute_program_from_args(char *program_path, char **args)
 {
 	int		pipe_fd[2];
+	int		pid;
 
 	if (pipe(pipe_fd) == -1)
 		return (perror_return("pipe failure"));
 	else
 	{
-		if (fork() == 0)
+		pid = fork();
+		if (pid == 0)
 		{
 			exec_and_redirect_stdout(pipe_fd, program_path, args);
 			return (-2);
 		}
 		else
+		{
 			close(pipe_fd[1]);
+			printf("Child pid = %d\n", pid);
+			g_pid = pid;
+		}
 	}
 	return (pipe_fd[0]);
 }
@@ -216,12 +223,14 @@ static int	execute_program_from_args_and_fd(int read_fd, char *program_path, \
 											char **args)
 {
 	int		pipe_fd[2];
+	int		pid;
 
 	if (pipe(pipe_fd) == -1)
 		return (perror_return("pipe failure"));
 	else
 	{
-		if (fork() == 0)
+		pid = fork();
+		if (pid == 0)
 		{
 			dup2(read_fd, STDIN_FILENO);
 			close(read_fd);
@@ -230,6 +239,7 @@ static int	execute_program_from_args_and_fd(int read_fd, char *program_path, \
 		}
 		else
 		{
+			g_pid = pid;
 			close(read_fd);
 			close(pipe_fd[1]);
 		}
@@ -243,6 +253,7 @@ static int	execute_program_from_args_and_fd(int read_fd, char *program_path, \
 int	execute_program(int input_fd, char *program_path, char **args)
 {
 	int	output_read_fd;
+	int	exit_status;
 
 	output_read_fd = -1;
 	if (input_fd == -1)
@@ -274,9 +285,7 @@ int	execute_program(int input_fd, char *program_path, char **args)
 	Write into it after the check, so that if the line matches, it is not
 		included
 
-	We also need to write EOF after our file because otherwise our command
-		we redirect to will never end (eg cat << test we need to send EOF
-		to tell cat we found it)
+	closing the pipe will automatically write EOF into it
 
 	Also write a \n between each line as bash does
 */
@@ -310,6 +319,71 @@ int	read_until_delimiter(char *delimiter)
 		printf("Warning, EOF encountered while waiting for '%s'\n", delimiter);
 	return (pipe_fd[0]);
 }
+
+static int	has_slash(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+		if (str[i++] == '/')
+			return (1);
+	return (0);
+}
+
+/*
+	If file doesn't exists / is not a regular file or a symlink, we don't
+	consider it as executable
+
+	stat function directly use the file pointed by the symlink if any,
+	so we don't need to check if it is a symlink, then if the file it points
+	to is a regular file
+
+	Macros S_ISREG and S_ISLNK help doing it instead of doing binary operations
+	S_IXUSR = permission bit for execution
+*/
+int	is_regular_file_or_symlink(char *file)
+{
+	struct stat	file_infos;
+	int			stat_return;
+
+	stat_return = stat(file, &file_infos);
+
+
+	if (stat_return == -1 \
+	|| !S_ISREG(file_infos.st_mode) \
+	|| !(__S_IEXEC & file_infos.st_mode))
+	{
+		return (0);
+	}
+	return (1);
+}
+
+/*
+	https://pubs.opengroup.org/onlinepubs/9699919799/utilities/
+	V3_chap02.html#tag_18_09_01_01
+
+	If the command name contains at least one <slash>, the shell shall execute 
+	the utility in a separate utility environment with actions equivalent 
+	to calling the execl() function
+
+	If we have a '/' in the filename, then execute it as absolute / relative
+		path. But if there isn't any slashes, just search in PATH
+
+	S_IFMT = Bit mask for file type, used to only keep the file types of
+		stat.st_mode structure
+	If file is different from symlink or regular file, dont execute it
+*/
+char	*search_absolute_path_program(char *program)
+{
+	char		*res;
+	struct stat	file_infos;
+
+	if (!is_regular_file_or_symlink(program) || !has_slash(program))
+		return(NULL);
+	return (ft_strdup(program));
+}
+
 /*
 	read_fd = fd to read from for next command
 	new_read_fd = fd the first command has written to
@@ -321,6 +395,8 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 	int		new_read_fd;
 	char	*program;
 	char	buf;
+	int		exit_status;
+	int		waitpid_count = 0;
 
 	curr = cmd_lst;
 	read_fd = -1;
@@ -353,11 +429,26 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 			program = is_program_in_path(curr->args[0]);
 			if (program)
 			{
+				waitpid_count++;
 				new_read_fd = execute_program(read_fd, program, curr->args);
 				if (new_read_fd == -2)
 				{
 					printf("An error occured while executing pipeline\n");
 					return (-2);
+				}
+			}
+			else
+			{
+				waitpid_count++;
+				program = search_absolute_path_program(curr->args[0]);
+				if (program)
+				{
+					new_read_fd = execute_program(read_fd, program, curr->args);
+				}
+				else
+				{
+					
+					printf("We did not find any command matchig this sir.\n");
 				}
 			}
 		}
@@ -377,13 +468,37 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 			new_read_fd = -1;
 			read_fd = -1;
 		}
-		
+		if (curr->next)
+		{
+			// WNOHANG make the waitpid non blocking, which solve the issue of multiple blocking commands piping
+			// eg. cat | cat, instead of waiting for 1st cat to complete, both are executed at the same time
+			//if (g_pid)
+			//{
+			//	waitpid(g_pid, &exit_status, WNOHANG); // If it's the last command, first redirect to stdout, then waitpid (if we do just "cat" for instance it should print before waiting)
+			//	set_exit_status(exit_status);
+			//}
+		}
 		curr = curr->next;
 	}
-	//printf("current print fd: %d\n", read_fd);
-	while (read(read_fd, &buf, 1) > 0)
+	//WEXITSTATUS
+	printf("Test pouet\n");
+	int test = 0;
+	while ((test = read(read_fd, &buf, 1)) > 0)
+	{
 		write(STDOUT_FILENO, &buf, 1);
+	}
+	printf("Test pouet 2\n");
 	close(read_fd);
+	//if (g_pid)
+	//{
+	//	waitpid(g_pid, &exit_status, 0); // Wait to get the last process exit code
+	//	set_exit_status(exit_status);
+	//}
+	//for (int i = 0; i < waitpid_count; i++)
+	//	waitpid(-1, &exit_status, 0); // Wait for all childrens at the end, each waitpid only waits for 1 children
+	//set_exit_status(exit_status);
+	//printf("Finished waiting\n");
+	g_pid = 0;
 	
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
 /*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
 /*   Created:   by            `-'                        `-'                  */
-/*   Updated: 18-01-2022 22:10 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 19-01-2022 20:31 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,15 @@
 # include <errno.h>
 # include <fcntl.h>
 # include <dirent.h>
+# include <sys/wait.h>
+# include <sys/stat.h>
+
 // Local
 # include "cmd_list.h"
 # include "libft.h"
 # include "builtins.h"
+
+int	g_pid;
 
 // Parsing
 t_cmd	*parse_cmds(char *line);
@@ -39,6 +44,12 @@ char	*get_one_arg(char *str, int *i);
 char	*interpret_env_args(char *str);
 void	interpret_all_args(char	***args);
 void	interpret_quotes(char **str);
+
+int		*get_exit_status(void);
+int	set_exit_status(int status);
+
+
+int	is_regular_file_or_symlink(char *file);
 
 // Parsing redirections
 char	**remove_empty_args(char **args);

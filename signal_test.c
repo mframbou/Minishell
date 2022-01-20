@@ -5,37 +5,25 @@
 /*        )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )         .    */
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
-/*   Created: 12-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 19-01-2022 14:05 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Created: 20-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
+/*   Updated: 20-01-2022 01:02 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include <signal.h>
+#include <stdio.h>
+#include <unistd.h>
 
-void	echo_command(char **argv, int output_fd)
+void	my_sig_handler(int sig)
 {
-	int	print_nl;
-	int	i;
-	int	argc;
-
-	i = 1;
-	print_nl = 1;
-	argc = 0;
-	while (argv[argc])
-		argc++;
-	if (argc >= 2 && ft_strcmp(argv[i], "-n") == 0)
+	if (sig == SIGINT)
 	{
-		i++;
-		print_nl = 0;
+		fprintf(stdout, "I received SIGINT\n");
 	}
-	while (i < argc)
-	{
-		ft_putstr_fd(argv[i], output_fd);
-		i++;
-		if (i != argc)
-			ft_putchar_fd(' ', output_fd);
-	}
-	if (print_nl)
-		ft_putchar_fd('\n', output_fd);
-	set_exit_status(EXIT_SUCCESS);
+}
+int main()
+{
+	fprintf(stdout, "PID: %d\n", getpid());
+	signal(SIGINT, my_sig_handler);
+	sleep(3);
 }

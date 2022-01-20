@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 18-01-2022 22:10 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 19-01-2022 12:17 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ char	**split_command_operands(char *line)
 		programs_list[i++] = ft_substr(line, cmd_start, cmd_end - cmd_start);
 		if (line[cmd_end])
 			cmd_end += get_operator_str_len(layout.operator_chars[cmd_end]);
-		cmd_start += cmd_end;
+		cmd_start = cmd_end;
 		cmd_end = get_next_non_redirect_operator_index(line, cmd_end);
 	}
 	programs_list[i] = NULL;

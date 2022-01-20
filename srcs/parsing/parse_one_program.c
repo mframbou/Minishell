@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 17-01-2022 12:49 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 19-01-2022 15:14 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -28,16 +28,14 @@ void	interpret_all_args(char	***args)
 	}
 }
 
-static int	count_args(char *old_line)
+static int	count_args(char *line)
 {
-	char	*current_arg;
-	char	*line;
 	int		i;
+	char	*current_arg;
 	int		count;
 
 	i = 0;
 	count = 0;
-	line = ft_strtrim(old_line, " \t\v\f\r");
 	while (line[i])
 	{
 		while (line[i] && ft_isspace(line[i]))
@@ -47,12 +45,34 @@ static int	count_args(char *old_line)
 		current_arg = get_one_arg(line, &i);
 		if (current_arg)
 		{
-			i += ft_strlen(current_arg);
 			count++;
-			free(current_arg);
-		}		
+			//i += ft_strlen(current_arg);
+		}
 	}
-	free(line);
+
+	//char	*current_arg;
+	//char	*line;
+	//int		i;
+	//int		count;
+	//
+	//i = 0;
+	//count = 0;
+	//line = ft_strtrim(old_line, " \t\v\f\r");
+	//while (line[i])
+	//{
+	//	while (line[i] && ft_isspace(line[i]))
+	//		i++;
+	//	if (!line[i])
+	//		break ;
+	//	current_arg = get_one_arg(line, &i);
+	//	if (current_arg)
+	//	{
+	//		i += ft_strlen(current_arg);
+	//		count++;
+	//		free(current_arg);
+	//	}		
+	//}
+	//free(line);
 	return (count);
 }
 
@@ -102,7 +122,7 @@ void	fill_args_of_one_program(char *program, char **args)
 		if (current_arg)
 		{
 			args[argc++] = current_arg;
-			i += ft_strlen(current_arg);
+			//i += ft_strlen(current_arg);
 		}
 	}
 	args[argc] = NULL;
@@ -124,11 +144,13 @@ char	**parse_program_and_args(char *line)
 	char	*current_arg;
 	char	*new_line;
 
-	args = (char **) malloc(sizeof(char *) * (count_args(line) + 1));
-	if (!args)
-		return (NULL);
 	new_line = ft_strtrim(line, " \t\v\f\r");
 	free(line);
+	args = (char **) malloc(sizeof(char *) * (count_args(new_line) + 1));
+	if (!args)
+		return (NULL);
+	
+	
 	fill_args_of_one_program(new_line, args);
 	interpret_all_args(&args);
 	args = remove_empty_args(args);

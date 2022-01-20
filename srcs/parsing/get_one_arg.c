@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 13-01-2022 13:27 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 19-01-2022 15:35 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -118,21 +118,32 @@ char	*get_one_arg(char *str, int *i)
 {
 	char	*res;
 	int		closed_quote_distance;
+	int		start;
 
-	if (str[*i] == '"' || str[*i] == '\'')
+	start = *i;
+	while (str[*i] && !ft_isspace(str[*i]))
 	{
-		closed_quote_distance = is_closed_quote(&(str[*i]));
-		if (closed_quote_distance == 0)
-			res = get_line_till_space(&(str[*i]));
-		else if (closed_quote_distance == 1)
-		{
-			*i += 2;
-			return (NULL);
-		}
-		else
-			res = get_line_till_any_quote(&(str[*i]));
+		if (str[*i] == '"' || str[*i] == '\'')
+			*i += is_closed_quote(&(str[*i]));
+		(*i)++;
 	}
-	else
-		res = get_line_till_space_or_quote(&str[*i]);
+	res = ft_substr(str, start, *i - start);
+
+	//res = get_line_till_space(str);
+	//if (str[*i] == '"' || str[*i] == '\'')
+	//{
+	//	closed_quote_distance = is_closed_quote(&(str[*i]));
+	//	if (closed_quote_distance == 0)
+	//		res = get_line_till_space(&(str[*i]));
+	//	else if (closed_quote_distance == 1)
+	//	{
+	//		*i += 2;
+	//		return (NULL);
+	//	}
+	//	else
+	//		res = get_line_till_any_quote(&(str[*i]));
+	//}
+	//else
+	//	res = get_line_till_space_or_quote(&str[*i]);
 	return (res);
 }

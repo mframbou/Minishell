@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 2022/01/13 00:41:26 by mframbou         ###   ########.fr       */
+/*   Updated: 19-01-2022 14:27 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,4 +33,5 @@ void	env_command(char **argv, int output_fd)
 		}
 		curr = curr->next;
 	}
+	set_exit_status(EXIT_SUCCESS);
 }

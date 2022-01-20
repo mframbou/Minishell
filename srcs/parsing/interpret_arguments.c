@@ -6,7 +6,7 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2013/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 16-01-2022 22:04 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 19-01-2022 13:52 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,6 +163,20 @@ static int	check_if_in_double_quotes(int is_in_double_quotes, char *quotes_str)
 	return (is_in_double_quotes);
 }
 
+/*
+	Remove the "$?" from the string and replace it with the exit code
+*/
+char	*insert_last_exit_status(char *str, int *index)
+{
+	char	*res;
+	char	*exit_status;
+
+	remove_substr_from_string(&str, *index, *index + 2);
+	exit_status = ft_itoa(*get_exit_status());
+	res = insert_str_in_str(str, exit_status, *index); // insert_str_in_str automatically frees
+	return (res);
+}
+
 char	*interpret_env_args(char *str)
 {
 	char	*tmp;
@@ -180,9 +194,15 @@ char	*interpret_env_args(char *str)
 															&(str[i]));
 		else if (str[i] == '$')
 		{
-			tmp = str;
-			str = interpret_one_dollar_var(tmp, &i);
-			free (tmp);
+			if (str[i + 1] && str[i + 1] == '?')
+				str = insert_last_exit_status(str, &i);
+			else
+			{
+				tmp = str;
+				str = interpret_one_dollar_var(tmp, &i);
+				free (tmp);
+			}
+			
 			continue ;
 		}
 		i++;
