@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 20-01-2022 21:07 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 20-01-2022 22:52 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -488,6 +488,7 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 			flush_pipe(read_fd);
 			free_redirections();
 			rl_clear_history();
+			printf("Exit status is %d\n", *get_exit_status());
 			exit(*get_exit_status());
 			
 		}
@@ -506,7 +507,8 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 	}
 	for (int i = 0; i < waitpid_count; i++)
 		waitpid(-1, &exit_status, 0); // Wait for all childrens at the end, each waitpid only waits for 1 children
-	set_exit_status(exit_status);
+	if (g_pid || waitpid_count)	// If we only executed builtins for instance, don't set since it's already done
+		set_exit_status(exit_status);
 	//printf("Finished waiting\n");
 	g_pid = 0;
 	return (0);

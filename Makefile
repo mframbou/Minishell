@@ -58,7 +58,7 @@ OBJS = $(SRCS:.c=.o)
 
 NAME = minishell
 
-CC = gcc -g -fsanitize=address #-Wall -Wextra -Werror
+CC = gcc #-g -fsanitize=address #-Wall -Wextra -Werror
 
 %.o: %.c
 	@$(CC) -c $< -o $@
