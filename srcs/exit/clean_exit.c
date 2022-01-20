@@ -6,32 +6,44 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 20-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 20-01-2022 11:57 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 20-01-2022 16:17 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
-#include <signal.h>
-#include <stdio.h>
-#include <unistd.h>
+#include "../../includes/minishell.h"
 
-void	my_sig_handler(int sig)
+t_cmd	**get_cmd_lst(void);
+
+void free_all_and_exit(int code, int current_fd)
 {
-	if (sig == SIGUSR1)
+	
+}
+
+void	free_redirections(void)
+{
+	t_cmd	*cmds;
+
+	cmds = *get_cmd_lst();
+	while (cmds)
 	{
-		write(STDOUT_FILENO, "I received SIGUSR\n", 19);
-	}
-	else if (sig == SIGINT)
-	{
-		write(STDOUT_FILENO, "I received SIGINT\n", 19);
+		free(cmds->redirection.in_filename);
+		free(cmds->redirection.out_filename);
+		cmds = cmds->next;
 	}
 }
-int main()
+
+void	flush_pipe(int fd)
 {
-	signal(SIGINT, my_sig_handler);
-	signal(SIGUSR1, my_sig_handler);
-	write(STDOUT_FILENO, "Pouic\n", 6);
-	fprintf(stdout, "PID: %d\n", getpid());
-	sleep(3);
-	write(STDOUT_FILENO, "Sleeped\n", 8);
-	sleep(2);
+	char	buf;
+	int		read_val;
+
+	if (fd == -1)
+		return ;
+	read_val = read(fd, &buf, 1);
+	while (read_val)
+	{
+		write(STDOUT_FILENO, &buf, 1);
+		read_val = read(fd, &buf, 1);
+	}
+	close(fd);
 }

@@ -6,7 +6,7 @@
 /*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
 /*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
 /*   Created:   by            `-'                        `-'                  */
-/*   Updated: 19-01-2022 20:31 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 20-01-2022 16:18 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,14 @@ int	set_exit_status(int status);
 
 
 int	is_regular_file_or_symlink(char *file);
+
+
+// Clean exitr
+void	flush_pipe(int fd);
+int	should_exit(void);
+int	set_should_exit(int code);
+void	free_redirections(void);
+
 
 // Parsing redirections
 char	**remove_empty_args(char **args);

@@ -6,17 +6,65 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 2022/01/13 00:41:43 by mframbou         ###   ########.fr       */
+/*   Updated: 20-01-2022 16:09 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
+static int		is_digit_str(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (str[i] && (ft_isdigit(str[i]) || str[i] == '+' || str[i] == '-'))
+		i++;
+	else
+		return (0);
+	while (str[i] && ft_isdigit(str[i]))
+		i++;
+	if (str[i])
+		return (0);
+	return (1);
+}
+
 void	exit_command(char **argv, int output_fd)
 {
-	(void) argv;
-	(void) output_fd;
-	printf("Exit TODO\n");
-	exit(EXIT_SUCCESS);
+	int	argc;
+	int	exit_status;
+
+	
+	argc = 0;
+	while (argv[argc])
+		argc++;
+	if (argc == 1)
+	{
+		set_should_exit(1);
+		//set_exit_status(get_exit_status());
+	}
+	else if (argc == 2)
+	{
+		if (is_digit_str(argv[1]))
+		{
+			exit_status = ft_atoi(argv[1]);
+			set_should_exit(1);
+			set_exit_status(exit_status);
+		}
+		else
+		{
+			printf("%s %s\n", argv[0], argv[1]);
+			ft_putstr_fd("exit: ", output_fd);
+			ft_putstr_fd(argv[1], output_fd);
+			ft_putstr_fd(": numeric argument required\n", output_fd);
+			set_should_exit(1);
+			//set_exit_status(get_exit_status());
+		}
+	}
+	else
+	{
+		ft_putstr_fd("exit: too many arguments\n", output_fd);
+		return ;
+	}
+	//printf("Exit TODO\n");
 	return ;
 }

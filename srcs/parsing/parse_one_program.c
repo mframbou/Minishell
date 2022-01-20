@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 19-01-2022 15:14 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 20-01-2022 16:06 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ static int	count_args(char *line)
 		if (current_arg)
 		{
 			count++;
+			free(current_arg);
 			//i += ft_strlen(current_arg);
 		}
 	}
@@ -149,9 +150,8 @@ char	**parse_program_and_args(char *line)
 	args = (char **) malloc(sizeof(char *) * (count_args(new_line) + 1));
 	if (!args)
 		return (NULL);
-	
-	
 	fill_args_of_one_program(new_line, args);
+	free(new_line);
 	interpret_all_args(&args);
 	args = remove_empty_args(args);
 	return (args);

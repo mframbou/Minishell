@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 19-01-2022 12:17 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 20-01-2022 21:08 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ t_cmd	*parse_cmds(char *line)
 
 	i = 0;
 	cmds = split_command_operands(line);
-	// TODO: Interpret wildcards
 	while (cmds[i])
 	{
 		interpret_wildcards(&(cmds[i]));
@@ -84,6 +83,8 @@ t_cmd	*parse_cmds(char *line)
 		add_cmd(parse_program_and_args(cmds[i]), redirection);
 		i++;
 	}
+	free(cmds); // Strings are already freed in parsing, just need to free array of string
+	//free_ft_split(cmds);
 	//interpret_all_args(&args); // Puts quotes around every arg, must remove it after parsing redirection
 	//return(0);
 	//for (int i = 0; args[i]; i++)

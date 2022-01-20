@@ -28,6 +28,9 @@ SRCS =	srcs/minishell.c \
 		srcs/parsing/wildcards/interpret_wildcards.c \
 		srcs/parsing/wildcards/retrieve_files.c \
 		\
+		srcs/exit/clean_exit.c \
+		srcs/exit/check_exit.c \
+		\
 		srcs/parsing/get_one_arg.c \
 		srcs/parsing/interpret_arguments.c \
 		srcs/parsing/is_valid_bash_var.c \

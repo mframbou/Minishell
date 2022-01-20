@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 15-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 17-01-2022 17:40 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 20-01-2022 16:24 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -169,6 +169,7 @@ static int	fill_struct_and_create_files(char *filename, int redir_type, \
 int	parse_redirectoins_and_create_files(char **line, t_redirection *redir)
 {
 	char	*filename;
+	char	*prev_filename;
 	int		redir_type;
 	int		fd;
 
@@ -180,7 +181,10 @@ int	parse_redirectoins_and_create_files(char **line, t_redirection *redir)
 		interpret_quotes(&filename);
 		if (fill_struct_and_create_files(filename, redir_type, redir) == -1)
 			return (-1);
+		prev_filename = filename;
 		filename = get_first_redirection_filename(line, &redir_type);
+		if (filename) // If we have another filename, the previous one is unused, so free it
+			free(prev_filename);
 	}
 	return (0);
 }

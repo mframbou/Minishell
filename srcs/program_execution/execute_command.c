@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 20-01-2022 01:13 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 20-01-2022 21:07 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,7 +212,6 @@ int	execute_program_from_args(char *program_path, char **args)
 		else
 		{
 			close(pipe_fd[1]);
-			printf("Child pid = %d\n", pid);
 			g_pid = pid;
 		}
 	}
@@ -397,12 +396,14 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 	char	buf;
 	int		exit_status;
 	int		waitpid_count = 0;
+	int		cmd_count = 0;
 
 	curr = cmd_lst;
 	read_fd = -1;
 	new_read_fd = -1;
 	while (curr)
 	{
+		cmd_count++;
 		if (curr->redirection.in_filename != NULL)
 		{
 			if (curr->redirection.in_redir_type == SINGLE_LEFT_REDIRECT)
@@ -451,6 +452,7 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 					printf("We did not find any command matchig this sir.\n");
 				}
 			}
+			free(program);
 		}
 		if (read_fd >= 0)
 			close(read_fd);
@@ -479,27 +481,34 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 			//}
 		}
 		curr = curr->next;
+
+		if (should_exit() && cmd_count == 1 && !curr) // Only exit if it's the only command
+		{
+			clear_cmd_list();
+			flush_pipe(read_fd);
+			free_redirections();
+			rl_clear_history();
+			exit(*get_exit_status());
+			
+		}
+		else if (should_exit())
+		{
+			set_should_exit(0);
+		}
 	}
 	//WEXITSTATUS
-	printf("Test pouet\n");
-	int test = 0;
-	while ((test = read(read_fd, &buf, 1)) > 0)
+	free_redirections();
+	flush_pipe(read_fd);
+	if (g_pid)
 	{
-		write(STDOUT_FILENO, &buf, 1);
+		waitpid(g_pid, &exit_status, 0); // Wait to get the last process exit code
+		set_exit_status(exit_status);
 	}
-	printf("Test pouet 2\n");
-	close(read_fd);
-	//if (g_pid)
-	//{
-	//	waitpid(g_pid, &exit_status, 0); // Wait to get the last process exit code
-	//	set_exit_status(exit_status);
-	//}
-	//for (int i = 0; i < waitpid_count; i++)
-	//	waitpid(-1, &exit_status, 0); // Wait for all childrens at the end, each waitpid only waits for 1 children
-	//set_exit_status(exit_status);
+	for (int i = 0; i < waitpid_count; i++)
+		waitpid(-1, &exit_status, 0); // Wait for all childrens at the end, each waitpid only waits for 1 children
+	set_exit_status(exit_status);
 	//printf("Finished waiting\n");
 	g_pid = 0;
-	
 	return (0);
 }
 
