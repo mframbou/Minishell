@@ -1,14 +1,15 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 20-01-2022 21:38 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
-/*                                                                            */
+/*                       .-.                       .                          */
+/*                      / -'                      /                           */
+/*       .  .-. .-.   -/--).--..-.  .  .-. .-.   /-.  .-._.)  (               */
+/*        )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )         .    */
+/*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
+/*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
+/*   Created: 20-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
+/*   Updated: 21-01-2022 01:37 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
+
 
 #include "../includes/minishell.h"
 #include <termios.h>
@@ -74,7 +75,7 @@ void	handle_sigs(int sig, siginfo_t *siginfo, void *context)
 {
 	if (sig == SIGINT)
 	{
-		fprintf(stdout, "Sigint on pid: %d\n", g_pid);
+		//fprintf(stdout, "Sigint on pid: %d\n", g_pid);
 		if (g_pid)
 		{
 			//printf("pid = %d\n", g_pid);
@@ -131,7 +132,7 @@ void	init_signals(void)
 	sa.sa_sigaction = &handle_sigs;
 	sa.sa_flags = 0;
 	//sa.sa_handler = 0;
-	sigaction(SIGINT, &sa, 0);
+	sigaction(SIGINT, &sa, 0); // IL FAUT CHECKER SIG_DFL
 	sigaction(SIGQUIT, &sa, 0);
 
 	//signal(SIGINT, &handle_sigs);

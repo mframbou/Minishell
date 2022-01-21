@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 20-01-2022 22:52 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 21-01-2022 01:47 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -347,8 +347,6 @@ int	is_regular_file_or_symlink(char *file)
 	int			stat_return;
 
 	stat_return = stat(file, &file_infos);
-
-
 	if (stat_return == -1 \
 	|| !S_ISREG(file_infos.st_mode) \
 	|| !(__S_IEXEC & file_infos.st_mode))
@@ -428,7 +426,7 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 		else
 		{
 			program = is_program_in_path(curr->args[0]);
-			if (program)
+			if (program && !has_slash(curr->args[0]))
 			{
 				waitpid_count++;
 				new_read_fd = execute_program(read_fd, program, curr->args);
@@ -448,8 +446,12 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 				}
 				else
 				{
-					
-					printf("We did not find any command matchig this sir.\n");
+					perror(curr->args[0]); // If one command is not found or no perm etc., break the whole pipeline
+					clear_cmd_list();
+					close(read_fd);
+					//flush_pipe(read_fd); // Do not print to output since it failed, eg echo test | pouet should not output "test'\n pouet command not found" but just "pouet command not found"
+					free_redirections();
+					return (1);
 				}
 			}
 			free(program);
@@ -488,7 +490,7 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 			flush_pipe(read_fd);
 			free_redirections();
 			rl_clear_history();
-			printf("Exit status is %d\n", *get_exit_status());
+			free_environment();
 			exit(*get_exit_status());
 			
 		}

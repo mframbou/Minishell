@@ -6,7 +6,7 @@
 /*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
 /*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
 /*   Created:   by            `-'                        `-'                  */
-/*   Updated: 20-01-2022 16:18 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 21-01-2022 01:19 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ int		execute_cmd_lst(t_cmd *cmd_lst);
 // Environment
 void	add_env_variable(char *key, char *value);
 void	remove_env_variable(char *key);
-void	free_var_list(void);
+void	free_environment(void);
 char	*get_env_variable(char *key);
 char	**get_env_as_string_array(void);
 
