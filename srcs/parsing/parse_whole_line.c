@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 22-01-2022 20:57 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 22-01-2022 23:51 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -27,29 +27,32 @@ t_cmd	**get_cmd_lst(void);
 		if we do, skip the current operator ('>', '>>', '|' etc.) 
 		and go to the next command
 */
-char	**split_command_operands(char *line)
+t_splitted_cmd	*split_command_operands(char *line)
 {
 	t_cmd_layout	layout;
 	int				i;
 	int				cmd_start;
 	int				cmd_end;
-	char			**programs_list;
+	t_splitted_cmd	*programs_list;
 
 	create_cmd_layout(&layout, line);
 	i = 0;
 	cmd_start = 0;
 	cmd_end = get_next_non_redirect_operator_index(line, 0);
-	programs_list = malloc(sizeof(char *) * \
+	programs_list = malloc(sizeof(t_splitted_cmd) * \
 	(layout.non_redirect_operators_nb + 2));
 	while (layout.non_redirect_operators_nb-- >= 0)
 	{
-		programs_list[i++] = ft_substr(line, cmd_start, cmd_end - cmd_start);
+		programs_list[i].cmd = ft_substr(line, cmd_start, cmd_end - cmd_start);
+		programs_list[i].next_cmd_operator = layout.operator_chars[cmd_end]; // we already have it
+		i++;
 		if (line[cmd_end])
 			cmd_end += get_operator_str_len(layout.operator_chars[cmd_end]);
 		cmd_start = cmd_end;
 		cmd_end = get_next_non_redirect_operator_index(line, cmd_end);
 	}
-	programs_list[i] = NULL;
+	programs_list[i].cmd = NULL;
+	programs_list[i].next_cmd_operator = 0;
 	return (programs_list);
 }
 
@@ -126,7 +129,7 @@ char	*remove_first_parentheses(char *str)
 */
 t_cmd	*parse_cmds(char *line)
 {
-	char			**cmds;
+	t_splitted_cmd	*cmds;
 	t_redirection	redirection;
 	int				i;
 	char			*parentheses_string;
@@ -134,7 +137,6 @@ t_cmd	*parse_cmds(char *line)
 
 	i = 0;
 	cmds = split_command_operands(line);
-
 	/*
 		We need to check if the parenthesis are surrounded by operators
 		So that we don't have like echo (cat)
@@ -142,18 +144,18 @@ t_cmd	*parse_cmds(char *line)
 		are considered invalid
 	*/
 	lst = NULL;
-	while (cmds[i])
+	while (cmds[i].cmd)
 	{
-		char *tmp = ft_strtrim(cmds[i], " \n\t\v\f\t");
-		free(cmds[i]);
-		cmds[i] = tmp;
+		char *tmp = ft_strtrim(cmds[i].cmd, " \n\t\v\f\t");
+		free(cmds[i].cmd);
+		cmds[i].cmd = tmp;
 		parentheses_string = NULL;
 
-		if (has_parentheses_to_interpret(cmds[i]))
+		if (has_parentheses_to_interpret(cmds[i].cmd))
 		{
-			if (!is_arg_only_in_parentheses(cmds[i]))
+			if (!is_arg_only_in_parentheses(cmds[i].cmd))
 			{
-				printf("Syntax error on argument '%s' : command between parentheses should not contain arguments outside parentheses\n", cmds[i]);
+				printf("Syntax error on argument '%s' : command between parentheses should not contain arguments outside parentheses\n", cmds[i].cmd);
 				// Don't free from beginning but only remaining commands, because previous have already been freed
 				//while (cmds[i])
 				//	free(cmds[i++]);
@@ -162,19 +164,19 @@ t_cmd	*parse_cmds(char *line)
 			}
 			else
 			{
-				parentheses_string = remove_first_parentheses(cmds[i]);
+				parentheses_string = remove_first_parentheses(cmds[i].cmd);
 			}
 		}
 
 		if (!parentheses_string) // If the cmd is in parentheses, don't do anything just keep raw line
 		{
-			interpret_wildcards(&(cmds[i]));
-			if (parse_redirections_and_create_files(&(cmds[i]), &redirection) == -1)
+			interpret_wildcards(&(cmds[i].cmd));
+			if (parse_redirections_and_create_files(&(cmds[i].cmd), &redirection) == -1)
 			{
 				// TODO: Error happened, otherwise we have a correct redirection
 				return (NULL);
 			}
-			add_cmd(&lst, parse_program_and_args(cmds[i]), redirection, NULL);
+			add_cmd(&lst, parse_program_and_args(cmds[i].cmd), redirection, NULL, cmds[i].next_cmd_operator);
 		}
 		else
 		{
@@ -182,8 +184,8 @@ t_cmd	*parse_cmds(char *line)
 			redirection.out_filename = NULL;
 			redirection.in_filename = 0;
 			redirection.out_filename = 0;
-			free(cmds[i]); // free it since we don't pass it to parsing
-			add_cmd(&lst, NULL, redirection, parentheses_string);
+			free(cmds[i].cmd); // free it since we don't pass it to parsing
+			add_cmd(&lst, NULL, redirection, parentheses_string, cmds[i].next_cmd_operator);
 		}		
 		i++;
 	}

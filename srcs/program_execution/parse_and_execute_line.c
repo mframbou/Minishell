@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 22-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 22-01-2022 21:10 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 22-01-2022 23:56 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -133,8 +133,10 @@ int execute_cmd_lst(int read_fd, t_cmd *cmd_lst)
 
 	curr = cmd_lst;
 	new_read_fd = -1;
+	printf("|=%d ||=%d &&=%d\n", PIPE_CHAR, OR_CHAR, AND_CHAR);
 	while (curr)
 	{
+		printf("Current command: %s, redir type: %d\n", curr->args[0], curr->next_cmd_operator);
 		cmd_count++;
 		if (curr->parentheses_content) // Execute it before
 		{

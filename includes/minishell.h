@@ -6,7 +6,7 @@
 /*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
 /*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
 /*   Created:   by            `-'                        `-'                  */
-/*   Updated: 22-01-2022 20:07 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 22-01-2022 23:41 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,16 @@ int	should_exit(void);
 int	set_should_exit(int code);
 void	free_redirections(t_cmd *lst);
 
+/*
+	example:
+	cmd = "echo test"
+	next_cmd_operator = pipe
+*/
+typedef	struct s_splitted_cmd
+{
+	char	*cmd;
+	int		next_cmd_operator;
+}	t_splitted_cmd;
 
 // Parsing redirections
 char	**remove_empty_args(char **args);

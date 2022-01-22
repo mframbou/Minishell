@@ -6,22 +6,22 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2013/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 22-01-2022 20:01 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 22-01-2022 23:52 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
 t_cmd	**get_cmd_lst(void);
-t_cmd	*create_cmd(char **args, t_redirection redirection, char *parentheses_content);
+t_cmd	*create_cmd(char **args, t_redirection redirection, char *parentheses_content, int next_operator);
 void	add_cmd_to_lst(t_cmd **lst, t_cmd *new);
 
-void	add_cmd(t_cmd **cmd_lst, char **args, t_redirection redirection, char *parentheses_content)
+void	add_cmd(t_cmd **cmd_lst, char **args, t_redirection redirection, char *parentheses_content, int next_operator)
 {
 	//t_cmd	**cmd_lst;
 
 	//cmd_lst = get_cmd_lst();
-	add_cmd_to_lst(cmd_lst, create_cmd(args, redirection, parentheses_content));
+	add_cmd_to_lst(cmd_lst, create_cmd(args, redirection, parentheses_content, next_operator));
 }
 
 // void	clear_cmd_list(void)

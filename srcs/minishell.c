@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 20-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 22-01-2022 21:09 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 22-01-2022 23:39 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -201,6 +201,17 @@ int	are_parentheses_invalid(char *line)
 }
 
 /*
+	operator = Value in the cmd_layout (e_interpreted_char)
+*/
+static int	is_redirection_operator(int operator)
+{
+	return (operator == SINGLE_LEFT_REDIRECT \
+	|| operator == SINGLE_RIGHT_REDIRECT \
+	|| operator == DOUBLE_LEFT_REDIRECT \
+	|| operator == DOUBLE_RIGHT_REDIRECT);
+}
+
+/*
 	No need to check if we have reached the end of the line because
 	we know it's not an empty line
 
@@ -218,7 +229,7 @@ int	has_syntax_error(char *line) // Check for cases like echo | |, | cat etc.
 	i = 0;
 	while (line[i] && ft_isspace(line[i]) && !layout.operator_chars[i])
 		i++;
-	if (layout.operator_chars[i]) // We have an operator at the beginning
+	if (layout.operator_chars[i] && !is_redirection_operator(layout.operator_chars[i])) // We have an operator at the beginning, but we can have redirections at the beggining like in bash
 		return (i + 1);
 	i = 0;
 	while (line[i])
