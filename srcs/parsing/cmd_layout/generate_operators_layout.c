@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 16-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 18-01-2022 19:50 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 22-01-2022 14:05 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -77,6 +77,40 @@ void	layout_wildcard(t_cmd_layout *layout, char *line, int *index)
 }
 
 /*
+	Returns either 1 (closed parenthesis)
+	0 (not closed) => should not interpret
+	-1 (invalid) eg. : (()
+*/
+int	is_closed_and_validparenthesis(char *line)
+{
+	int	i;
+
+	i = 0;
+	while (line[i])
+	{
+		if (line[i] == ')')
+			return (1);
+		else if (line[i] == '(')
+			return (-1);
+	}
+}
+
+void	layout_parenthesis(t_cmd_layout *layout, char *line)
+{
+	int	i;
+
+	i = 0;
+	while (line[i])
+	{
+		if (line[i] == '(')
+		{
+
+		}
+		i++;
+	}
+}
+
+/*
 	Generates the command layout (find operators like pipe, redirect etc.)
 		If we find a quote, don't include the content of the quotes 
 		in the layout, we give the address of the index because if we have for
@@ -89,12 +123,14 @@ void	create_cmd_layout(t_cmd_layout *layout, char *line)
 
 	layout->non_redirect_operators_nb = 0;
 	layout->operators_nb = 0;
-	ft_bzero(layout->operator_chars, 4096);
+	ft_bzero(layout->operator_chars, sizeof(int) * 4096);
 	i = 0;
 	while (line[i])
 	{
-		if ((line[i] == '\'' || line[i] == '"') && is_closed_quote(&line[i]))
+		if (line[i] == '\'' || line[i] == '"')
 			i += is_closed_quote(&line[i]) + 1;
+		if (line[i] == '(')
+			i += is_closed_parenthesis(&(line[i]));
 		if (!line[i])
 			break ;
 		if (line[i] == '|')

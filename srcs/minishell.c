@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 20-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 21-01-2022 01:37 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 22-01-2022 21:09 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -154,6 +154,52 @@ int	has_command_after_index(char *str, int i)
 	return (1);
 }
 
+
+
+/*
+	Uses a stack of 4096 because it's the max line length in bash
+
+	Return 0 = valid
+	1 = invalid
+	automatically prints the error
+*/
+int	are_parentheses_invalid(char *line)
+{
+	char	parenthesis_stack[4096];
+	int		i;
+	int		stack_top;
+
+	ft_bzero(parenthesis_stack, 4096);
+	i = 0;
+	stack_top = 0; // stack_top 1 = 1 ( in our stack, so when accessing use index - 1
+	while (line[i])
+	{
+		if (line[i] == '\'' || line[i] == '"') // skip quotes
+			i += is_closed_quote(&(line[i]));
+		if (line[i] == '(')
+		{
+			parenthesis_stack[stack_top++] = '(';
+		}
+		else if (line[i] == ')')
+		{
+			if (stack_top == 0)
+			{
+				printf("Syntax error near index %d ('%c'): too many closing parentheses\n", i, line[i]);
+				return (1);
+			}
+			if (parenthesis_stack[stack_top - 1] == '(')
+				parenthesis_stack[stack_top--] = 0;
+		}
+		i++;
+	}
+	if (stack_top != 0)
+	{
+		printf("Syntax error: too many opening parentheses\n");
+		return (1);
+	}
+	return (0);
+}
+
 /*
 	No need to check if we have reached the end of the line because
 	we know it's not an empty line
@@ -209,27 +255,44 @@ int	main()
 	//add_env_variable(ft_strdup("TEST"), ft_strdup(">"));	
 
 	//line = ft_strdup("echo pouet > \"test 1\".txt \"(should create a file named test 1.txt)\"");
-	//line = ft_strdup("echo ||cat");
+	//line = ft_strdup("echo test | (cat)");
 	while (1)
 	{
 		line = readline(MINISHELL_PROMPT);
 		if (line && line[0] != '\0' && !is_line_empty(line))
 		{
 			add_history(line);
+			if (are_parentheses_invalid(line))
+				continue ;
 			if (has_syntax_error(line))
 			{
 				printf("Syntax error near index %d ('%c')\n", has_syntax_error(line) - 1, line[has_syntax_error(line) - 1]);
 				continue ;
 			}
-			cmd_list = parse_cmds(line);
-			/*t_cmd *curr = cmd_list;
-			while (curr)
+
+			int res = parse_and_execute_line(-1, line);
+			if (res == -2)
 			{
-				curr = curr->next;
-			}*/
-			if (cmd_list)
-				execute_cmd_lst(cmd_list);
-			clear_cmd_list();
+				printf("Caught error in main\n");
+			}
+			if (res >= 0)
+			{
+				flush_pipe(res);
+			}
+
+			// cmd_list = parse_cmds(line);
+			// /*t_cmd *curr = cmd_list;
+			// while (curr)
+			// {
+			// 	curr = curr->next;
+			// }*/
+			// if (cmd_list)
+			// 	execute_cmd_lst(cmd_list);
+			// clear_cmd_list();
+
+
+
+			
 		}
 		else if (line == NULL)
 		{

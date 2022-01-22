@@ -6,7 +6,7 @@
 /*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
 /*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
 /*   Created:   by            `-'                        `-'                  */
-/*   Updated: 21-01-2022 01:19 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 22-01-2022 20:07 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,14 @@ int		*get_exit_status(void);
 int	set_exit_status(int status);
 
 
+int	parse_and_execute_line(int input_read_fd, char *line);
+
+// from execute_command.c
+int	read_until_delimiter(char *delimiter);
+int	has_slash(char *str);
+char	*search_absolute_path_program(char *program);
+
+
 int	is_regular_file_or_symlink(char *file);
 
 
@@ -56,14 +64,14 @@ int	is_regular_file_or_symlink(char *file);
 void	flush_pipe(int fd);
 int	should_exit(void);
 int	set_should_exit(int code);
-void	free_redirections(void);
+void	free_redirections(t_cmd *lst);
 
 
 // Parsing redirections
 char	**remove_empty_args(char **args);
 void	unquote_all_args(char **args);
 int		perror_return(char *str);
-int		parse_redirectoins_and_create_files(char **line, \
+int		parse_redirections_and_create_files(char **line, \
 											t_redirection *redirection);
 int		get_next_redirect_operator_index(char *line, int current_index);
 int		get_next_redirect_operator_type(char *line, int current_index);
@@ -105,6 +113,7 @@ typedef enum e_interpreted_char
 // Parsing utils
 int		is_line_empty(char *str);
 int		is_closed_quote(char *str);
+int		is_closed_parenthesis(char *str);
 void	remove_substr_from_string(char **str, int start, int end);
 void	remove_char_from_string(char **str, int index);
 void	interpret_quotes(char **str);
@@ -121,7 +130,7 @@ int		execute_program(int input_fd, char *program_path, char **args);
 int		execute_builtin(char **args);
 int		is_builtin(char *program);
 char	*is_program_in_path(char *program);
-int		execute_cmd_lst(t_cmd *cmd_lst);
+//int		execute_cmd_lst(t_cmd *cmd_lst);
 
 // Environment
 void	add_env_variable(char *key, char *value);

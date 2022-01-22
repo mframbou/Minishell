@@ -13,6 +13,7 @@ SRCS =	srcs/minishell.c \
 		\
 		srcs/program_execution/search_executable.c \
 		srcs/program_execution/execute_command.c \
+		srcs/program_execution/parse_and_execute_line.c \
 		srcs/program_execution/cmd_list.c \
 		srcs/program_execution/cmd_list_wrapper.c \
 		\

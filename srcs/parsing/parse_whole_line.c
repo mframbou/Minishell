@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 20-01-2022 21:08 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 22-01-2022 20:57 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -53,6 +53,72 @@ char	**split_command_operands(char *line)
 	return (programs_list);
 }
 
+
+int	has_parentheses_to_interpret(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '\'' || str[i] == '"')
+			i += is_closed_quote(&(str[i]));
+		else if (str[i] == '(' && is_closed_parenthesis(&str[i]))
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+/*
+	Check if arg is fully in parentheses like (echo test)
+	and not (echo test) cat
+
+	if it is not, it's considered invalid
+*/
+int is_arg_only_in_parentheses(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (has_parentheses_to_interpret(str))
+	{
+		if (str[0] != '(') // If we have parenthesis but first char is not one, it's automatically invalid
+			return (0);
+		else
+		{
+			i += is_closed_parenthesis(str);
+			if (str[i + 1]) // If the closing parenthesis is not the last char, it's also invalid
+				return (0);
+		}
+	}
+	return (1); // If the first char is a ( and it is well closed, arg is valid
+}
+
+char	*remove_first_parentheses(char *str)
+{
+	int		i;
+	int		first;
+	int		second;
+	char	*res;
+
+	i = 0;
+	res = ft_strdup(str);
+	while (res[i])
+	{
+		if (res[i] == '(' && is_closed_parenthesis(&res[i]))
+		{
+			first = i;
+			second = is_closed_parenthesis(&(res[i])) - 1; // Since we removed one char already
+			remove_char_from_string(&res, first);
+			remove_char_from_string(&res, second);
+			break ;
+		}
+		i++;
+	}
+	return (res);
+}
+
 /*
 	Takes our line return a list of fully parsed programs
 
@@ -63,24 +129,62 @@ t_cmd	*parse_cmds(char *line)
 	char			**cmds;
 	t_redirection	redirection;
 	int				i;
+	char			*parentheses_string;
+	t_cmd			*lst;
 
 	i = 0;
 	cmds = split_command_operands(line);
+
+	/*
+		We need to check if the parenthesis are surrounded by operators
+		So that we don't have like echo (cat)
+		but only cases like echo | (cat), (echo) | cat, and (echo), all other
+		are considered invalid
+	*/
+	lst = NULL;
 	while (cmds[i])
 	{
-		interpret_wildcards(&(cmds[i]));
-		if (parse_redirectoins_and_create_files(&(cmds[i]), &redirection) == -1)
+		char *tmp = ft_strtrim(cmds[i], " \n\t\v\f\t");
+		free(cmds[i]);
+		cmds[i] = tmp;
+		parentheses_string = NULL;
+
+		if (has_parentheses_to_interpret(cmds[i]))
 		{
-			// TODO: Error happened, otherwise we have a correct redirection
-			return (NULL);
+			if (!is_arg_only_in_parentheses(cmds[i]))
+			{
+				printf("Syntax error on argument '%s' : command between parentheses should not contain arguments outside parentheses\n", cmds[i]);
+				// Don't free from beginning but only remaining commands, because previous have already been freed
+				//while (cmds[i])
+				//	free(cmds[i++]);
+				//free(cmds);
+				return (NULL);
+			}
+			else
+			{
+				parentheses_string = remove_first_parentheses(cmds[i]);
+			}
 		}
-		//printf("Redirection types:\n> = %d\n >> = %d\n< = %d\n<< = %d\n\n", SINGLE_RIGHT_REDIRECT, DOUBLE_RIGHT_REDIRECT, SINGLE_LEFT_REDIRECT, DOUBLE_LEFT_REDIRECT);
-		//printf("Found redirection type in: %d\n", redirection.type);
-		//if (redirection.out_fd >= 0)
-		//	write(redirection.out_fd, "Salut pouet", 12);
-		// Need to add command with correct redirection type, redirection fd and args
-		// parse_program_and_args for args, redirect_fd for fd, need a function for redirection type
-		add_cmd(parse_program_and_args(cmds[i]), redirection);
+
+		if (!parentheses_string) // If the cmd is in parentheses, don't do anything just keep raw line
+		{
+			interpret_wildcards(&(cmds[i]));
+			if (parse_redirections_and_create_files(&(cmds[i]), &redirection) == -1)
+			{
+				// TODO: Error happened, otherwise we have a correct redirection
+				return (NULL);
+			}
+			add_cmd(&lst, parse_program_and_args(cmds[i]), redirection, NULL);
+		}
+		else
+		{
+			redirection.in_filename = NULL;
+			redirection.out_filename = NULL;
+			redirection.in_filename = 0;
+			redirection.out_filename = 0;
+			free(cmds[i]); // free it since we don't pass it to parsing
+			add_cmd(&lst, NULL, redirection, parentheses_string);
+		}		
 		i++;
 	}
 	free(cmds); // Strings are already freed in parsing, just need to free array of string
@@ -92,7 +196,7 @@ t_cmd	*parse_cmds(char *line)
 	//	printf("arg=\"%s\"\n", args[i]);
 	//}
 	//printf("\n");
-	return (*get_cmd_lst());
+	return (lst);
 }
 /*
 	"echo "$USER" | cat > pouet.txt"

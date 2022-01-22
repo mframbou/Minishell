@@ -6,18 +6,18 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 17-01-2022 17:29 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 22-01-2022 20:00 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-t_cmd	**get_cmd_lst(void)
-{
-	static t_cmd	*cmd_lst = NULL;
+// t_cmd	**get_cmd_lst(void)
+// {
+// 	static t_cmd	*cmd_lst = NULL;
 
-	return (&cmd_lst);
-}
+// 	return (&cmd_lst);
+// }
 
 static t_cmd	*get_last_cmd(t_cmd *lst)
 {
@@ -40,7 +40,7 @@ void	init_redirection_struct(t_redirection *redirection)
 	redirection->in_redir_type = 0;
 }
 
-t_cmd	*create_cmd(char **args, t_redirection redirection)
+t_cmd	*create_cmd(char **args, t_redirection redirection, char *parenthesis_content)
 {
 	t_cmd	*new;
 
@@ -52,6 +52,7 @@ t_cmd	*create_cmd(char **args, t_redirection redirection)
 		new->redirection.in_filename = redirection.in_filename;
 		new->redirection.out_redir_type = redirection.out_redir_type;
 		new->redirection.in_redir_type = redirection.in_redir_type;
+		new->parentheses_content = parenthesis_content;
 		new->next = NULL;
 	}
 	return (new);

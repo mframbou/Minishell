@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 15-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 20-01-2022 16:24 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 22-01-2022 15:08 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ static char	*get_first_redirection_filename(char **line, int *redir_type)
 }
 
 /* OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD OLD
-int	parse_redirectoins_and_create_files(char **line, t_redirection *redir)
+int	parse_redirections_and_create_files(char **line, t_redirection *redir)
 {
 	init_redirection_struct(redir);
 	redir->out_filename = get_first_redirection_filename(line, \
@@ -166,7 +166,7 @@ static int	fill_struct_and_create_files(char *filename, int redir_type, \
 		-1 = Error
 		0 = Success (either no filename found or well parsed)
 */
-int	parse_redirectoins_and_create_files(char **line, t_redirection *redir)
+int	parse_redirections_and_create_files(char **line, t_redirection *redir)
 {
 	char	*filename;
 	char	*prev_filename;

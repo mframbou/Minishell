@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 21-01-2022 01:47 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 22-01-2022 20:51 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -319,7 +319,7 @@ int	read_until_delimiter(char *delimiter)
 	return (pipe_fd[0]);
 }
 
-static int	has_slash(char *str)
+int	has_slash(char *str)
 {
 	int	i;
 
@@ -381,10 +381,36 @@ char	*search_absolute_path_program(char *program)
 	return (ft_strdup(program));
 }
 
+
+/*
+	Need a function that take a fd to read from, and returns a fd for next command
+		to read from, which takes a line as argument
+*//*
+int	sample_function(int read_fd, char *line)
+{
+	if (parenthesis(line))
+		{
+			read_fd = sample_function(curr_read_fd, substr(line, parenthesis_pos));
+		}
+}*/
+
+/*
+	Executes everything inside parenthesis (if needed) then return the next
+		fd to read from
+
+	Example input: echo test && (cd ../Minishell || (echo fail && echo fail2))
+	Takes the full line between parenthesis ("cd ../Minishell || (echo fail && echo fail2)")
+	then parse it as before, will make a recursive call with "echo fail && echo fail2"
+*/
+int	execute_parenthesis(int read_fd, char *line)
+{
+	
+}
+
 /*
 	read_fd = fd to read from for next command
 	new_read_fd = fd the first command has written to
-*/
+*//*
 int execute_cmd_lst(t_cmd *cmd_lst)
 {
 	t_cmd	*curr;
@@ -401,6 +427,11 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 	new_read_fd = -1;
 	while (curr)
 	{
+		if (curr->parentheses_content) // Execute it before
+		{
+			parse_and_execute_line(curr->parentheses_content);
+		}
+
 		cmd_count++;
 		if (curr->redirection.in_filename != NULL)
 		{
@@ -515,7 +546,7 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 	g_pid = 0;
 	return (0);
 }
-
+*/
 /*
 void	execute_program(char *program_path, char **args)
 {
