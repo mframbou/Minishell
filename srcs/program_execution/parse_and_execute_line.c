@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 22-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 22-01-2022 23:56 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 23-01-2022 18:58 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -119,6 +119,10 @@ int	parse_and_execute_line(int input_read_fd, char *line)
 /*
 	read_fd = fd to read from for next command
 	new_read_fd = fd the first command has written to
+
+	"sleep 4 | echo test && echo salut" will execute normaly sleep and echo test
+		then wait for them and when they are all finished execute the && or the ||
+	so need to wait for all childrens before doing && or ||
 */
 int execute_cmd_lst(int read_fd, t_cmd *cmd_lst)
 {
@@ -133,16 +137,16 @@ int execute_cmd_lst(int read_fd, t_cmd *cmd_lst)
 
 	curr = cmd_lst;
 	new_read_fd = -1;
-	printf("|=%d ||=%d &&=%d\n", PIPE_CHAR, OR_CHAR, AND_CHAR);
+	//printf("|=%d ||=%d &&=%d\n", PIPE_CHAR, OR_CHAR, AND_CHAR);
 	while (curr)
 	{
-		printf("Current command: %s, redir type: %d\n", curr->args[0], curr->next_cmd_operator);
+		//printf("Current command: %s, redir type: %d\n", curr->args[0], curr->next_cmd_operator);
 		cmd_count++;
 		if (curr->parentheses_content) // Execute it before
 		{
 			new_read_fd = parse_and_execute_line(read_fd, curr->parentheses_content);
-			if (read_fd >= 0)
-				close(read_fd);
+			//if (read_fd >= 0) Do not close here, execute_cmd_list will do it
+			//	close(read_fd);
 			if (new_read_fd == -2)
 			{
 				free_redirections(cmd_lst);
@@ -181,9 +185,37 @@ int execute_cmd_lst(int read_fd, t_cmd *cmd_lst)
 			}
 			while (read(new_read_fd, &buf, 1) > 0)
 				write(fd, &buf, 1);
+			close(fd);
 			new_read_fd = -1;
 			read_fd = -1;
 		}
+
+		if (curr->next_cmd_operator == AND_CHAR || curr->next_cmd_operator == OR_CHAR)
+		{
+			
+			if (waitpid(g_pid, &exit_status, 0) != -1) // wait for the last process, then wait for all other
+				set_exit_status(exit_status);
+			while (wait(NULL) > 0);	// Wait for all other childs but don't save exit status
+			flush_pipe(read_fd); // flush pipe since it's redirected to stdout and not a pipe
+			read_fd = -1;
+			new_read_fd = -1;
+			// Then check
+			if (curr->next_cmd_operator == AND_CHAR && *get_exit_status() != 0) // Skip the next command
+			{
+				curr = curr->next; // go to next cmd as usual
+				if (curr)
+					curr = curr->next; // then one after
+				continue ;
+			}
+			else if (curr->next_cmd_operator == OR_CHAR && *get_exit_status() == 0)
+			{
+				curr = curr->next; // go to next cmd as usual
+				if (curr)
+					curr = curr->next; // then one after
+				continue ;
+			}
+		}
+		
 		curr = curr->next;
 
 		if (should_exit() && cmd_count == 1 && !curr) // Only exit if it's the only command

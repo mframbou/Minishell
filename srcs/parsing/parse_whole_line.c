@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 22-01-2022 23:51 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 23-01-2022 18:49 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -171,6 +171,7 @@ t_cmd	*parse_cmds(char *line)
 		if (!parentheses_string) // If the cmd is in parentheses, don't do anything just keep raw line
 		{
 			interpret_wildcards(&(cmds[i].cmd));
+
 			if (parse_redirections_and_create_files(&(cmds[i].cmd), &redirection) == -1)
 			{
 				// TODO: Error happened, otherwise we have a correct redirection

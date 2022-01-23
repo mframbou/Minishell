@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 20-01-2022 16:06 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 23-01-2022 18:59 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -141,9 +141,9 @@ void	fill_args_of_one_program(char *program, char **args)
 */
 char	**parse_program_and_args(char *line)
 {
-	char	**args;
-	char	*current_arg;
-	char	*new_line;
+	char			**args;
+	char			*current_arg;
+	char			*new_line;
 
 	new_line = ft_strtrim(line, " \t\v\f\r");
 	free(line);

@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 20-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 22-01-2022 23:39 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 23-01-2022 18:45 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -229,12 +229,12 @@ int	has_syntax_error(char *line) // Check for cases like echo | |, | cat etc.
 	i = 0;
 	while (line[i] && ft_isspace(line[i]) && !layout.operator_chars[i])
 		i++;
-	if (layout.operator_chars[i] && !is_redirection_operator(layout.operator_chars[i])) // We have an operator at the beginning, but we can have redirections at the beggining like in bash
+	if (layout.operator_chars[i] && !is_redirection_operator(layout.operator_chars[i]) && layout.operator_chars[i] != WILDCARD_CHAR) // We have an operator at the beginning, but we can have redirections at the beggining like in bash
 		return (i + 1);
 	i = 0;
 	while (line[i])
 	{
-		if (layout.operator_chars[i])
+		if (layout.operator_chars[i] && layout.operator_chars[i] != WILDCARD_CHAR)
 		{
 			if (!line[i + 1]) // operator at the end of line
 				return (i + 1);
@@ -266,7 +266,7 @@ int	main()
 	//add_env_variable(ft_strdup("TEST"), ft_strdup(">"));	
 
 	//line = ft_strdup("echo pouet > \"test 1\".txt \"(should create a file named test 1.txt)\"");
-	//line = ft_strdup("echo test | (cat)");
+	//line = ft_strdup("echo *");
 	while (1)
 	{
 		line = readline(MINISHELL_PROMPT);
@@ -290,6 +290,10 @@ int	main()
 			{
 				flush_pipe(res);
 			}
+			int exit_status = 0;
+			if (waitpid(g_pid, &exit_status, 0) != -1) // wait for the last process, then wait for all other
+				set_exit_status(exit_status);
+			while (wait(NULL) > 0);
 
 			// cmd_list = parse_cmds(line);
 			// /*t_cmd *curr = cmd_list;
