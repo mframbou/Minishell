@@ -6,3 +6,4 @@
 libft/*.o
 !TRICKS.txt
 !test.sh
+!ft_malloc/*
