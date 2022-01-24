@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 24-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 24-01-2022 01:36 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 01:33 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ void	ft_free(void *ptr)
 			*ptr_lst = curr->next;
 		else
 			prev->next = curr->next;
-		//free(curr->ptr);
-		//free(curr);
+		free(curr->ptr);
+		free(curr);
 	}
 }
 
@@ -58,7 +58,7 @@ void	ft_free_all(void)
 	{
 		prev = curr;
 		curr = curr->next;
-		//free(prev->ptr);
-		//free(prev);
+		free(prev->ptr);
+		free(prev);
 	}
 }

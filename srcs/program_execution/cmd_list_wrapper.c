@@ -6,7 +6,7 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2013/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 22-01-2022 23:52 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 01:37 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	add_cmd(t_cmd **cmd_lst, char **args, t_redirection redirection, char *pare
 // 		curr = curr->next;
 // 		prev->next = NULL;
 // 		free_ft_split(prev->args);
-// 		free(prev);
+// 		//free(prev);
 // 	}
 // 	*cmd_lst = NULL;
 // }
@@ -54,8 +54,8 @@ void	clear_cmd_list(t_cmd **lst)
 		prev = curr;
 		curr = curr->next;
 		prev->next = NULL;
-		free_ft_split(prev->args);
-		free(prev);
+		//free_ft_split(prev->args);
+		//free(prev);
 	}
-	free (*lst);
+	//free(*lst);
 }

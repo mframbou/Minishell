@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 23-01-2022 18:59 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 01:39 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static int	count_args(char *line)
 		if (current_arg)
 		{
 			count++;
-			free(current_arg);
+			//free(current_arg);
 			//i += ft_strlen(current_arg);
 		}
 	}
@@ -70,10 +70,10 @@ static int	count_args(char *line)
 	//	{
 	//		i += ft_strlen(current_arg);
 	//		count++;
-	//		free(current_arg);
+	//		//free(current_arg);
 	//	}		
 	//}
-	//free(line);
+	////free(line);
 	return (count);
 }
 
@@ -89,18 +89,18 @@ char	**remove_empty_args(char **args)
 	while (args[++i])
 		if (args[i][0] != '\0')
 			valid_count++;
-	new_args = (char **) malloc(sizeof (char *) * (valid_count + 1));
+	new_args = (char **) ft_malloc(sizeof (char *) * (valid_count + 1));
 	i = 0;
 	j = 0;
 	while (args[i])
 	{
 		if (args[i][0] != '\0')
 			new_args[j++] = args[i];
-		else
-			free(args[i]);
+		//else
+			//free(args[i]);
 		i++;
 	}
-	free(args);
+	//free(args);
 	new_args[j] = NULL;
 	return (new_args);
 }
@@ -146,12 +146,12 @@ char	**parse_program_and_args(char *line)
 	char			*new_line;
 
 	new_line = ft_strtrim(line, " \t\v\f\r");
-	free(line);
-	args = (char **) malloc(sizeof(char *) * (count_args(new_line) + 1));
+	//free(line);
+	args = (char **) ft_malloc(sizeof(char *) * (count_args(new_line) + 1));
 	if (!args)
 		return (NULL);
 	fill_args_of_one_program(new_line, args);
-	free(new_line);
+	//free(new_line);
 	interpret_all_args(&args);
 	args = remove_empty_args(args);
 	return (args);

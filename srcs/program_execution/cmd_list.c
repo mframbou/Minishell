@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 22-01-2022 23:51 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 01:31 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ t_cmd	*create_cmd(char **args, t_redirection redirection, char *parenthesis_cont
 {
 	t_cmd	*new;
 
-	new = malloc(sizeof(t_cmd));
+	new = ft_malloc(sizeof(t_cmd));
 	if (new)
 	{
 		new->args = args;

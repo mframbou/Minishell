@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 12-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 12-01-2022 18:37 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 01:35 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static char	*generate_var_string(t_env_link *var)
 */
 static void	*free_all_return_null(char **str_array)
 {
-	free_ft_split(str_array);
+	//free_ft_split(str_array);
 	return (NULL);
 }
 
@@ -66,7 +66,7 @@ char	**get_env_as_string_array(void)
 
 	i = 0;
 	curr = *get_var_list();
-	res = (char **) malloc(sizeof(char *) * (count_lst_size(curr) + 1));
+	res = (char **) ft_malloc(sizeof(char *) * (count_lst_size(curr) + 1));
 	if (res)
 	{
 		i = 0;

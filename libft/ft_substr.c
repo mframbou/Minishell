@@ -6,13 +6,14 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/06 16:37:47 by mframbou          #+#    #+#             */
-/*   Updated: 2021/08/08 20:04:53 by mframbou         ###   ########.fr       */
+/*   Updated: 24-01-2022 01:34 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <string.h>
 #include <stdlib.h>
 #include "libft.h"
+#include "ft_malloc/ft_malloc.h"
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
@@ -21,12 +22,12 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 
 	if (start >= ft_strlen(s))
 	{
-		substr = (char *) malloc(sizeof (char));
+		substr = (char *) ft_malloc(sizeof (char));
 		if (substr)
 			*substr = '\0';
 		return (substr);
 	}
-	substr = (char *) malloc(sizeof(char) * (len + 1));
+	substr = (char *) ft_malloc(sizeof(char) * (len + 1));
 	if (substr)
 	{
 		i = 0;

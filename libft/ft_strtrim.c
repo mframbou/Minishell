@@ -6,11 +6,12 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/06 16:50:36 by mframbou          #+#    #+#             */
-/*   Updated: 2021/08/08 19:03:12 by mframbou         ###   ########.fr       */
+/*   Updated: 24-01-2022 01:35 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include "ft_malloc/ft_malloc.h"
 
 static int	ft_isinset(char c, char const *set)
 {
@@ -44,7 +45,7 @@ char	*ft_strtrim(char const *s, char const *set)
 		end++;
 	while (ft_isinset(s[end - 1], set) && end != 0 && end > start)
 		end--;
-	res = (char *) malloc (sizeof(char) * (end - start + 1));
+	res = (char *) ft_malloc (sizeof(char) * (end - start + 1));
 	if (res)
 	{
 		res[end - start] = '\0';

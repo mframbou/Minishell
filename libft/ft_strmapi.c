@@ -6,11 +6,12 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/06 16:26:29 by mframbou          #+#    #+#             */
-/*   Updated: 2021/08/06 16:29:22 by mframbou         ###   ########.fr       */
+/*   Updated: 24-01-2022 01:35 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include "ft_malloc/ft_malloc.h"
 
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 {
@@ -20,7 +21,7 @@ char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 	i = 0;
 	while (s[i])
 		i++;
-	fresh = (char *) malloc (sizeof (char) * (i + 1));
+	fresh = (char *) ft_malloc (sizeof (char) * (i + 1));
 	if (fresh)
 	{
 		fresh[i] = '\0';

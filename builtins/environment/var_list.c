@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 12-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 21-01-2022 01:19 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 01:36 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ t_env_link	**get_var_list(void)
 
 void	free_var_list(void)
 {
-	free(*(get_var_list()));
+	//free(*(get_var_list()));
 }
 
 void	free_environment(void)
@@ -34,8 +34,8 @@ void	free_environment(void)
 	{
 		prev = curr;
 		curr = curr->next;
-		free(prev->var.key);
-		free(prev->var.value);
-		free(prev);
+		//free(prev->var.key);
+		//free(prev->var.value);
+		//free(prev);
 	}
 }

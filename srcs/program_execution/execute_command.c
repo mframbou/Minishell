@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 23-01-2022 15:23 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 01:36 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	execute_builtin(char *builtin, char **args)
 	// We give it even the program name by convention
 	if (fork() == 0)
 		execve(program_path, args, NULL);
-	free(program_path);
+	//free(program_path);
 }*/
 /*
 int	execute_command(char **args)
@@ -485,7 +485,7 @@ int execute_cmd_lst(t_cmd *cmd_lst)
 					return (1);
 				}
 			}
-			free(program);
+			//free(program);
 		}
 		if (read_fd >= 0)
 			close(read_fd);

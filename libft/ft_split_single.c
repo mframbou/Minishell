@@ -6,12 +6,13 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/06 17:15:28 by mframbou          #+#    #+#             */
-/*   Updated: 2022/01/10 13:26:30 by mframbou         ###   ########.fr       */
+/*   Updated: 24-01-2022 01:34 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include "libft.h"
+#include "ft_malloc/ft_malloc.h"
 
 static void	*clean_array(char **arr)
 {
@@ -66,7 +67,7 @@ char	**ft_split_single(char const *s, char c)
 	i = -1;
 	j = 0;
 	substr_count = get_substring_count(s, c);
-	res = malloc (sizeof (char *) * (substr_count + 1));
+	res = ft_malloc (sizeof (char *) * (substr_count + 1));
 	if (!res)
 		return (NULL);
 	while (++i < substr_count)

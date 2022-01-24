@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 18-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 23-01-2022 19:32 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 01:36 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static char	**list_files_in_directory(char *folder)
 	struct dirent	*curr_file;
 	int				i;
 
-	files = malloc(sizeof(char *) * (count_files_in_directory(".") + 1));
+	files = ft_malloc(sizeof(char *) * (count_files_in_directory(".") + 1));
 	i = 0;
 	dir = opendir(".");
 	if (dir)
@@ -108,12 +108,12 @@ static void	add_quotes_to_strs(char **array)
 			j++;
 		}
 		new_str_size = ft_strlen(array[i]) + 3;
-		str = malloc(sizeof(char) * new_str_size);
+		str = ft_malloc(sizeof(char) * new_str_size);
 		str[0] = '\'';
 		ft_strlcpy(&(str[1]), array[i], new_str_size);
 		str[new_str_size - 2] = '\'';
 		str[new_str_size - 1] = '\0';
-		free(array[i]);
+		//free(array[i]);
 		array[i] = str;
 		i++;
 	}
@@ -135,7 +135,7 @@ char	**generate_wildcard_in_current_dir(void)
 	
 	if (count_files_in_directory(".") == 0)
 	{
-		files = malloc(sizeof(char *) * 2); // ["*", NULL]
+		files = ft_malloc(sizeof(char *) * 2); // ["*", NULL]
 		files[0] = ft_strdup("'*'");
 		files[1] = NULL;
 	}
@@ -156,7 +156,7 @@ char	*get_one_line_wildcard(void)
 	if (files)
 	{
 		line = convert_str_array_to_one_line(files);
-		free_ft_split(files);
+		//free_ft_split(files);
 	}
 	return (line);
 }

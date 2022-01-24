@@ -6,18 +6,19 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/07 21:53:23 by mframbou          #+#    #+#             */
-/*   Updated: 2021/08/08 22:04:18 by mframbou         ###   ########.fr       */
+/*   Updated: 24-01-2022 01:34 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include "libft.h"
+#include "ft_malloc/ft_malloc.h"
 
 t_list	*ft_lstnew(void const *content)
 {
 	t_list	*link;
 
-	link = (t_list *) malloc(sizeof (t_list));
+	link = (t_list *) ft_malloc(sizeof (t_list));
 	if (link)
 	{
 		link->content = (void *) content;
@@ -31,12 +32,12 @@ t_list	*ft_lstnew(void const *content, size_t content_size)
 {
 	t_list	*link;
 
-	link = (t_list *) malloc(sizeof (t_list));
+	link = (t_list *) ft_malloc(sizeof (t_list));
 	if (!link)
 		return (NULL);
 	if (content)
 	{
-		link->content = malloc(content_size);
+		link->content = ft_malloc(content_size);
 		if (!link->content)
 		{
 			free(link);

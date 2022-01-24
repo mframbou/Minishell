@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 2022/01/13 00:41:04 by mframbou         ###   ########.fr       */
+/*   Updated: 24-01-2022 01:39 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ static void	lst_add_env_variable(t_env_link **var_lst, t_env_link *new)
 
 static void	overwrite_var_value(t_env_link *var, char *new_value)
 {
-	if (var->var.value)
-		free(var->var.value);
+	//if (var->var.value)
+		////free(var->var.value);
 	var->var.value = new_value;
 }
 

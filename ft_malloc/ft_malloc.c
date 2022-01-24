@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 24-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 24-01-2022 01:28 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 01:40 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ typedef struct s_ft_pointer
 }	t_ft_pointer;
 
 // Return pointer to array of void *
-static t_ft_pointer	**get_ft_malloc_lst(void)
+t_ft_pointer	**get_ft_malloc_lst(void)
 {
 	static t_ft_pointer	*ft_malloc_lst = NULL;
 

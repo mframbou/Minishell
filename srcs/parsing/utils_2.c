@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 18-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 18-01-2022 22:05 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 01:31 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ char	*convert_str_array_to_one_line(char **array)
 	i = 0;
 	while (array[i])
 		total_len += ft_strlen(array[i++]) + 1;
-	res = malloc(sizeof(char) * (total_len));
+	res = ft_malloc(sizeof(char) * (total_len));
 	if (res)
 	{
 		i = 0;

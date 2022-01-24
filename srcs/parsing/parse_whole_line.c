@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 23-01-2022 18:49 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 01:36 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ t_splitted_cmd	*split_command_operands(char *line)
 	i = 0;
 	cmd_start = 0;
 	cmd_end = get_next_non_redirect_operator_index(line, 0);
-	programs_list = malloc(sizeof(t_splitted_cmd) * \
+	programs_list = ft_malloc(sizeof(t_splitted_cmd) * \
 	(layout.non_redirect_operators_nb + 2));
 	while (layout.non_redirect_operators_nb-- >= 0)
 	{
@@ -147,7 +147,7 @@ t_cmd	*parse_cmds(char *line)
 	while (cmds[i].cmd)
 	{
 		char *tmp = ft_strtrim(cmds[i].cmd, " \n\t\v\f\t");
-		free(cmds[i].cmd);
+		//free(cmds[i].cmd);
 		cmds[i].cmd = tmp;
 		parentheses_string = NULL;
 
@@ -158,8 +158,8 @@ t_cmd	*parse_cmds(char *line)
 				printf("Syntax error on argument '%s' : command between parentheses should not contain arguments outside parentheses\n", cmds[i].cmd);
 				// Don't free from beginning but only remaining commands, because previous have already been freed
 				//while (cmds[i])
-				//	free(cmds[i++]);
-				//free(cmds);
+				//	//free(cmds[i++]);
+				////free(cmds);
 				return (NULL);
 			}
 			else
@@ -185,12 +185,12 @@ t_cmd	*parse_cmds(char *line)
 			redirection.out_filename = NULL;
 			redirection.in_filename = 0;
 			redirection.out_filename = 0;
-			free(cmds[i].cmd); // free it since we don't pass it to parsing
+			//free(cmds[i].cmd); // free it since we don't pass it to parsing
 			add_cmd(&lst, NULL, redirection, parentheses_string, cmds[i].next_cmd_operator);
 		}		
 		i++;
 	}
-	free(cmds); // Strings are already freed in parsing, just need to free array of string
+	//free(cmds); // Strings are already freed in parsing, just need to free array of string
 	//free_ft_split(cmds);
 	//interpret_all_args(&args); // Puts quotes around every arg, must remove it after parsing redirection
 	//return(0);

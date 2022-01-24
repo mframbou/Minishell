@@ -6,7 +6,7 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2013/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 19-01-2022 13:52 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 01:37 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ static char	*interpret_one_dollar_var_2(char *src, int res_size, \
 	int		j;
 	char	*env_value;
 
-	result = malloc(sizeof(char) * res_size);
+	result = ft_malloc(sizeof(char) * res_size);
 	j = 0;
 	while (src[j] && j < dollar_char_index)
 	{
@@ -102,7 +102,7 @@ static char	*interpret_one_dollar_var_2(char *src, int res_size, \
 		ft_strlcat(result, env_value, res_size);
 	j += (ft_strlen(env_name) + 1);
 	ft_strlcat(result, &(src[j]), res_size);
-	free(env_name);
+	//free(env_name);
 	return (result);
 }
 
@@ -121,7 +121,7 @@ char	*get_unquoted_arg(char *str)
 	if (str && (str[0] == '\'' || str[0] == '"') && is_closed_quote(&str[0]))
 	{
 		res = ft_substr(str, 1, ft_strlen(str) - 2);
-		free(str);
+		//free(str);
 	}
 	else
 		res = str;
@@ -200,7 +200,7 @@ char	*interpret_env_args(char *str)
 			{
 				tmp = str;
 				str = interpret_one_dollar_var(tmp, &i);
-				free (tmp);
+				//free(tmp);
 			}
 			
 			continue ;
@@ -222,11 +222,11 @@ char	*interpret_env_args(char *str)
 			{
 				tmp = result;
 				result = interpret_one_dollar_var(tmp, i);
-				free(tmp);
+				//free(tmp);
 			}
 			i++;
 		}
-		free(str);
+		//free(str);
 	}
 	return (get_unquoted_arg(result));
 	//return (result);

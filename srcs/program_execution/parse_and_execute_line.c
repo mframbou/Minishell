@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 22-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 24-01-2022 01:28 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 01:37 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int	execute_program_if_found(char **args, int read_fd, int *waitpid_count)
 			//flush_pipe(read_fd); // Do not print to output since it failed, eg echo test | pouet should not output "test'\n pouet command not found" but just "pouet command not found"
 			return (-2);
 		}
-		free(program);
+		//free(program);
 	}
 	return (new_read_fd);
 }
@@ -225,6 +225,7 @@ int execute_cmd_lst(int read_fd, t_cmd *cmd_lst)
 			free_redirections(cmd_lst);
 			rl_clear_history();
 			free_environment();
+			//ft_free_all();
 			exit(*get_exit_status());
 		}
 		else if (should_exit())

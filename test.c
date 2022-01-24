@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 18-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 23-01-2022 18:47 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 01:30 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	remove_char_from_string(char **str, int index)
 	if (index > ft_strlen(*str) - 1 || index < 0)
 		return ;
 	new_len = ft_strlen(*str) - 1;
-	res = malloc(sizeof(char) * (new_len + 1));
+	res = ft_malloc(sizeof(char) * (new_len + 1));
 	if (res)
 	{
 		ft_bzero(res, new_len + 1);
@@ -104,7 +104,7 @@ static char	**list_files_in_directory(char *folder)
 	struct dirent	*curr_file;
 	int				i;
 
-	files = malloc(sizeof(char *) * (count_files_in_directory(".") + 1));
+	files = ft_malloc(sizeof(char *) * (count_files_in_directory(".") + 1));
 	i = 0;
 	dir = opendir(".");
 	if (dir)
@@ -160,7 +160,7 @@ static void	add_quotes_to_strs(char **array)
 	while (array[i])
 	{
 		new_str_size = ft_strlen(array[i]) + 3;
-		str = malloc(sizeof(char) * new_str_size);
+		str = ft_malloc(sizeof(char) * new_str_size);
 		str[0] = '\'';
 		ft_strlcpy(&(str[1]), str, new_str_size);
 		str[new_str_size - 2] = '\'';
@@ -186,7 +186,7 @@ char	**generate_wildcard_in_current_dir(void)
 	
 	if (count_files_in_directory(".") == 0)
 	{
-		files = malloc(sizeof(char *) * 2); // ["*", NULL]
+		files = ft_malloc(sizeof(char *) * 2); // ["*", NULL]
 		files[0] = ft_strdup("'*'");
 		files[1] = NULL;
 	}
@@ -217,7 +217,7 @@ char	*convert_str_array_to_one_line(char **array)
 	i = 0;
 	while (array[i])
 		total_len += ft_strlen(array[i++]) + 1;
-	res = malloc(sizeof(char) * (total_len));
+	res = ft_malloc(sizeof(char) * (total_len));
 	if (res)
 	{
 		i = 0;
@@ -251,7 +251,7 @@ static char	*insert_str_in_str(char *src, char *str, int index)
 	int		j;
 	int		k;
 
-	res = malloc(sizeof(char) * (ft_strlen(src) + ft_strlen(str) + 1));
+	res = ft_malloc(sizeof(char) * (ft_strlen(src) + ft_strlen(str) + 1));
 	if (index < 0 || index > ft_strlen(src))
 		return (NULL);
 	if (res)

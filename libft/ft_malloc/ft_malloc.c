@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 24-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 24-01-2022 01:36 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 01:33 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -18,47 +18,50 @@ typedef struct s_ft_pointer
 	void					*ptr;
 }	t_ft_pointer;
 
-t_ft_pointer	**get_ft_malloc_lst(void);
+// Return pointer to array of void *
+t_ft_pointer	**get_ft_malloc_lst(void)
+{
+	static t_ft_pointer	*ft_malloc_lst = NULL;
 
-void	ft_free(void *ptr)
+	return (&ft_malloc_lst);
+}
+
+static t_ft_pointer	*create_link(void *ptr)
+{
+	t_ft_pointer	*new;
+
+	new = malloc(sizeof(t_ft_pointer));
+	if (new)
+	{
+		new->next = NULL;
+		new->ptr = ptr;
+	}
+	return (new);
+}
+
+void	add_ft_malloc(void *ptr)
 {
 	t_ft_pointer	**ptr_lst;
 	t_ft_pointer	*curr;
-	t_ft_pointer	*prev;
 
 	ptr_lst = get_ft_malloc_lst();
-	prev = NULL;
 	curr = *ptr_lst;
-	while (curr && curr != ptr)
+	if (!curr)
+		*ptr_lst = create_link(ptr);
+	else
 	{
-		prev = curr;
-		curr = curr->next;
-	}
-	if (curr == ptr)
-	{
-		if (!prev)
-			*ptr_lst = curr->next;
-		else
-			prev->next = curr->next;
-		//free(curr->ptr);
-		//free(curr);
+		while (curr->next)
+			curr = curr->next;
+		curr->next = create_link(ptr);
 	}
 }
 
-void	ft_free_all(void)
+void	*ft_malloc(size_t size)
 {
-	t_ft_pointer	**ptr_lst;
-	t_ft_pointer	*curr;
-	t_ft_pointer	*prev;
+	void	*ptr;
 
-	ptr_lst = get_ft_malloc_lst();
-	prev = NULL;
-	curr = *ptr_lst;
-	while (curr)
-	{
-		prev = curr;
-		curr = curr->next;
-		//free(prev->ptr);
-		//free(prev);
-	}
+	ptr = malloc(size);
+	if (ptr)
+		add_ft_malloc(ptr);
+	return (ptr);
 }

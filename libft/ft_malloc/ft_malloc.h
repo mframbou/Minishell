@@ -5,46 +5,16 @@
 /*        )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )         .    */
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
-/*   Created: 20-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 24-01-2022 01:36 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Created: 24-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
+/*   Updated: 24-01-2022 01:27 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#ifndef FT_MALLOC_H
+# define FT_MALLOC_H
 
-t_cmd	**get_cmd_lst(void);
+void	ft_free(void *ptr);
+void	ft_free_all(void);
+void	*ft_malloc(size_t size);
 
-void free_all_and_exit(int code, int current_fd)
-{
-	
-}
-
-void	free_redirections(t_cmd *cmds)
-{
-	//t_cmd	*cmds;
-
-	//cmds = *get_cmd_lst();
-	while (cmds)
-	{
-		//free(cmds->redirection.in_filename);
-		//free(cmds->redirection.out_filename);
-		cmds = cmds->next;
-	}
-}
-
-void	flush_pipe(int fd)
-{
-	char	buf;
-	int		read_val;
-
-	if (fd == -1)
-		return ;
-	read_val = read(fd, &buf, 1);
-	while (read_val)
-	{
-		write(STDOUT_FILENO, &buf, 1);
-		read_val = read(fd, &buf, 1);
-		//usleep(500000);
-	}
-	close(fd);
-}
+#endif

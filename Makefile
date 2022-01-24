@@ -10,6 +10,8 @@
 
 
 SRCS =	srcs/minishell.c \
+		ft_malloc/ft_free.c \
+		ft_malloc/ft_malloc.c \
 		\
 		srcs/program_execution/search_executable.c \
 		srcs/program_execution/execute_command.c \

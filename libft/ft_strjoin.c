@@ -6,11 +6,12 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/06 16:44:03 by mframbou          #+#    #+#             */
-/*   Updated: 2021/08/06 16:50:21 by mframbou         ###   ########.fr       */
+/*   Updated: 24-01-2022 01:35 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include "ft_malloc/ft_malloc.h"
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
@@ -27,7 +28,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		i++;
 		j++;
 	}
-	res = (char *) malloc(sizeof(char) * (i + 1));
+	res = (char *) ft_malloc(sizeof(char) * (i + 1));
 	if (res)
 	{
 		res[i] = 0;

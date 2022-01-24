@@ -6,11 +6,12 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/06 20:29:27 by mframbou          #+#    #+#             */
-/*   Updated: 2021/08/06 23:33:46 by mframbou         ###   ########.fr       */
+/*   Updated: 24-01-2022 01:34 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include "ft_malloc/ft_malloc.h"
 
 static int	get_nbr_len(int nb)
 {
@@ -47,7 +48,7 @@ char	*ft_itoa(int n)
 	int		nbr_len;
 
 	nbr_len = get_nbr_len(n);
-	res = malloc (sizeof(char) * (nbr_len + 1));
+	res = ft_malloc (sizeof(char) * (nbr_len + 1));
 	i = nbr_len - 1;
 	pos_nb = n;
 	if (!res)

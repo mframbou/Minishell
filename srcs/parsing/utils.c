@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 22-01-2022 17:14 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 01:36 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	remove_char_from_string(char **str, int index)
 	if (index > ft_strlen(*str) - 1 || index < 0)
 		return ;
 	new_len = ft_strlen(*str) - 1;
-	res = malloc(sizeof(char) * (new_len + 1));
+	res = ft_malloc(sizeof(char) * (new_len + 1));
 	if (res)
 	{
 		ft_bzero(res, new_len + 1);
@@ -39,7 +39,7 @@ void	remove_char_from_string(char **str, int index)
 		ft_strlcat(res, *str, new_len + 1);
 		(*str)[index] = old_char;
 		ft_strlcat(res, &((*str)[index + 1]), new_len + 1);
-		free(*str);
+		//free(*str);
 		*str = res;
 	}
 }
@@ -156,7 +156,7 @@ char	*insert_str_in_str(char *src, char *str, int index)
 	int		j;
 	int		k;
 
-	res = malloc(sizeof(char) * (ft_strlen(src) + ft_strlen(str) + 1));
+	res = ft_malloc(sizeof(char) * (ft_strlen(src) + ft_strlen(str) + 1));
 	if (index < 0 || index > ft_strlen(src))
 		return (NULL);
 	if (res)
@@ -172,7 +172,7 @@ char	*insert_str_in_str(char *src, char *str, int index)
 			res[i++] = src[j++];
 		res[i] = '\0';
 	}
-	free(src);
-	free(str);
+	//free(src);
+	//free(str);
 	return (res);
 }
