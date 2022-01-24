@@ -6,11 +6,13 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 16-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 22-01-2022 14:05 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 19:46 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
 #include "../../../includes/minishell.h"
+
+void	layout_wildcard(t_cmd_layout *layout, char *line, int *index);
 
 static void	layout_pipe(t_cmd_layout *layout, char *line, int *index)
 {
@@ -70,46 +72,6 @@ static void	layout_and(t_cmd_layout *layout, char *line, int *index)
 	}
 }
 
-void	layout_wildcard(t_cmd_layout *layout, char *line, int *index)
-{
-	layout->operator_chars[(*index)] = WILDCARD_CHAR;
-	layout->operators_nb++;
-}
-
-/*
-	Returns either 1 (closed parenthesis)
-	0 (not closed) => should not interpret
-	-1 (invalid) eg. : (()
-*/
-int	is_closed_and_validparenthesis(char *line)
-{
-	int	i;
-
-	i = 0;
-	while (line[i])
-	{
-		if (line[i] == ')')
-			return (1);
-		else if (line[i] == '(')
-			return (-1);
-	}
-}
-
-void	layout_parenthesis(t_cmd_layout *layout, char *line)
-{
-	int	i;
-
-	i = 0;
-	while (line[i])
-	{
-		if (line[i] == '(')
-		{
-
-		}
-		i++;
-	}
-}
-
 /*
 	Generates the command layout (find operators like pipe, redirect etc.)
 		If we find a quote, don't include the content of the quotes 
@@ -124,8 +86,8 @@ void	create_cmd_layout(t_cmd_layout *layout, char *line)
 	layout->non_redirect_operators_nb = 0;
 	layout->operators_nb = 0;
 	ft_bzero(layout->operator_chars, sizeof(int) * 4096);
-	i = 0;
-	while (line[i])
+	i = -1;
+	while (line[++i])
 	{
 		if (line[i] == '\'' || line[i] == '"')
 			i += is_closed_quote(&line[i]) + 1;
@@ -143,6 +105,5 @@ void	create_cmd_layout(t_cmd_layout *layout, char *line)
 			layout_and(layout, line, &i);
 		else if (line[i] == '*')
 			layout_wildcard(layout, line, &i);
-		i++;
 	}
 }

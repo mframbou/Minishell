@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 17-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 17-01-2022 18:39 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 19:47 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -39,6 +39,6 @@ int	open_file_for_redirection(char *filename, int redirection_type)
 		return (-1);
 	fd = open(filename, flags, mode);
 	if (fd == -1)
-		perror(filename); // TODO add prompt etc
+		perror(filename);
 	return (fd);
 }

@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 20-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 24-01-2022 01:36 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 16:50 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -14,22 +14,9 @@
 
 t_cmd	**get_cmd_lst(void);
 
-void free_all_and_exit(int code, int current_fd)
+void	free_all_and_exit(int code, int current_fd)
 {
-	
-}
-
-void	free_redirections(t_cmd *cmds)
-{
-	//t_cmd	*cmds;
-
-	//cmds = *get_cmd_lst();
-	while (cmds)
-	{
-		//free(cmds->redirection.in_filename);
-		//free(cmds->redirection.out_filename);
-		cmds = cmds->next;
-	}
+	return ;
 }
 
 void	flush_pipe(int fd)
@@ -44,7 +31,6 @@ void	flush_pipe(int fd)
 	{
 		write(STDOUT_FILENO, &buf, 1);
 		read_val = read(fd, &buf, 1);
-		//usleep(500000);
 	}
 	close(fd);
 }

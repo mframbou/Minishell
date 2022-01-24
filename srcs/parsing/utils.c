@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 24-01-2022 01:36 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 19:43 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	remove_char_from_string(char **str, int index)
 		ft_strlcat(res, *str, new_len + 1);
 		(*str)[index] = old_char;
 		ft_strlcat(res, &((*str)[index + 1]), new_len + 1);
-		//free(*str);
+		ft_free(*str);
 		*str = res;
 	}
 }
@@ -66,80 +66,6 @@ int	is_closed_quote(char *str)
 		return (0);
 	return (i);
 }
-
-
-
-/*
-nt		i;
-	int		stack_top;
-
-	ft_bzero(parenthesis_stack, 4096);
-	i = 0;
-	stack_top = 0; // stack_top 1 = 1 ( in our stack, so when accessing use index - 1
-	while (line[i])
-	{
-		if (line[i] == '\'' || line[i] == '"') // skip quotes
-			i += is_closed_quote(&(line[i]));
-		if (line[i] == '(')
-		{
-			parenthesis_stack[stack_top++] = '(';
-		}
-		else if (line[i] == ')')
-		{
-			if (stack_top == 0)
-			{
-				printf("Syntax error near index %d ('%c'): too many closing parentheses\n", i, line[i]);
-				return (1);
-			}
-			if (parenthesis_stack[stack_top - 1] == '(')
-				parenthesis_stack[stack_top--] = 0;
-		}
-		i++;
-	}
-	if (stack_top != 0)
-	{
-		printf("Syntax error: too many opening parentheses\n");
-		return (1);
-	}
-*/
-
-/*
-	We cannot use the first closing parenthesis we find, if we have
-	(echo test (salut) pouet)
-			we need to match 1st with last
-*/
-int	is_closed_parenthesis(char *str)
-{
-	int		i;
-	char	parentheses_stack[4096];
-	int		stack_top;
-
-	if (str[0] != '(')
-		return (0);
-	stack_top = 0;
-	ft_bzero(parentheses_stack, 4096);
-	i = 0;
-	parentheses_stack[stack_top++] = '(';
-	i++; // Skip the first '('
-	while (str[i])
-	{
-		if (str[i] == '\'' || str[i] == '"')
-			i += is_closed_quote(&(str[i]));
-		else if (str[i] == '(')
-			parentheses_stack[stack_top++] = '(';
-		else if (str[i] == ')') // No need to check if the stack is empty since we already checked it previously
-		{
-			if (parentheses_stack[stack_top - 1] == '(')
-				parentheses_stack[stack_top--] = 0;
-			if (stack_top == 0) // If it is the matching parenthesis
-				return (i);
-		}
-		i++;
-	}
-	return (0); // We should never reach this point
-}
-
-
 
 /*
 	Inserts str into src at index index.
@@ -172,7 +98,7 @@ char	*insert_str_in_str(char *src, char *str, int index)
 			res[i++] = src[j++];
 		res[i] = '\0';
 	}
-	//free(src);
-	//free(str);
+	ft_free(src);
+	ft_free(str);
 	return (res);
 }

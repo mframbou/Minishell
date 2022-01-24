@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 18-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 23-01-2022 18:55 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 19:48 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ void	interpret_wildcards(char **line)
 				i++;
 			wildcard_end = i;
 			remove_substr_from_string(line, wildcard_start, wildcard_end);
-			*line = insert_str_in_str(*line, get_one_line_wildcard(), wildcard_start);
+			*line = insert_str_in_str(*line, get_one_line_wildcard(), \
+										wildcard_start);
 			continue ;
 		}
 		i++;

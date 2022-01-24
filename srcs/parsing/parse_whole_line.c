@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 24-01-2022 01:36 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 19:59 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -26,8 +26,13 @@ t_cmd	**get_cmd_lst(void);
 	Just check if we found a next operator (if(line[cmd_end])),
 		if we do, skip the current operator ('>', '>>', '|' etc.) 
 		and go to the next command
+
+	We need to check if the parenthesis are surrounded by operators
+	So that we don't have like echo (cat)
+	but only cases like echo | (cat), (echo) | cat, and (echo), all other
+	are considered invalid
 */
-t_splitted_cmd	*split_command_operands(char *line)
+static t_splitted_cmd	*split_command_operands(char *line)
 {
 	t_cmd_layout	layout;
 	int				i;
@@ -44,7 +49,7 @@ t_splitted_cmd	*split_command_operands(char *line)
 	while (layout.non_redirect_operators_nb-- >= 0)
 	{
 		programs_list[i].cmd = ft_substr(line, cmd_start, cmd_end - cmd_start);
-		programs_list[i].next_cmd_operator = layout.operator_chars[cmd_end]; // we already have it
+		programs_list[i].next_cmd_operator = layout.operator_chars[cmd_end];
 		i++;
 		if (line[cmd_end])
 			cmd_end += get_operator_str_len(layout.operator_chars[cmd_end]);
@@ -56,165 +61,119 @@ t_splitted_cmd	*split_command_operands(char *line)
 	return (programs_list);
 }
 
-
-int	has_parentheses_to_interpret(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '\'' || str[i] == '"')
-			i += is_closed_quote(&(str[i]));
-		else if (str[i] == '(' && is_closed_parenthesis(&str[i]))
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
 /*
 	Check if arg is fully in parentheses like (echo test)
 	and not (echo test) cat
 
 	if it is not, it's considered invalid
+
+	if ( is not the first char or ) is not the last, it's invalid
 */
-int is_arg_only_in_parentheses(char *str)
+int	is_arg_fully_in_parentheses(char *str)
 {
 	int	i;
 
 	i = 0;
 	if (has_parentheses_to_interpret(str))
 	{
-		if (str[0] != '(') // If we have parenthesis but first char is not one, it's automatically invalid
+		if (str[0] != '(')
 			return (0);
 		else
 		{
 			i += is_closed_parenthesis(str);
-			if (str[i + 1]) // If the closing parenthesis is not the last char, it's also invalid
+			if (str[i + 1])
 				return (0);
 		}
 	}
-	return (1); // If the first char is a ( and it is well closed, arg is valid
+	return (1);
 }
 
-char	*remove_first_parentheses(char *str)
+static char	*parse_parentheses_if_valid(char *cmd)
 {
-	int		i;
-	int		first;
-	int		second;
-	char	*res;
+	char	*parentheses_string;
 
-	i = 0;
-	res = ft_strdup(str);
-	while (res[i])
+	parentheses_string = NULL;
+	if (has_parentheses_to_interpret(cmd))
 	{
-		if (res[i] == '(' && is_closed_parenthesis(&res[i]))
+		if (!is_arg_fully_in_parentheses(cmd))
 		{
-			first = i;
-			second = is_closed_parenthesis(&(res[i])) - 1; // Since we removed one char already
-			remove_char_from_string(&res, first);
-			remove_char_from_string(&res, second);
-			break ;
+			printf("Syntax error on argument '%s' : command between parentheses \
+			should not contain arguments outside parentheses\n", cmd);
+			return (NULL);
 		}
-		i++;
+		else
+			parentheses_string = remove_outer_parentheses(cmd);
 	}
-	return (res);
+	return (parentheses_string);
+}
+
+/*
+	Takes pointer to list and pointer to current cmd
+*/
+static int	parse_one_cmd(t_cmd **list, t_splitted_cmd *current_cmd)
+{
+	t_redirection	redirection;
+	char			*parentheses_string;
+
+	parentheses_string = NULL;
+	parentheses_string = parse_parentheses_if_valid(current_cmd->cmd);
+	if (!parentheses_string)
+	{
+		interpret_wildcards(&current_cmd->cmd);
+		if (parse_redirections_and_create_files(&current_cmd->cmd, &redirection) \
+		== -1)
+			return (-1);
+		add_cmd(list, parse_program_and_args(current_cmd->cmd), redirection, NULL, \
+				current_cmd->next_cmd_operator);
+	}
+	else
+	{
+		redirection.in_filename = NULL;
+		redirection.out_filename = NULL;
+		redirection.in_filename = 0;
+		redirection.out_filename = 0;
+		ft_free(current_cmd->cmd);
+		add_cmd(list, NULL, redirection, parentheses_string, \
+				current_cmd->next_cmd_operator);
+	}
+	return (0);
 }
 
 /*
 	Takes our line return a list of fully parsed programs
 
-	when interpreting args, put "" aronud the value for easier parsing
+	on error, don't free since beginning but only from current index because
+		previous ones have already been freed
+	- If the arg is between parentheses, keep it as raw line (just remove
+		parentheses chars)
+
+	free cmd array at the end (not content since it's already freed in parsing)
 */
 t_cmd	*parse_cmds(char *line)
 {
 	t_splitted_cmd	*cmds;
 	t_redirection	redirection;
-	int				i;
-	char			*parentheses_string;
 	t_cmd			*lst;
+	int				i;
+	char			*tmp;
 
 	i = 0;
 	cmds = split_command_operands(line);
-	/*
-		We need to check if the parenthesis are surrounded by operators
-		So that we don't have like echo (cat)
-		but only cases like echo | (cat), (echo) | cat, and (echo), all other
-		are considered invalid
-	*/
 	lst = NULL;
 	while (cmds[i].cmd)
 	{
-		char *tmp = ft_strtrim(cmds[i].cmd, " \n\t\v\f\t");
-		//free(cmds[i].cmd);
+		tmp = ft_strtrim(cmds[i].cmd, " \n\t\v\f\t");
+		ft_free(cmds[i].cmd);
 		cmds[i].cmd = tmp;
-		parentheses_string = NULL;
-
-		if (has_parentheses_to_interpret(cmds[i].cmd))
+		if (parse_one_cmd(&lst, &(cmds[i])))
 		{
-			if (!is_arg_only_in_parentheses(cmds[i].cmd))
-			{
-				printf("Syntax error on argument '%s' : command between parentheses should not contain arguments outside parentheses\n", cmds[i].cmd);
-				// Don't free from beginning but only remaining commands, because previous have already been freed
-				//while (cmds[i])
-				//	//free(cmds[i++]);
-				////free(cmds);
-				return (NULL);
-			}
-			else
-			{
-				parentheses_string = remove_first_parentheses(cmds[i].cmd);
-			}
+			while (cmds[i].cmd)
+				ft_free(cmds[i++].cmd);
+			ft_free(cmds);
+			return (NULL);
 		}
-
-		if (!parentheses_string) // If the cmd is in parentheses, don't do anything just keep raw line
-		{
-			interpret_wildcards(&(cmds[i].cmd));
-
-			if (parse_redirections_and_create_files(&(cmds[i].cmd), &redirection) == -1)
-			{
-				// TODO: Error happened, otherwise we have a correct redirection
-				return (NULL);
-			}
-			add_cmd(&lst, parse_program_and_args(cmds[i].cmd), redirection, NULL, cmds[i].next_cmd_operator);
-		}
-		else
-		{
-			redirection.in_filename = NULL;
-			redirection.out_filename = NULL;
-			redirection.in_filename = 0;
-			redirection.out_filename = 0;
-			//free(cmds[i].cmd); // free it since we don't pass it to parsing
-			add_cmd(&lst, NULL, redirection, parentheses_string, cmds[i].next_cmd_operator);
-		}		
 		i++;
 	}
-	//free(cmds); // Strings are already freed in parsing, just need to free array of string
-	//free_ft_split(cmds);
-	//interpret_all_args(&args); // Puts quotes around every arg, must remove it after parsing redirection
-	//return(0);
-	//for (int i = 0; args[i]; i++)
-	//{
-	//	printf("arg=\"%s\"\n", args[i]);
-	//}
-	//printf("\n");
+	ft_free(cmds);
 	return (lst);
 }
-/*
-	"echo "$USER" | cat > pouet.txt"
-
-	
-	["echo "$USER" (output fd = input of "cat"), "cat > pouet.txt"]
-	["echo "mframbou"" | cat > pouet.txt"]
-	["echo "mframbou"" (output fd = input of "cat"), "cat" (output fd = "pouet.txt")]
-	[["echo", "mframbou" (output fd = input of "cat")], ["cat"]]
-
-	Execute
-
-	- Split programs
-	- interpret environment
-	- Remove redirections
-	- Fully parse program
-	- Execute
-*/

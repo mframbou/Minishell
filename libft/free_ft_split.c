@@ -6,11 +6,12 @@
 /*   By: mframbou <mframbou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/14 15:48:13 by mframbou          #+#    #+#             */
-/*   Updated: 2022/01/07 17:32:33 by mframbou         ###   ########.fr       */
+/*   Updated: 24-01-2022 19:54 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "ft_malloc/ft_malloc.h"
 #include <stdlib.h>
 
 void	free_ft_split(char **ft_split_return)
@@ -21,6 +22,6 @@ void	free_ft_split(char **ft_split_return)
 	if (!ft_split_return)
 		return ;
 	while (ft_split_return[i])
-		free(ft_split_return[i++]);
-	free(ft_split_return);
+		ft_free(ft_split_return[i++]);
+	ft_free(ft_split_return);
 }

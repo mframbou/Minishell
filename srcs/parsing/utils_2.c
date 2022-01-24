@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 18-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 24-01-2022 01:31 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 19:59 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -17,38 +17,65 @@
 
 	i = str array index
 	j = result index
-	k = current str in array index
+	k = - result length in first part and 
+		- current str in array index in second part
 
 	Add a space after each string (except for last, so remove 1 at the end)
 	Which "counters" the + 1 for the '\0'
 */
 char	*convert_str_array_to_one_line(char **array)
 {
-	int		total_len;
 	int		i;
 	int		j;
 	int		k;
 	char	*res;
 
-	total_len = 0;
+	k = 0;
 	i = 0;
 	while (array[i])
-		total_len += ft_strlen(array[i++]) + 1;
-	res = ft_malloc(sizeof(char) * (total_len));
+		k += ft_strlen(array[i++]) + 1;
+	res = ft_malloc(sizeof(char) * (k));
 	if (res)
 	{
-		i = 0;
+		i = -1;
 		j = 0;
-		while (array[i])
+		while (array[++i])
 		{
 			k = 0;
 			while (array[i][k])
 				res[j++] = array[i][k++];
 			if (array[i + 1])
 				res[j++] = ' ';
-			i++;
 		}
-		res[j] = 0;
+		res[j] = '\0';
 	}
 	return (res);
+}
+
+/*
+	Compares first string with every other, second with every other (except 1st)
+	and so on, always swap if the 1st is bigger than 2nd
+*/
+void	sort_string_array(char **array)
+{
+	int		i;
+	int		j;
+	char	*tmp;
+
+	i = 0;
+	while (array[i])
+	{
+		j = i + 1;
+		while (array[j])
+		{
+			if (ft_strcmp(array[i], array[j]) > 0)
+			{
+				tmp = array[j];
+				array[j] = array[i];
+				array[i] = tmp;
+			}
+			j++;
+		}
+		i++;
+	}
 }

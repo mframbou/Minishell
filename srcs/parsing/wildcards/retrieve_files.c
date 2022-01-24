@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 18-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 24-01-2022 01:36 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 19:53 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -60,34 +60,6 @@ static char	**list_files_in_directory(char *folder)
 }
 
 /*
-	Compares first string with every other, second with every other (except 1st)
-	and so on
-*/
-static void	sort_string_array(char **array)
-{
-	int		i;
-	int		j;
-	char	*tmp;
-
-	i = 0;
-	while (array[i])
-	{
-		j = i + 1;
-		while (array[j])
-		{
-			if (ft_strcmp(array[i], array[j]) > 0) // If first string is bigger, put it after (swap)
-			{
-				tmp = array[j];
-				array[j] = array[i];
-				array[i] = tmp;
-			}
-			j++;
-		}
-		i++;
-	}
-}
-
-/*
 	Add quotes so files like "test 1.txt" are not splitted while parsing
 */
 static void	add_quotes_to_strs(char **array)
@@ -104,7 +76,7 @@ static void	add_quotes_to_strs(char **array)
 		while (array[i][j])
 		{
 			if (array[i][j] == '\'')
-				array[i][j] = '`'; // Replace so that it doesn't mess up with quotes
+				array[i][j] = '`';
 			j++;
 		}
 		new_str_size = ft_strlen(array[i]) + 3;
@@ -113,7 +85,7 @@ static void	add_quotes_to_strs(char **array)
 		ft_strlcpy(&(str[1]), array[i], new_str_size);
 		str[new_str_size - 2] = '\'';
 		str[new_str_size - 1] = '\0';
-		//free(array[i]);
+		ft_free(array[i]);
 		array[i] = str;
 		i++;
 	}
@@ -128,14 +100,17 @@ static void	add_quotes_to_strs(char **array)
 	globs like * that match no file expand to themselves
 
 	"echo *" in an empty folder will output "*"
+
+	If no files, just as bash set the * character literally
+	so out string array looks like this: ["*", NULL]
 */
 char	**generate_wildcard_in_current_dir(void)
 {
 	char			**files;
-	
+
 	if (count_files_in_directory(".") == 0)
 	{
-		files = ft_malloc(sizeof(char *) * 2); // ["*", NULL]
+		files = ft_malloc(sizeof(char *) * 2);
 		files[0] = ft_strdup("'*'");
 		files[1] = NULL;
 	}
@@ -146,7 +121,6 @@ char	**generate_wildcard_in_current_dir(void)
 	return (files);
 }
 
-
 char	*get_one_line_wildcard(void)
 {
 	char	**files;
@@ -156,7 +130,7 @@ char	*get_one_line_wildcard(void)
 	if (files)
 	{
 		line = convert_str_array_to_one_line(files);
-		//free_ft_split(files);
+		free_ft_split(files);
 	}
 	return (line);
 }

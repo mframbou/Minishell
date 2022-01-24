@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 22-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 24-01-2022 01:37 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 16:50 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -149,7 +149,7 @@ int execute_cmd_lst(int read_fd, t_cmd *cmd_lst)
 			//	close(read_fd);
 			if (new_read_fd == -2)
 			{
-				free_redirections(cmd_lst);
+				//free_redirections(cmd_lst);
 				//clear_cmd_list(&cmd_lst);
 				
 				return (-2);
@@ -169,7 +169,7 @@ int execute_cmd_lst(int read_fd, t_cmd *cmd_lst)
 			close(read_fd);
 		if (new_read_fd == -2)
 		{
-			free_redirections(cmd_lst);
+			//free_redirections(cmd_lst);
 			//clear_cmd_list(&cmd_lst);
 			
 			return (-2);
@@ -222,10 +222,7 @@ int execute_cmd_lst(int read_fd, t_cmd *cmd_lst)
 		{
 			//clear_cmd_list(&cmd_lst);
 			flush_pipe(read_fd);
-			free_redirections(cmd_lst);
 			rl_clear_history();
-			free_environment();
-			//ft_free_all();
 			exit(*get_exit_status());
 		}
 		else if (should_exit())

@@ -13,6 +13,8 @@ SRCS =	srcs/minishell.c \
 		ft_malloc/ft_free.c \
 		ft_malloc/ft_malloc.c \
 		\
+		srcs/parsing/exit_status.c \
+		\
 		srcs/program_execution/search_executable.c \
 		srcs/program_execution/execute_command.c \
 		srcs/program_execution/parse_and_execute_line.c \
@@ -20,6 +22,7 @@ SRCS =	srcs/minishell.c \
 		srcs/program_execution/cmd_list_wrapper.c \
 		\
 		srcs/parsing/cmd_layout/generate_operators_layout.c \
+		srcs/parsing/cmd_layout/generate_operators_layout2.c \
 		srcs/parsing/cmd_layout/get_next_operator.c \
 		srcs/parsing/cmd_layout/get_operator_strlen.c \
 		\
@@ -41,6 +44,7 @@ SRCS =	srcs/minishell.c \
 		srcs/parsing/parse_whole_line.c \
 		srcs/parsing/utils.c \
 		srcs/parsing/utils_2.c \
+		srcs/parsing/utils_parentheses.c \
 		\
 		builtins/environment/add_variable.c \
 		builtins/environment/get_variable.c \

@@ -6,7 +6,7 @@
 /*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
 /*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
 /*   Created:   by            `-'                        `-'                  */
-/*   Updated: 24-01-2022 01:32 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 24-01-2022 19:53 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ void	interpret_quotes(char **str);
 int		*get_exit_status(void);
 int	set_exit_status(int status);
 
+char	*insert_last_exit_status(char *str, int *index);
 
 int	parse_and_execute_line(int input_read_fd, char *line);
 
@@ -132,6 +133,12 @@ void	unquote_all_args(char **args);
 int		is_valid_in_filename(char c);
 char	*insert_str_in_str(char *src, char *str, int index);
 char	*convert_str_array_to_one_line(char **array);
+void	sort_string_array(char **array);
+
+// parentheses
+char	*remove_outer_parentheses(char *str);
+int		has_parentheses_to_interpret(char *str);
+
 
 // Wildcard
 void	interpret_wildcards(char **line);

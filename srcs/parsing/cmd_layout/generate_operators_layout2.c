@@ -5,37 +5,15 @@
 /*        )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )         .    */
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
-/*   Created: 20-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 20-01-2022 00:11 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Created: 24-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
+/*   Updated: 24-01-2022 19:46 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
-#include<stdio.h>
-#include<unistd.h>
-#include<signal.h>
+#include "../../../includes/minishell.h"
 
-
-void
-sigusr1( int pidno )
+void	layout_wildcard(t_cmd_layout *layout, char *line, int *index)
 {
-  fprintf(stderr, "Caught\n");
-}
-
-int
-main()
-{
-  pid_t pid;
-
-  signal( SIGINT, sigusr1 );
-  if( (pid = fork()) == 0 ){
-    pause();
-    fprintf(stderr, "Child\n");
-  }
-  else
-  {
-    fprintf(stderr, "Parent\n");
-    kill( pid , SIGINT ); //parent sends signal to child
-  }
-  pause();
-  return 0;
+	layout->operator_chars[(*index)] = WILDCARD_CHAR;
+	layout->operators_nb++;
 }
