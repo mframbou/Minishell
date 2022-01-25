@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 20-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 25-01-2022 17:17 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 25-01-2022 18:18 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -48,10 +48,10 @@ void	init_basic_env_variables(void)
 		add_env_variable(ft_strdup("PATH"), ft_strdup(PATH_STR));
 }
 
-// void	reset_the_terminal(void)
-// {
-// 	tcsetattr(0, 0, &g_termios_save);
-// }
+void	reset_the_terminal(void)
+{
+	tcsetattr(0, 0, &g_termios_save);
+}
 
 /*
 	Move to a new line
@@ -72,14 +72,30 @@ void	handle_sigs(int sig, siginfo_t *siginfo, void *context)
 		}
 		else
 		{
-			printf("\n");
-			rl_on_new_line();
-			rl_replace_line("", 0);
-			rl_redisplay();
+			printf("\n"); // Move to a new line
+			rl_on_new_line(); // Regenerate the prompt on a newline
+			rl_replace_line("", 0); // Clear the previous text
+			rl_redisplay(); // update the prompt i guess ?
 		}
 	}
 	else if (sig == SIGQUIT)
 	{
+		if (g_pid == 0)
+		{
+			rl_on_new_line();
+			rl_redisplay();
+		}
+		else
+		{
+			kill(g_pid, SIGQUIT);
+			printf("Quit: %d\n", sig); // 128 + N as bash with N = signal
+			set_exit_status(sig + 128);
+		}
+		// printf("\n");
+		
+		//rl_replace_line("", 0);
+		
+		//printf("Sigquit\n");
 		//printf("Sigquit\n");
 		//if (g_pid)
 		//{
@@ -96,27 +112,27 @@ void	init_signals(void)
 	struct sigaction sa;
 	int					tmp;
 	struct termios		termios_new;
-//
-	//tmp = tcgetattr(0, &g_termios_save);
-	//if (tmp)
-	//{
-	//	perror("tcgetattr");
-	//	exit(1);
-	//}
-	//tmp = atexit(reset_the_terminal);
-	//if (tmp)
-	//{
-	//	perror("atexit");
-	//	exit(1);
-	//}
-	// termios_new = g_termios_save;
-	// termios_new.c_lflag &= ~ECHOCTL;
-	// tmp = tcsetattr(0, 0, &termios_new);
-	// if (tmp)
-	// {
-	// 	perror("tcsetattr");
-	// 	exit(1);
-	// }
+
+	tmp = tcgetattr(0, &g_termios_save);
+	if (tmp)
+	{
+		perror("tcgetattr");
+		exit(1);
+	}
+	tmp = atexit(reset_the_terminal);
+	if (tmp)
+	{
+		perror("atexit");
+		exit(1);
+	}
+	 termios_new = g_termios_save;
+	 termios_new.c_lflag &= ~ECHOCTL;
+	 tmp = tcsetattr(0, 0, &termios_new);
+	 if (tmp)
+	 {
+	 	perror("tcsetattr");
+	 	exit(1);
+	 }
 	sa.sa_sigaction = &handle_sigs;
 	sa.sa_flags = 0;
 	//sa.sa_handler = 0;
@@ -168,15 +184,15 @@ int	main()
 			{
 				printf("Caught error in main\n");
 			}
+			
+			int exit_status = 0;
 			if (res >= 0)
 			{
 				flush_pipe(res);
 			}
-			int exit_status = 0;
 			if (waitpid(g_pid, &exit_status, 0) != -1) // wait for the last process, then wait for all other
 				set_exit_status(exit_status);
 			while (wait(NULL) > 0);
-
 			// cmd_list = parse_cmds(line);
 			// /*t_cmd *curr = cmd_list;
 			// while (curr)

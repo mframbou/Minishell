@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 12-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 25-01-2022 14:03 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 25-01-2022 18:05 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -42,7 +42,9 @@ void	cd_command(char *argv[], int output_fd)
 		set_exit_status(errno);
 		ft_putstr_fd("cd: ", output_fd);
 		ft_putstr_fd(argv[1], output_fd);
+		ft_putchar_fd(' ', output_fd);
 		ft_putstr_fd(strerror(errno), output_fd);
+		ft_putchar_fd('\n', output_fd);
 	}
 	else
 		set_exit_status(EXIT_SUCCESS);

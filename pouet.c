@@ -5,32 +5,18 @@
 /*        )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )         .    */
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
-/*   Created: 20-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 25-01-2022 18:21 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Created: 25-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
+/*   Updated: 25-01-2022 17:56 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
-
-t_cmd	**get_cmd_lst(void);
-
-void	free_all_and_exit(int code, int current_fd)
+int main()
 {
-	return ;
-}
+	char *pouet = "pouet";
 
-void	flush_pipe(int fd)
-{
-	char	buf[128];
-	int		read_val;
-
-	if (fd == -1)
-		return ;
-	read_val = read(fd, buf, 128);
-	while (read_val > 0)
+	int i = 0;
+	while (1)
 	{
-		write(STDOUT_FILENO, buf, read_val);
-		read_val = read(fd, buf, 128);
+		char c = pouet[i++];
 	}
-	close(fd);
 }

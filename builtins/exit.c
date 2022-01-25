@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 25-01-2022 14:05 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 25-01-2022 18:07 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ static int	is_digit_str(char *str)
 	while (str[i] && ft_isdigit(str[i]))
 		i++;
 	if (str[i])
+		return (0);
+	if (i > 10)
 		return (0);
 	return (1);
 }
@@ -49,9 +51,13 @@ void	exit_command(char **argv, int output_fd)
 			ft_putstr_fd("exit: ", output_fd);
 			ft_putstr_fd(argv[1], output_fd);
 			ft_putstr_fd(": numeric argument required\n", output_fd);
+			set_exit_status(255);
 			set_should_exit(1);
 		}
 	}
 	else
+	{
 		ft_putstr_fd("exit: too many arguments\n", output_fd);
+		set_exit_status(EXIT_FAILURE);
+	}
 }
