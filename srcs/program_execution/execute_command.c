@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 24-01-2022 01:36 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 25-01-2022 13:12 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -349,7 +349,7 @@ int	is_regular_file_or_symlink(char *file)
 	stat_return = stat(file, &file_infos);
 	if (stat_return == -1 \
 	|| !S_ISREG(file_infos.st_mode) \
-	|| !(__S_IEXEC & file_infos.st_mode))
+	|| !(S_IEXEC & file_infos.st_mode))
 	{
 		return (0);
 	}
@@ -393,19 +393,6 @@ int	sample_function(int read_fd, char *line)
 			read_fd = sample_function(curr_read_fd, substr(line, parenthesis_pos));
 		}
 }*/
-
-/*
-	Executes everything inside parenthesis (if needed) then return the next
-		fd to read from
-
-	Example input: echo test && (cd ../Minishell || (echo fail && echo fail2))
-	Takes the full line between parenthesis ("cd ../Minishell || (echo fail && echo fail2)")
-	then parse it as before, will make a recursive call with "echo fail && echo fail2"
-*/
-int	execute_parenthesis(int read_fd, char *line)
-{
-	
-}
 
 /*
 	read_fd = fd to read from for next command

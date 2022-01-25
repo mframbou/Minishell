@@ -5,24 +5,15 @@
 /*        )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )         .    */
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
-/*   Created: 20-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 25-01-2022 13:13 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Created: 25-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
+/*   Updated: 25-01-2022 13:04 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
-static int	*should_exit_ptr(void)
-{
-	static int	should_exit = 0;
+#ifndef READLINE_EXTRAS_H
+# define READLINE_EXTRAS_H
 
-	return (&should_exit);
-}
+extern void	rl_replace_line(const char *text, int clear_undo);
+extern void	rl_clear_history(void);
 
-void	set_should_exit(int code)
-{
-	*should_exit_ptr() = code;
-}
-
-int	should_exit(void)
-{
-	return (*should_exit_ptr());
-}
+#endif

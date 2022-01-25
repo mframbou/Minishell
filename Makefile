@@ -61,6 +61,8 @@ SRCS =	srcs/minishell.c \
 
 LIBFT = ./libft/libft.a
 
+READLINE = ./libreadline.a -ltermcap # Need to include termcap to use readline
+
 OBJS = $(SRCS:.c=.o)
 
 NAME = minishell
@@ -73,9 +75,9 @@ CC = gcc -g -fsanitize=address #-Wall -Wextra -Werror
 
 $(NAME):	$(LIBFT) $(OBJS)
 	@echo "\033[0;95mLinking \033[0;95m($(OBJS)) into \033[1;35m$(NAME)\033[0m"
-	@$(CC) $(OBJS) $(LIBFT) -lreadline -o $(NAME)
+	@$(CC) $(OBJS) $(LIBFT) $(READLINE) -o $(NAME)
 	@echo "\033[1;92mDONE"
-#	@./test.sh
+	@./test.sh
 
 $(LIBFT):
 	$(MAKE) -j -C libft

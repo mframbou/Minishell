@@ -6,7 +6,7 @@
 /*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
 /*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
 /*   Created:   by            `-'                        `-'                  */
-/*   Updated: 24-01-2022 19:53 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 25-01-2022 13:13 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 # include "libft.h"
 # include "builtins.h"
 # include "ft_malloc.h"
+# include "readline_extras.h"
 
 int	g_pid;
 
@@ -47,7 +48,7 @@ void	interpret_all_args(char	***args);
 void	interpret_quotes(char **str);
 
 int		*get_exit_status(void);
-int	set_exit_status(int status);
+void	set_exit_status(int status);
 
 char	*insert_last_exit_status(char *str, int *index);
 
@@ -64,8 +65,8 @@ int	is_regular_file_or_symlink(char *file);
 
 // Clean exitr
 void	flush_pipe(int fd);
-int	should_exit(void);
-int	set_should_exit(int code);
+int		should_exit(void);
+void	set_should_exit(int code);
 void	free_redirections(t_cmd *lst);
 
 /*
