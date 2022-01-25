@@ -6,7 +6,7 @@
 /*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
 /*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
 /*   Created:   by            `-'                        `-'                  */
-/*   Updated: 25-01-2022 13:13 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 25-01-2022 17:16 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ typedef	struct s_splitted_cmd
 char	**remove_empty_args(char **args);
 void	unquote_all_args(char **args);
 int		perror_return(char *str);
-int		parse_redirections_and_create_files(char **line, \
+int		parse_redirs_and_create_files(char **line, \
 											t_redirection *redirection);
 int		get_next_redirect_operator_index(char *line, int current_index);
 int		get_next_redirect_operator_type(char *line, int current_index);
@@ -92,6 +92,11 @@ int		get_next_non_redirect_operator_index(char *line, int current_index);
 int		get_operator_str_len(int operator);
 void	init_redirection_struct(t_redirection *redirection);
 int		open_file_for_redirection(char *filename, int redirection_type);
+
+// exit status
+int		*get_exit_status(void);
+void	set_exit_status(int status);
+char	*insert_last_exit_status(char *str, int *index);
 
 typedef struct s_cmd_layout
 {
@@ -135,6 +140,9 @@ int		is_valid_in_filename(char c);
 char	*insert_str_in_str(char *src, char *str, int index);
 char	*convert_str_array_to_one_line(char **array);
 void	sort_string_array(char **array);
+int		has_syntax_error(char *line); // Check for cases like echo | |, | cat etc.
+int	are_parentheses_invalid(char *line);
+int	is_redirection_operator(int operator);
 
 // parentheses
 char	*remove_outer_parentheses(char *str);

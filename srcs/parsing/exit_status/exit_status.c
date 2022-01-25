@@ -6,11 +6,23 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 24-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 24-01-2022 16:57 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 25-01-2022 14:27 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "../../../includes/minishell.h"
+
+int	*get_exit_status(void)
+{
+	static int	exit_status = 0;
+
+	return (&exit_status);
+}
+
+void	set_exit_status(int status)
+{
+	*get_exit_status() = status;
+}
 
 /*
 	Remove the "$?" from the string and replace it with the exit code

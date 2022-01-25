@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 24-01-2022 01:36 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 25-01-2022 14:32 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,10 @@ static void	lst_remove_env_variable(t_env_link	**var_lst, t_env_link *var)
 	}
 	if (var->var.value)
 	{
-		//free(var->var.value);
+		ft_free(var->var.value);
 	}
-	//free(var->var.key);
-	//free(var);
+	ft_free(var->var.key);
+	ft_free(var);
 }
 
 void	remove_env_variable(char *key)

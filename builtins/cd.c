@@ -6,31 +6,32 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 12-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 20-01-2022 22:53 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 25-01-2022 14:03 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
 /*
+	If no arguments, cd to home, if no home, print error
+
+	Return values:
 	0 = Success
 	1 = Other error / HOME does not exists
 */
 void	cd_command(char *argv[], int output_fd)
 {
 	int		res;
-	char	*home_path;
 
 	res = 0;
 	if (argv[1] == NULL)
 	{
-		home_path = get_env_variable("HOME");
-		if (home_path)
-			res = chdir(home_path);
+		if (get_env_variable("HOME"))
+			res = chdir(get_env_variable("HOME"));
 		else
 		{
-			printf("cd: HOME not set\n");
-			set_exit_status (EXIT_FAILURE);
+			ft_putstr_fd("cd: HOME not set\n", output_fd);
+			set_exit_status(EXIT_FAILURE);
 			return ;
 		}
 	}
@@ -39,11 +40,9 @@ void	cd_command(char *argv[], int output_fd)
 	if (res == -1)
 	{
 		set_exit_status(errno);
-		perror(argv[1]);
-		//ft_putstr_fd(MINISHELL_PROMPT, output_fd);
-		//ft_putstr_fd("cd: ", output_fd);
-		//ft_putstr_fd(argv[1], output_fd);
-		//ft_putstr_fd(strerror(errno), output_fd);
+		ft_putstr_fd("cd: ", output_fd);
+		ft_putstr_fd(argv[1], output_fd);
+		ft_putstr_fd(strerror(errno), output_fd);
 	}
 	else
 		set_exit_status(EXIT_SUCCESS);

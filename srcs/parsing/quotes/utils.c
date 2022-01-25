@@ -5,37 +5,23 @@
 /*        )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )         .    */
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
-/*   Created: 12-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 25-01-2022 14:33 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Created: 25-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
+/*   Updated: 25-01-2022 17:21 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
-#include "environment.h"
+#include "../../../includes/minishell.h"
 
-t_env_link	**get_var_list(void)
+int	is_closed_quote(char *str)
 {
-	static t_env_link	*var_list = NULL;
+	int		i;
+	char	quote;
 
-	return (&var_list);
-}
-
-void	free_var_list(void)
-{
-	ft_free(*(get_var_list()));
-}
-
-void	free_environment(void)
-{
-	t_env_link	*prev;
-	t_env_link	*curr;
-
-	curr = *get_var_list();
-	while (curr)
-	{
-		prev = curr;
-		curr = curr->next;
-		ft_free(prev->var.key);
-		ft_free(prev->var.value);
-		ft_free(prev);
-	}
+	i = 0;
+	quote = str[i++];
+	while (str[i] && str[i] != quote)
+		i++;
+	if (!str[i])
+		return (0);
+	return (i);
 }

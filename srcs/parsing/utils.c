@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 24-01-2022 19:43 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 25-01-2022 17:21 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -51,20 +51,6 @@ void	remove_substr_from_string(char **str, int start, int end)
 {
 	while (--end >= start)
 		remove_char_from_string(str, start);
-}
-
-int	is_closed_quote(char *str)
-{
-	int		i;
-	char	quote;
-
-	i = 0;
-	quote = str[i++];
-	while (str[i] && str[i] != quote)
-		i++;
-	if (!str[i])
-		return (0);
-	return (i);
 }
 
 /*

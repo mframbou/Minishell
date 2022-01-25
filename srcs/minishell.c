@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 20-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 25-01-2022 13:11 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 25-01-2022 17:17 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -52,18 +52,6 @@ void	init_basic_env_variables(void)
 // {
 // 	tcsetattr(0, 0, &g_termios_save);
 // }
-
-int	*get_exit_status(void)
-{
-	static int	exit_status = 0;
-
-	return (&exit_status);
-}
-
-void	set_exit_status(int status)
-{
-	*get_exit_status() = status;
-}
 
 /*
 	Move to a new line
@@ -139,112 +127,6 @@ void	init_signals(void)
 	//signal(SIGQUIT, &handle_sigs); // TODO TEST IF IT WORKS
 }
 
-
-int	has_command_after_index(char *str, int i)
-{
-	t_cmd_layout	layout;
-
-	create_cmd_layout(&layout, str);
-	while (str[i] && ft_isspace(str[i])) // Continue while space, then check if we landed either on a command, either on an operator
-		i++;
-	if (!str[i])
-		return (0);
-	if (str[i] == '>' || str[i] == '<' || str[i] == '|' || str[i] == '&')
-		return (0);
-	return (1);
-}
-
-
-
-/*
-	Uses a stack of 4096 because it's the max line length in bash
-
-	Return 0 = valid
-	1 = invalid
-	automatically prints the error
-*/
-int	are_parentheses_invalid(char *line)
-{
-	char	parenthesis_stack[4096];
-	int		i;
-	int		stack_top;
-
-	ft_bzero(parenthesis_stack, 4096);
-	i = 0;
-	stack_top = 0; // stack_top 1 = 1 ( in our stack, so when accessing use index - 1
-	while (line[i])
-	{
-		if (line[i] == '\'' || line[i] == '"') // skip quotes
-			i += is_closed_quote(&(line[i]));
-		if (line[i] == '(')
-		{
-			parenthesis_stack[stack_top++] = '(';
-		}
-		else if (line[i] == ')')
-		{
-			if (stack_top == 0)
-			{
-				printf("Syntax error near index %d ('%c'): too many closing parentheses\n", i, line[i]);
-				return (1);
-			}
-			if (parenthesis_stack[stack_top - 1] == '(')
-				parenthesis_stack[stack_top--] = 0;
-		}
-		i++;
-	}
-	if (stack_top != 0)
-	{
-		printf("Syntax error: too many opening parentheses\n");
-		return (1);
-	}
-	return (0);
-}
-
-/*
-	operator = Value in the cmd_layout (e_interpreted_char)
-*/
-static int	is_redirection_operator(int operator)
-{
-	return (operator == SINGLE_LEFT_REDIRECT \
-	|| operator == SINGLE_RIGHT_REDIRECT \
-	|| operator == DOUBLE_LEFT_REDIRECT \
-	|| operator == DOUBLE_RIGHT_REDIRECT);
-}
-
-/*
-	No need to check if we have reached the end of the line because
-	we know it's not an empty line
-
-	returns the index in the line where the error is found, starting from 1
-	(so that 0 is only returned if we have no errors)
-*/
-int	has_syntax_error(char *line) // Check for cases like echo | |, | cat etc.
-{
-	t_cmd_layout	layout;
-	int				i;
-	int				start;
-	int				end;
-
-	create_cmd_layout(&layout, line);
-	i = 0;
-	while (line[i] && ft_isspace(line[i]) && !layout.operator_chars[i])
-		i++;
-	if (layout.operator_chars[i] && !is_redirection_operator(layout.operator_chars[i]) && layout.operator_chars[i] != WILDCARD_CHAR) // We have an operator at the beginning, but we can have redirections at the beggining like in bash
-		return (i + 1);
-	i = 0;
-	while (line[i])
-	{
-		if (layout.operator_chars[i] && layout.operator_chars[i] != WILDCARD_CHAR)
-		{
-			if (!line[i + 1]) // operator at the end of line
-				return (i + 1);
-			if (!has_command_after_index(line, i + get_operator_str_len(layout.operator_chars[i])))
-				return (i + 1);
-		}
-		i++;
-	}
-	return (0);
-}
 
 /*
 	Au final tous les double quotes sont supprimés sauf si ils sont dans des simples quotes

@@ -6,24 +6,13 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 16-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 16-01-2022 21:06 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 25-01-2022 17:29 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
 #include "../../../includes/minishell.h"
 
-/*
-	operator = Value in the cmd_layout (e_interpreted_char)
-*/
-static int	is_redirection_operator(int operator)
-{
-	return (operator == SINGLE_LEFT_REDIRECT \
-	|| operator == SINGLE_RIGHT_REDIRECT \
-	|| operator == DOUBLE_LEFT_REDIRECT \
-	|| operator == DOUBLE_RIGHT_REDIRECT);
-}
-
-static int	is_not_redirection_operator(int	operator)
+static int	is_not_redirection_operator(int operator)
 {
 	return (operator == PIPE_CHAR \
 	|| operator == OR_CHAR \

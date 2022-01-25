@@ -8,25 +8,34 @@
 #                               /\  `-'/      `-'  '/   (  `-'-..`-'-'
 #                           `._;  `._;                   `-           
 
+CPUS ?= $(shell sysctl -n hw.ncpu || echo 1)
+MAKEFLAGS += --jobs=$(CPUS)	# I'm fast as fuck boi
 
 SRCS =	srcs/minishell.c \
 		ft_malloc/ft_free.c \
 		ft_malloc/ft_malloc.c \
 		\
-		srcs/parsing/exit_status.c \
+		srcs/parsing/exit_status/exit_status.c \
+		\
+		srcs/parsing/check_syntax.c \
 		\
 		srcs/program_execution/search_executable.c \
 		srcs/program_execution/execute_command.c \
+		srcs/program_execution/execute_one_command.c \
 		srcs/program_execution/parse_and_execute_line.c \
 		srcs/program_execution/cmd_list.c \
 		srcs/program_execution/cmd_list_wrapper.c \
+		srcs/program_execution/execute_builtin.c \
+		srcs/program_execution/utils.c \
 		\
 		srcs/parsing/cmd_layout/generate_operators_layout.c \
 		srcs/parsing/cmd_layout/generate_operators_layout2.c \
 		srcs/parsing/cmd_layout/get_next_operator.c \
 		srcs/parsing/cmd_layout/get_operator_strlen.c \
+		srcs/parsing/cmd_layout/utils.c \
 		\
 		srcs/parsing/quotes/parse_quotes.c \
+		srcs/parsing/quotes/utils.c \
 		\
 		srcs/parsing/redirections/parse_redirections.c \
 		srcs/parsing/redirections/open_file.c \
@@ -39,12 +48,12 @@ SRCS =	srcs/minishell.c \
 		\
 		srcs/parsing/get_one_arg.c \
 		srcs/parsing/interpret_arguments.c \
-		srcs/parsing/is_valid_bash_var.c \
 		srcs/parsing/parse_one_program.c \
 		srcs/parsing/parse_whole_line.c \
 		srcs/parsing/utils.c \
 		srcs/parsing/utils_2.c \
-		srcs/parsing/utils_parentheses.c \
+		\
+		srcs/parsing/parentheses/utils_parentheses.c \
 		\
 		builtins/environment/add_variable.c \
 		builtins/environment/get_variable.c \

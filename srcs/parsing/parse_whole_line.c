@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 24-01-2022 19:59 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 25-01-2022 14:39 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ static t_splitted_cmd	*split_command_operands(char *line)
 
 	if ( is not the first char or ) is not the last, it's invalid
 */
-int	is_arg_fully_in_parentheses(char *str)
+static int	is_arg_fully_in_parentheses(char *str)
 {
 	int	i;
 
@@ -120,11 +120,11 @@ static int	parse_one_cmd(t_cmd **list, t_splitted_cmd *current_cmd)
 	if (!parentheses_string)
 	{
 		interpret_wildcards(&current_cmd->cmd);
-		if (parse_redirections_and_create_files(&current_cmd->cmd, &redirection) \
+		if (parse_redirs_and_create_files(&current_cmd->cmd, &redirection) \
 		== -1)
 			return (-1);
-		add_cmd(list, parse_program_and_args(current_cmd->cmd), redirection, NULL, \
-				current_cmd->next_cmd_operator);
+		add_cmd_normal(list, parse_program_and_args(current_cmd->cmd), \
+						redirection, current_cmd->next_cmd_operator);
 	}
 	else
 	{
@@ -133,8 +133,8 @@ static int	parse_one_cmd(t_cmd **list, t_splitted_cmd *current_cmd)
 		redirection.in_filename = 0;
 		redirection.out_filename = 0;
 		ft_free(current_cmd->cmd);
-		add_cmd(list, NULL, redirection, parentheses_string, \
-				current_cmd->next_cmd_operator);
+		add_cmd_parentheses(list, redirection, parentheses_string, \
+							current_cmd->next_cmd_operator);
 	}
 	return (0);
 }

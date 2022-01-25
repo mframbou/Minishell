@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 12-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 24-01-2022 01:36 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 25-01-2022 14:05 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	pwd_command(char *argv[], int output_fd)
 	{
 		ft_putstr_fd(curr_path, output_fd);
 		ft_putchar_fd('\n', output_fd);
-		////free(curr_path);
+		ft_free(curr_path);
 		set_exit_status(EXIT_SUCCESS);
 	}
 	else

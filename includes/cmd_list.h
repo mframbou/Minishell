@@ -43,7 +43,10 @@ enum	e_operator
 	REDIRECT_UNKNOWN
 };
 
-void	add_cmd(t_cmd **cmd_lst, char **args, t_redirection redirection, char *parenthesese_content, int next_operator);
+void	add_cmd_normal(t_cmd **cmd_lst, char **args, t_redirection redirection, \
+						int next_operator);
+void	add_cmd_parentheses(t_cmd **cmd_lst, t_redirection redirection, \
+							char *parentheses_content, int next_operator);
 void	clear_cmd_list(t_cmd **cmd_lst);
 
 #endif

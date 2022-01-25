@@ -6,13 +6,13 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 20-01-2022 16:09 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 25-01-2022 14:05 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static int		is_digit_str(char *str)
+static int	is_digit_str(char *str)
 {
 	int	i;
 
@@ -31,40 +31,27 @@ static int		is_digit_str(char *str)
 void	exit_command(char **argv, int output_fd)
 {
 	int	argc;
-	int	exit_status;
 
-	
 	argc = 0;
 	while (argv[argc])
 		argc++;
 	if (argc == 1)
-	{
 		set_should_exit(1);
-		//set_exit_status(get_exit_status());
-	}
 	else if (argc == 2)
 	{
 		if (is_digit_str(argv[1]))
 		{
-			exit_status = ft_atoi(argv[1]);
 			set_should_exit(1);
-			set_exit_status(exit_status);
+			set_exit_status(ft_atoi(argv[1]));
 		}
 		else
 		{
-			printf("%s %s\n", argv[0], argv[1]);
 			ft_putstr_fd("exit: ", output_fd);
 			ft_putstr_fd(argv[1], output_fd);
 			ft_putstr_fd(": numeric argument required\n", output_fd);
 			set_should_exit(1);
-			//set_exit_status(get_exit_status());
 		}
 	}
 	else
-	{
 		ft_putstr_fd("exit: too many arguments\n", output_fd);
-		return ;
-	}
-	//printf("Exit TODO\n");
-	return ;
 }

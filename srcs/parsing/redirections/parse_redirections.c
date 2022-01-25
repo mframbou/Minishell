@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 15-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 25-01-2022 13:13 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 25-01-2022 13:30 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -170,7 +170,7 @@ static int	fill_struct_and_create_files(char *filename, int redir_type, \
 	If we have another filename, free the previous one, this only keeps
 		the last one malloced
 */
-int	parse_redirections_and_create_files(char **line, t_redirection *redir)
+int	parse_redirs_and_create_files(char **line, t_redirection *redir)
 {
 	char	*filename;
 	char	*prev_filename;
