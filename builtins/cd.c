@@ -6,11 +6,20 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 12-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 25-01-2022 18:05 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 26-01-2022 13:40 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+static void	print_cd_error(char *arg, int output_fd)
+{
+	ft_putstr_fd("cd: ", output_fd);
+	ft_putstr_fd(arg, output_fd);
+	ft_putchar_fd(' ', output_fd);
+	ft_putstr_fd(strerror(errno), output_fd);
+	ft_putchar_fd('\n', output_fd);
+}
 
 /*
 	If no arguments, cd to home, if no home, print error
@@ -40,11 +49,7 @@ void	cd_command(char *argv[], int output_fd)
 	if (res == -1)
 	{
 		set_exit_status(errno);
-		ft_putstr_fd("cd: ", output_fd);
-		ft_putstr_fd(argv[1], output_fd);
-		ft_putchar_fd(' ', output_fd);
-		ft_putstr_fd(strerror(errno), output_fd);
-		ft_putchar_fd('\n', output_fd);
+		print_cd_error(argv[1], output_fd);
 	}
 	else
 		set_exit_status(EXIT_SUCCESS);

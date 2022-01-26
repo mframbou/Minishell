@@ -12,3 +12,4 @@ export 123=TEST (not a valid identifier), export _123=TEST valid
 sleep 5 | echo test | grep pouet should wait 5 seconds and not return almost intantly
 quote in filename then try wildcard or something like that
 exit with big number, no number, check if expansion
+find . -type d -exec cd {} ; -exec pwd ;

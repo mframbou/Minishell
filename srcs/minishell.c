@@ -6,30 +6,12 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 20-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 25-01-2022 18:18 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 26-01-2022 13:36 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
-
 #include "../includes/minishell.h"
 #include <termios.h>
-
-
-#define _GNU_SOURCE // linux
-
-struct termios	g_termios_save;
-
-char	**parse_program_and_args(char *line);
-//void	rl_replace_line(char*, int);
-
-int	is_line_empty(char *str)
-{
-	while (ft_isspace(*str) && *str)
-		str++;
-	if (*str)
-		return (0);
-	return (1);
-}
 
 void	init_basic_env_variables(void)
 {
@@ -48,172 +30,106 @@ void	init_basic_env_variables(void)
 		add_env_variable(ft_strdup("PATH"), ft_strdup(PATH_STR));
 }
 
-void	reset_the_terminal(void)
+/*
+	Changes between ECHOCTL terminal and not
+
+	current values:
+	0 : not initialized
+	1 : old (ECHOCTL enabled)
+	2 = new (ECHOCTL disabled)
+
+	C boolean values are always either 0 or 1
+
+	control == -1 is true if minisell in minishell for instance
+*/
+void	set_terminal_attributes(int term_type)
 {
-	tcsetattr(0, 0, &g_termios_save);
+	static struct termios	old;
+	static struct termios	new;
+	static int				initialized = 0;
+	int						control;
+
+	if (!initialized)
+	{
+		control = tcgetattr(STDOUT_FILENO, &old);
+		if (control == -1)
+			return ;
+		new = old;
+		new.c_lflag &= ~ECHOCTL;
+		old.c_lflag |= ECHOCTL;
+		initialized = 1;
+	}
+	if (term_type == ECHOCTL_ON)
+		control = tcsetattr(STDOUT_FILENO, TCSANOW, &old);
+	else if (term_type == ECHOCTL_OFF)
+		control = tcsetattr(STDOUT_FILENO, TCSANOW, &new);
+	if (control == -1)
+	{
+		perror("tcsetattr error");
+		ft_free_all();
+		exit (EXIT_FAILURE);
+	}
+}
+
+static int	execute_line(char *line)
+{
+	int	res;
+	int	exit_status;
+
+	if (!line || line[0] == '\0' || is_line_empty(line))
+		return (0);
+	add_history(line);
+	if (are_parentheses_invalid(line))
+		return (-1);
+	if (has_syntax_error(line))
+	{
+		printf("Syntax error near index %d ('%c')\n", \
+		has_syntax_error(line) - 1, line[has_syntax_error(line) - 1]);
+		return (-1);
+	}
+	res = parse_and_execute_line(-1, line);
+	if (res == -2)
+		return (-1);
+	exit_status = 0;
+	if (res >= 0)
+		flush_pipe(res);
+	if (waitpid(g_pid, &exit_status, 0) != -1)
+		set_exit_status(exit_status);
+	while (wait(NULL) > 0)
+		;
+	return (0);
 }
 
 /*
-	Move to a new line
-	Regenerate prompt on newline
-	Clear previous text
-	redisplay
+	Au final tous les double quotes sont supprimés,
+	sauf si ils sont dans des simples quotes
+
+	- Parse line, execute commands
+	- Flush pipe
+	- Wait for last process to get exit status and wait for all others
+	but don't care about exit status.
+
+	- If syntax error, continue since it's already printed out
 */
-void	handle_sigs(int sig, siginfo_t *siginfo, void *context)
-{
-	if (sig == SIGINT)
-	{
-		//fprintf(stdout, "Sigint on pid: %d\n", g_pid);
-		if (g_pid)
-		{
-			//printf("pid = %d\n", g_pid);
-			printf("\n");
-			kill(g_pid, SIGUSR1);
-		}
-		else
-		{
-			printf("\n"); // Move to a new line
-			rl_on_new_line(); // Regenerate the prompt on a newline
-			rl_replace_line("", 0); // Clear the previous text
-			rl_redisplay(); // update the prompt i guess ?
-		}
-	}
-	else if (sig == SIGQUIT)
-	{
-		if (g_pid == 0)
-		{
-			rl_on_new_line();
-			rl_redisplay();
-		}
-		else
-		{
-			kill(g_pid, SIGQUIT);
-			printf("Quit: %d\n", sig); // 128 + N as bash with N = signal
-			set_exit_status(sig + 128);
-		}
-		// printf("\n");
-		
-		//rl_replace_line("", 0);
-		
-		//printf("Sigquit\n");
-		//printf("Sigquit\n");
-		//if (g_pid)
-		//{
-		//	kill(g_pid, SIGQUIT);
-		//}
-		return ;
-		//printf("Clean exit TODO ctrl \\\n");
-		//exit(0);
-	}
-}
-
-void	init_signals(void)
-{
-	struct sigaction sa;
-	int					tmp;
-	struct termios		termios_new;
-
-	tmp = tcgetattr(0, &g_termios_save);
-	if (tmp)
-	{
-		perror("tcgetattr");
-		exit(1);
-	}
-	tmp = atexit(reset_the_terminal);
-	if (tmp)
-	{
-		perror("atexit");
-		exit(1);
-	}
-	 termios_new = g_termios_save;
-	 termios_new.c_lflag &= ~ECHOCTL;
-	 tmp = tcsetattr(0, 0, &termios_new);
-	 if (tmp)
-	 {
-	 	perror("tcsetattr");
-	 	exit(1);
-	 }
-	sa.sa_sigaction = &handle_sigs;
-	sa.sa_flags = 0;
-	//sa.sa_handler = 0;
-	sigaction(SIGINT, &sa, 0); // IL FAUT CHECKER SIG_DFL
-	sigaction(SIGQUIT, &sa, 0);
-
-	//signal(SIGINT, &handle_sigs);
-	//signal(SIGQUIT, &handle_sigs); // TODO TEST IF IT WORKS
-}
-
-
-/*
-	Au final tous les double quotes sont supprimés sauf si ils sont dans des simples quotes
-*/
-int	main()
+int	main(int argc, char **argv)
 {
 	char	*line;
 	t_cmd	*cmd_list;
+	int		exit_status;
 
-	// TODO IMPORTANT Redirect STDOUT but also STDERR
-	// todo if we have time, interpret env args before splittigs cmds args (on single line)
-	// so that TEST=cho pouet then e$TEST would work but need to keep quotes so it's annoying with eg TEST='cho pouet' which should result in e cho pouet and not echo pouet since its single quotes
-	
 	init_signals();
+	set_terminal_attributes(ECHOCTL_OFF);
 	init_basic_env_variables();
-
-
-	*get_exit_status() = 0; // init exit status to 0
-	//add_env_variable(ft_strdup("TEST"), ft_strdup(">"));	
-
-	//line = ft_strdup("echo pouet > \"test 1\".txt \"(should create a file named test 1.txt)\"");
-	//line = ft_strdup("echo *");
+	set_exit_status(0);
 	while (1)
 	{
 		line = readline(MINISHELL_PROMPT);
-		if (line && line[0] != '\0' && !is_line_empty(line))
-		{
-			add_history(line);
-			if (are_parentheses_invalid(line))
-				continue ;
-			if (has_syntax_error(line))
-			{
-				printf("Syntax error near index %d ('%c')\n", has_syntax_error(line) - 1, line[has_syntax_error(line) - 1]);
-				continue ;
-			}
-
-			int res = parse_and_execute_line(-1, line);
-			if (res == -2)
-			{
-				printf("Caught error in main\n");
-			}
-			
-			int exit_status = 0;
-			if (res >= 0)
-			{
-				flush_pipe(res);
-			}
-			if (waitpid(g_pid, &exit_status, 0) != -1) // wait for the last process, then wait for all other
-				set_exit_status(exit_status);
-			while (wait(NULL) > 0);
-			// cmd_list = parse_cmds(line);
-			// /*t_cmd *curr = cmd_list;
-			// while (curr)
-			// {
-			// 	curr = curr->next;
-			// }*/
-			// if (cmd_list)
-			// 	execute_cmd_lst(cmd_list);
-			// clear_cmd_list();
-
-
-
-			
-		}
-		else if (line == NULL)
-		{
-			fprintf(stdout,  "exit TODO\n");
-			//exit(1);
-		}
+		if (line == NULL)
+			clean_exit(-1);
+		if (execute_line(line) == -1)
+			continue ;
+		set_terminal_attributes(ECHOCTL_OFF);
+		g_pid = 0;
 	}
-	ft_free_all();
-	return (*get_exit_status());
-	//return (123);
+	clean_exit(-1);
 }

@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 20-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 25-01-2022 18:21 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 26-01-2022 13:38 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -33,4 +33,14 @@ void	flush_pipe(int fd)
 		read_val = read(fd, buf, 128);
 	}
 	close(fd);
+}
+
+void	clean_exit(int read_fd)
+{
+	flush_pipe(read_fd);
+	rl_clear_history();
+	write(STDOUT_FILENO, "exit\n", 6);
+	ft_free_all();
+	set_terminal_attributes(ECHOCTL_ON);
+	exit(*get_exit_status());
 }

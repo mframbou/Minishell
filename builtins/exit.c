@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 25-01-2022 18:07 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 26-01-2022 13:41 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,15 @@ static int	is_digit_str(char *str)
 	return (1);
 }
 
+static void	set_numeric_arg_error(char *arg, int output_fd)
+{
+	ft_putstr_fd("exit: ", output_fd);
+	ft_putstr_fd(arg, output_fd);
+	ft_putstr_fd(": numeric argument required\n", output_fd);
+	set_exit_status(255);
+	set_should_exit(1);
+}
+
 void	exit_command(char **argv, int output_fd)
 {
 	int	argc;
@@ -48,11 +57,7 @@ void	exit_command(char **argv, int output_fd)
 		}
 		else
 		{
-			ft_putstr_fd("exit: ", output_fd);
-			ft_putstr_fd(argv[1], output_fd);
-			ft_putstr_fd(": numeric argument required\n", output_fd);
-			set_exit_status(255);
-			set_should_exit(1);
+			set_numeric_arg_error(argv[1], output_fd);
 		}
 	}
 	else

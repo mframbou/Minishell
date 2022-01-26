@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 25-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 25-01-2022 17:19 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 26-01-2022 13:08 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -51,11 +51,10 @@ static int	get_fd_for_input_redirection_if_any(int current_fd, \
 */
 static int	execute_program_if_found(char **args, int read_fd)
 {
-	int		new_read_fd;
 	char	*program;
 
 	if (is_builtin(args[0]))
-		new_read_fd = execute_builtin(args);
+		read_fd = execute_builtin(args);
 	else
 	{
 		if (has_slash(args[0]))
@@ -68,14 +67,15 @@ static int	execute_program_if_found(char **args, int read_fd)
 			close(read_fd);
 			return (-2);
 		}
-		new_read_fd = execute_program(read_fd, program, args);
-		if (new_read_fd == -2)
+		read_fd = execute_program(read_fd, program, args);
+		set_terminal_attributes(ECHOCTL_ON);
+		if (read_fd == -2)
 			perror("An error occured while executing pipeline:");
-		if (new_read_fd == -2)
+		if (read_fd == -2)
 			return (-2);
 		ft_free(program);
 	}
-	return (new_read_fd);
+	return (read_fd);
 }
 
 /*

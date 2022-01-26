@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 22-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 25-01-2022 18:08 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 26-01-2022 13:10 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -130,11 +130,7 @@ static int	execute_cmd_lst(int read_fd, t_cmd *cmd_lst)
 		curr = curr->next;
 		if (should_exit() && has_only_one_command(cmd_lst))
 		{
-			clear_cmd_list(&cmd_lst);
-			flush_pipe(read_fd);
-			rl_clear_history();
-			printf("exit\n");
-			exit(*get_exit_status());
+			clean_exit(read_fd);
 		}
 		set_should_exit(0);
 	}

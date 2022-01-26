@@ -12,6 +12,8 @@ CPUS ?= $(shell sysctl -n hw.ncpu || echo 1)
 MAKEFLAGS += --jobs=$(CPUS)	# I'm fast as fuck boi
 
 SRCS =	srcs/minishell.c \
+		srcs/signals.c \
+		\
 		ft_malloc/ft_free.c \
 		ft_malloc/ft_malloc.c \
 		\
@@ -78,9 +80,12 @@ NAME = minishell
 
 CC = gcc -g -fsanitize=address #-Wall -Wextra -Werror
 
+AQUA = \033[0;96m
+AQUA_BOLD = \033[1;96m
+
 %.o: %.c
 	@$(CC) -c $< -o $@
-	@echo "\033[0;96mCompiling \033[1;96m$<\033[0m"
+	@echo "$(AQUA)Compiling $(AQUA_BOLD)$<\033[0m"
 
 $(NAME):	$(LIBFT) $(OBJS)
 	@echo "\033[0;95mLinking \033[0;95m($(OBJS)) into \033[1;35m$(NAME)\033[0m"

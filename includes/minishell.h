@@ -6,7 +6,7 @@
 /*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
 /*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
 /*   Created:   by            `-'                        `-'                  */
-/*   Updated: 25-01-2022 17:16 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 26-01-2022 13:21 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,16 @@ char	*search_absolute_path_program(char *program);
 
 
 int	is_regular_file_or_symlink(char *file);
+
+void	set_terminal_attributes(int term_type);
+
+void	clean_exit(int read_fd);
+
+enum e_current_terminal
+{
+	ECHOCTL_ON = 0,
+	ECHOCTL_OFF = 1
+};
 
 
 // Clean exitr
@@ -127,6 +137,9 @@ typedef enum e_interpreted_char
 	AND_CHAR,
 	WILDCARD_CHAR
 }	t_interpreted_char;
+
+
+void	init_signals(void);
 
 // Parsing utils
 int		is_line_empty(char *str);
