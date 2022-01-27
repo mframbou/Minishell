@@ -29,7 +29,7 @@ typedef struct s_cmd
 	char			**args;
 	int				next_cmd_operator;
 	t_redirection	redirection;
-	char			*parentheses_content; // If there is something between (), just substr the whole content
+	char			*parentheses_content;
 }	t_cmd;
 
 enum	e_operator

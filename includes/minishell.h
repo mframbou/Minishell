@@ -6,14 +6,14 @@
 /*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
 /*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
 /*   Created:   by            `-'                        `-'                  */
-/*   Updated: 26-01-2022 13:21 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 12:40 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# define MINISHELL_PROMPT "minishell: "
+# define MINISHELL_PROMPT "🤡: "
 # define PATH_STR "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 // Libs
@@ -37,7 +37,7 @@
 # include "ft_malloc.h"
 # include "readline_extras.h"
 
-int	g_pid;
+int		g_pid;
 
 // Parsing
 t_cmd	*parse_cmds(char *line);
@@ -46,49 +46,7 @@ char	*get_one_arg(char *str, int *i);
 char	*interpret_env_args(char *str);
 void	interpret_all_args(char	***args);
 void	interpret_quotes(char **str);
-
-int		*get_exit_status(void);
-void	set_exit_status(int status);
-
-char	*insert_last_exit_status(char *str, int *index);
-
-int	parse_and_execute_line(int input_read_fd, char *line);
-
-// from execute_command.c
-int	read_until_delimiter(char *delimiter);
-int	has_slash(char *str);
-char	*search_absolute_path_program(char *program);
-
-
-int	is_regular_file_or_symlink(char *file);
-
-void	set_terminal_attributes(int term_type);
-
-void	clean_exit(int read_fd);
-
-enum e_current_terminal
-{
-	ECHOCTL_ON = 0,
-	ECHOCTL_OFF = 1
-};
-
-
-// Clean exitr
-void	flush_pipe(int fd);
-int		should_exit(void);
-void	set_should_exit(int code);
-void	free_redirections(t_cmd *lst);
-
-/*
-	example:
-	cmd = "echo test"
-	next_cmd_operator = pipe
-*/
-typedef	struct s_splitted_cmd
-{
-	char	*cmd;
-	int		next_cmd_operator;
-}	t_splitted_cmd;
+int		parse_and_execute_line(int input_read_fd, char *line);
 
 // Parsing redirections
 char	**remove_empty_args(char **args);
@@ -103,19 +61,71 @@ int		get_operator_str_len(int operator);
 void	init_redirection_struct(t_redirection *redirection);
 int		open_file_for_redirection(char *filename, int redirection_type);
 
-// exit status
+// Parsing utils
+int		is_line_empty(char *str);
+int		is_closed_quote(char *str);
+int		is_closed_parenthesis(char *str);
+void	remove_substr_from_string(char **str, int start, int end);
+void	remove_char_from_string(char **str, int index);
+void	interpret_quotes(char **str);
+void	unquote_all_args(char **args);
+int		is_valid_in_filename(char c);
+char	*insert_str_in_str(char *src, char *str, int index);
+char	*convert_str_array_to_one_line(char **array);
+void	sort_string_array(char **array);
+int		has_syntax_error(char *line);
+int		are_parentheses_invalid(char *line);
+int		is_redirection_operator(int operator);
+int		has_slash(char *str);
+
+// Exit
 int		*get_exit_status(void);
 void	set_exit_status(int status);
 char	*insert_last_exit_status(char *str, int *index);
+int		should_exit(void);
+void	set_should_exit(int code);
+// Redirections
+int		read_until_delimiter(char *delimiter);
 
+// Terminal
+void	set_terminal_attributes(int term_type);
+enum e_current_terminal
+{
+	ECHOCTL_ON = 0,
+	ECHOCTL_OFF = 1
+};
+
+// Execution
+char	*search_absolute_path_program(char *program);
+int		is_regular_file_or_symlink(char *file);
+int		execute_program(int input_fd, char *program_path, char **args);
+int		execute_builtin(char **args);
+int		is_builtin(char *program);
+char	*is_program_in_path(char *program);
+
+typedef struct s_splitted_cmd
+{
+	char	*cmd;
+	int		next_cmd_operator;
+}	t_splitted_cmd;
+
+// Clean exit
+void	flush_pipe(int fd);
+void	clean_exit(int read_fd);
+
+// Layout
 typedef struct s_cmd_layout
 {
 	int	operator_chars[4096];
 	int	operators_nb;
 	int	non_redirect_operators_nb;
 }	t_cmd_layout;
-
 void	create_cmd_layout(t_cmd_layout *layout, char *line);
+
+// Exit status
+int		*get_exit_status(void);
+void	set_exit_status(int status);
+char	*insert_last_exit_status(char *str, int *index);
 
 /*
 	|
@@ -138,39 +148,15 @@ typedef enum e_interpreted_char
 	WILDCARD_CHAR
 }	t_interpreted_char;
 
-
+// Signals
 void	init_signals(void);
-
-// Parsing utils
-int		is_line_empty(char *str);
-int		is_closed_quote(char *str);
-int		is_closed_parenthesis(char *str);
-void	remove_substr_from_string(char **str, int start, int end);
-void	remove_char_from_string(char **str, int index);
-void	interpret_quotes(char **str);
-void	unquote_all_args(char **args);
-int		is_valid_in_filename(char c);
-char	*insert_str_in_str(char *src, char *str, int index);
-char	*convert_str_array_to_one_line(char **array);
-void	sort_string_array(char **array);
-int		has_syntax_error(char *line); // Check for cases like echo | |, | cat etc.
-int	are_parentheses_invalid(char *line);
-int	is_redirection_operator(int operator);
 
 // parentheses
 char	*remove_outer_parentheses(char *str);
 int		has_parentheses_to_interpret(char *str);
 
-
 // Wildcard
 void	interpret_wildcards(char **line);
-
-// Program execution
-int		execute_program(int input_fd, char *program_path, char **args);
-int		execute_builtin(char **args);
-int		is_builtin(char *program);
-char	*is_program_in_path(char *program);
-//int		execute_cmd_lst(t_cmd *cmd_lst);
 
 // Environment
 void	add_env_variable(char *key, char *value);
