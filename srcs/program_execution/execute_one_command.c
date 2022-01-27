@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 25-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 27-01-2022 13:09 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 14:37 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ static int	execute_program_if_found(char **args, int read_fd)
 		read_fd = execute_builtin(args);
 	else
 	{
-		if (has_slash(args[0]))
+		if (has_slash(args[0]) || get_env_variable("PATH") == NULL)
 			program = search_absolute_path_program(args[0]);
 		else
 			program = is_program_in_path(args[0]);

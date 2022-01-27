@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 24-01-2022 16:51 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 13:54 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -54,61 +54,56 @@ char	*get_line_till_space_or_quote(char *str)
 }
 */
 
-/*
-	If we found a non-closing quote, then count it as part of the argument
-*/
-static char	*get_line_till_space_or_quote(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] && !ft_isspace(str[i]) && str[i] != '\'' && str[i] != '"')
-		i++;
-	if (str[i] == '"' || str[i] == '\'')
-	{
-		if (!is_closed_quote(&(str[i])))
-		{
-			i++;
-			while (str[i] && !ft_isspace(str[i]) && str[i] != '"' \
-			&& str[i] != '\'')
-				i++;
-			if ((str[i] == '"' || str[i] == '\'') \
-			&& !is_closed_quote(&(str[i])))
-				while (str[i] && !ft_isspace(str[i]))
-					i++;
-		}
-	}
-	return (ft_substr(str, 0, i));
-}
-
-static char	*get_line_till_any_quote(char *str)
-{
-	int		i;
-	char	quote;
-
-	i = 0;
-	quote = str[i];
-	i++;
-	while (str[i] && str[i] != quote)
-		i++;
-	return (ft_substr(str, 0, i + 1));
-}
-
+// /*
+// 	If we found a non-closing quote, then count it as part of the argument
+// */
+// static char	*get_line_till_space_or_quote(char *str)
+// {
+// 	int	i;
+// 	i = 0;
+// 	while (str[i] && !ft_isspace(str[i]) && str[i] != '\'' && str[i] != '"')
+// 		i++;
+// 	if (str[i] == '"' || str[i] == '\'')
+// 	{
+// 		if (!is_closed_quote(&(str[i])))
+// 		{
+// 			i++;
+// 			while (str[i] && !ft_isspace(str[i]) && str[i] != '"'
+// 			&& str[i] != '\'')
+// 				i++;
+// 			if ((str[i] == '"' || str[i] == '\'')
+// 			&& !is_closed_quote(&(str[i])))
+// 				while (str[i] && !ft_isspace(str[i]))
+// 					i++;
+// 		}
+// 	}
+// 	return (ft_substr(str, 0, i));
+// }
+// static char	*get_line_till_any_quote(char *str)
+// {
+// 	int		i;
+// 	char	quote;
+// 	i = 0;
+// 	quote = str[i];
+// 	i++;
+// 	while (str[i] && str[i] != quote)
+// 		i++;
+// 	return (ft_substr(str, 0, i + 1));
+// }
 /*
 	test"i' ca' marche ou pas ?
 
 	special case => ['test"i', 'ca', 'marche', 'ou', 'pas']
 */
-static char	*get_line_till_space(char *str)
-{
-	int	i;
+// static char	*get_line_till_space(char *str)
+// {
+// 	int	i;
 
-	i = 0;
-	while (str[i] && !ft_isspace(str[i]))
-		i++;
-	return (ft_substr(str, 0, i));
-}
-
+// 	i = 0;
+// 	while (str[i] && !ft_isspace(str[i]))
+// 		i++;
+// 	return (ft_substr(str, 0, i));
+// }
 /*
 	Retrieve the argument, only special case is if the arg == '' or ""
 	In which case we just do i += 2 to skip the quotes 
@@ -117,7 +112,6 @@ static char	*get_line_till_space(char *str)
 char	*get_one_arg(char *str, int *i)
 {
 	char	*res;
-	int		closed_quote_distance;
 	int		start;
 
 	start = *i;

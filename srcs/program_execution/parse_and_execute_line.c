@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 22-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 27-01-2022 12:44 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 14:17 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ int	parse_and_execute_line(int input_read_fd, char *line)
 	int		output_read_fd;
 	int		syntax_error_index;
 
+	output_read_fd = -1;
 	if (are_parentheses_invalid(line))
 		return (-2);
 	if (has_syntax_error(line))
@@ -84,7 +85,8 @@ static int	execute_and_and_or_if_needed(t_cmd **cmd, int read_fd)
 		curr->next_cmd_operator == OR_CHAR)
 	{
 		if (g_pid != 0 && waitpid(g_pid, &exit_status, 0) != -1)
-			set_exit_status(exit_status);
+			if (WIFEXITED(exit_status))
+				set_exit_status(WEXITSTATUS(exit_status));
 		while (wait(NULL) > 0)
 			;
 		flush_pipe(read_fd);
@@ -115,9 +117,6 @@ static int	execute_cmd_lst(int read_fd, t_cmd *cmd_lst)
 {
 	t_cmd	*curr;
 	int		new_read_fd;
-	char	*program;
-	char	buf;
-	int		exit_status;
 
 	curr = cmd_lst;
 	new_read_fd = -1;

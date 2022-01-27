@@ -6,7 +6,7 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 27-01-2022 13:11 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 14:37 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,14 +80,11 @@ char	*is_program_in_path(char *program)
 
 	path = get_env_variable("PATH");
 	if (!path)
-	{
-		add_env_variable("PATH", ft_strdup(PATH_STR));
-		path = get_env_variable("PATH");
-	}
+		return (NULL);
 	res = test_all_paths(path, program);
 	if (!res)
 	{
-		printf("%s: program not found\n", program);
+		printf("%s: command not found\n", program);
 	}
 	return (res);
 }

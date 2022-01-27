@@ -6,7 +6,7 @@
 /*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
 /*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
 /*   Created:   by            `-'                        `-'                  */
-/*   Updated: 27-01-2022 12:40 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 13:53 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,11 +66,11 @@ int		is_line_empty(char *str);
 int		is_closed_quote(char *str);
 int		is_closed_parenthesis(char *str);
 void	remove_substr_from_string(char **str, int start, int end);
-void	remove_char_from_string(char **str, int index);
+void	remove_char_from_string(char **str, size_t index);
 void	interpret_quotes(char **str);
 void	unquote_all_args(char **args);
 int		is_valid_in_filename(char c);
-char	*insert_str_in_str(char *src, char *str, int index);
+char	*insert_str_in_str(char *src, char *str, size_t index);
 char	*convert_str_array_to_one_line(char **array);
 void	sort_string_array(char **array);
 int		has_syntax_error(char *line);

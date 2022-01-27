@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 20-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 27-01-2022 12:44 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 14:56 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -90,11 +90,11 @@ static int	execute_line(char *line)
 	res = parse_and_execute_line(-1, line);
 	if (res == -2)
 		return (-1);
-	exit_status = 0;
 	if (res >= 0)
 		flush_pipe(res);
 	if (g_pid != 0 && waitpid(g_pid, &exit_status, 0) != -1)
-		set_exit_status(exit_status);
+		if (WIFEXITED(exit_status))
+			set_exit_status(WEXITSTATUS(exit_status));
 	while (wait(NULL) > 0)
 		;
 	return (0);
@@ -110,12 +110,12 @@ static int	execute_line(char *line)
 	but don't care about exit status.
 
 	- If syntax error, continue since it's already printed out
+
+	STDERR is already redirected to STDOUT
 */
-int	main(int argc, char **argv)
+int	main(void)
 {
 	char	*line;
-	t_cmd	*cmd_list;
-	int		exit_status;
 
 	init_signals();
 	set_terminal_attributes(ECHOCTL_OFF);

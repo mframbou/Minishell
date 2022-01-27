@@ -6,7 +6,7 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 26-01-2022 13:26 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 14:26 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,6 @@ static int	exec_and_redirect_stdout(int pipe_fd[2], char *program_path, \
 		write(1, "Error occured\n", 8);
 		close(pipe_fd[1]);
 		return (perror_return("dup2 stdout failure"));
-	}
-	if (dup2(pipe_fd[1], STDERR_FILENO) == -1)
-	{
-		write(1, "Error occured\n", 8);
-		close(pipe_fd[1]);
-		return (perror_return("dup2 stderr failure"));
 	}
 	env = get_env_as_string_array();
 	close(pipe_fd[1]);
@@ -119,7 +113,6 @@ static int	execute_program_from_args_and_fd(int read_fd, char *program_path, \
 int	execute_program(int input_fd, char *program_path, char **args)
 {
 	int	output_read_fd;
-	int	exit_status;
 
 	output_read_fd = -1;
 	if (input_fd == -1)

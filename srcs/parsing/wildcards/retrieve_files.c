@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 18-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 24-01-2022 19:53 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 13:51 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static char	**list_files_in_directory(char *folder)
 
 	files = ft_malloc(sizeof(char *) * (count_files_in_directory(".") + 1));
 	i = 0;
-	dir = opendir(".");
+	dir = opendir(folder);
 	if (dir)
 	{
 		curr_file = readdir(dir);
@@ -126,6 +126,8 @@ char	*get_one_line_wildcard(void)
 	char	**files;
 	char	*line;
 
+	line = NULL;
+	files = NULL;
 	files = generate_wildcard_in_current_dir();
 	if (files)
 	{

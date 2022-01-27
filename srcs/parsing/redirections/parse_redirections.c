@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 15-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 25-01-2022 13:30 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 15:14 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ static int	get_filename_length(char *filename)
 static char	*get_first_redirection_filename(char **line, int *redir_type)
 {
 	int		i;
-	int		j;
 	char	*filename;
 
 	filename = NULL;
@@ -89,7 +88,6 @@ static char	*get_first_redirection_filename(char **line, int *redir_type)
 			i++;
 		if (!(*line)[i])
 		{
-			printf("TODO NO FILENAME\n");
 			return (NULL);
 		}
 		filename = &((*line)[i]);
@@ -175,7 +173,6 @@ int	parse_redirs_and_create_files(char **line, t_redirection *redir)
 	char	*filename;
 	char	*prev_filename;
 	int		redir_type;
-	int		fd;
 
 	init_redirection_struct(redir);
 	filename = get_first_redirection_filename(line, &redir_type);

@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 26-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 27-01-2022 12:43 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 13:45 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ static void	handle_sigquit(int sig)
 */
 static void	handle_sigs(int sig, siginfo_t *siginfo, void *context)
 {
+	(void) siginfo;
+	(void) context;
 	if (sig == SIGINT)
 	{
 		handle_sigint(sig);

@@ -14,8 +14,8 @@
 SRCS =	srcs/minishell.c \
 		srcs/signals.c \
 		\
-		srcs/ft_malloc/ft_free.c \
-		srcs/ft_malloc/ft_malloc.c \
+		srcs/libft/ft_malloc/ft_free.c \
+		srcs/libft/ft_malloc/ft_malloc.c \
 		\
 		srcs/parsing/exit_status/exit_status.c \
 		\
@@ -78,7 +78,7 @@ OBJS = $(SRCS:.c=.o)
 
 NAME = minishell
 
-CC = gcc -g -fsanitize=address #-Wall -Wextra -Werror
+CC = gcc -Wall -Wextra -Werror #-g -fsanitize=address
 
 AQUA = \033[0;96m
 AQUA_BOLD = \033[1;96m

@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 25-01-2022 17:21 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 13:50 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -21,10 +21,10 @@ int	is_valid_in_filename(char c)
 	Simply removes one char from string, takes string pointer and index
 	("test", 1) => "tst"
 */
-void	remove_char_from_string(char **str, int index)
+void	remove_char_from_string(char **str, size_t index)
 {
 	char	*res;
-	int		new_len;
+	size_t	new_len;
 	char	old_char;
 
 	if (index > ft_strlen(*str) - 1 || index < 0)
@@ -61,12 +61,12 @@ void	remove_substr_from_string(char **str, int start, int end)
 	i = res index
 	j = src index
 */
-char	*insert_str_in_str(char *src, char *str, int index)
+char	*insert_str_in_str(char *src, char *str, size_t index)
 {
 	char	*res;
-	int		i;
-	int		j;
-	int		k;
+	size_t	i;
+	size_t	j;
+	size_t	k;
 
 	res = ft_malloc(sizeof(char) * (ft_strlen(src) + ft_strlen(str) + 1));
 	if (index < 0 || index > ft_strlen(src))

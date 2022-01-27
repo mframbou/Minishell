@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 13-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 25-01-2022 14:39 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 13:51 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -152,7 +152,6 @@ static int	parse_one_cmd(t_cmd **list, t_splitted_cmd *current_cmd)
 t_cmd	*parse_cmds(char *line)
 {
 	t_splitted_cmd	*cmds;
-	t_redirection	redirection;
 	t_cmd			*lst;
 	int				i;
 	char			*tmp;

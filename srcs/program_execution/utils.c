@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 25-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 27-01-2022 13:09 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 14:39 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -61,10 +61,8 @@ int	is_regular_file_or_symlink(char *file)
 */
 char	*search_absolute_path_program(char *program)
 {
-	char		*res;
-	struct stat	file_infos;
-
-	if (!is_regular_file_or_symlink(program) || !has_slash(program))
+	if (!is_regular_file_or_symlink(program) \
+	|| (get_env_variable("PATH") != NULL && !has_slash(program)))
 	{
 		perror(program);
 		return (NULL);

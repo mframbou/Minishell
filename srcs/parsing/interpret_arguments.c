@@ -6,7 +6,7 @@
 /*   By: oronda <oronda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2013/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 24-01-2022 16:56 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 13:51 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,6 @@ static void	interpret_dollar_var_and_free(char **str, int *index)
 
 char	*interpret_env_args(char *str)
 {
-	char	*tmp;
 	int		i;
 	int		is_in_double_quote;
 
