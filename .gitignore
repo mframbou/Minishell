@@ -1,10 +1,5 @@
 *
 !*.c
 !*.h
-!*/
-!parse/*.c
-libft/*.o
-!TRICKS.txt
-!test.sh
-!ft_malloc/*
-!libreadline.a
+!srcs/*/
+!bellobito.sh

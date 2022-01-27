@@ -91,7 +91,7 @@ $(NAME):	$(LIBFT) $(OBJS)
 	@echo "\033[0;95mLinking \033[0;95m($(OBJS)) into \033[1;35m$(NAME)\033[0m"
 	@$(CC) $(OBJS) $(LIBFT) $(READLINE) -o $(NAME)
 	@echo "\033[1;92mDONE"
-	@./test.sh
+	@./bellobito.sh
 
 $(LIBFT):
 	$(MAKE) -j -C ./srcs/libft
