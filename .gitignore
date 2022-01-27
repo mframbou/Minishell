@@ -1,5 +1,5 @@
-*
-!*.c
-!*.h
-!srcs/*/
-!bellobito.sh
+.vscode/
+readline-8.1.2/
+test1/
+test2/
+TRICKS.txt
