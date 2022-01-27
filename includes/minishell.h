@@ -6,14 +6,14 @@
 /*   By:             )/   )   )  /  /    (  |   )/   )   ) /   )(   )(    )   */
 /*                  '/   /   (`.'  /      `-'-''/   /   (.'`--'`-`-'  `--':   */
 /*   Created:   by            `-'                        `-'                  */
-/*   Updated: 27-01-2022 13:53 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 15:32 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# define MINISHELL_PROMPT "🤡: "
+# define MINISHELL_PROMPT "👉👌: "
 # define PATH_STR "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 // Libs
