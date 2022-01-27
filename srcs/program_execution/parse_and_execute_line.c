@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 22-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 26-01-2022 13:10 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 12:44 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ static int	execute_and_and_or_if_needed(t_cmd **cmd, int read_fd)
 	if (curr->next_cmd_operator == AND_CHAR || \
 		curr->next_cmd_operator == OR_CHAR)
 	{
-		if (waitpid(g_pid, &exit_status, 0) != -1)
+		if (g_pid != 0 && waitpid(g_pid, &exit_status, 0) != -1)
 			set_exit_status(exit_status);
 		while (wait(NULL) > 0)
 			;

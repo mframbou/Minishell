@@ -6,11 +6,11 @@
 /*   By: mframbou <mframbou@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2012/01/20 00:00:00 by ' \/ (   )/       #+#    #+#             */
-/*   Updated: 26-01-2022 13:41 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 12:49 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/builtins.h"
 
 static int	is_digit_str(char *str)
 {

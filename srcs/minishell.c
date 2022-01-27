@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 20-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 26-01-2022 13:36 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 12:44 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ static int	execute_line(char *line)
 	exit_status = 0;
 	if (res >= 0)
 		flush_pipe(res);
-	if (waitpid(g_pid, &exit_status, 0) != -1)
+	if (g_pid != 0 && waitpid(g_pid, &exit_status, 0) != -1)
 		set_exit_status(exit_status);
 	while (wait(NULL) > 0)
 		;

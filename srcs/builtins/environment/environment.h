@@ -6,36 +6,31 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 12-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 25-01-2022 14:05 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 12:50 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#ifndef ENVIRONMENT_H
+# define ENVIRONMENT_H
 
-/*
-	If the string passed is null, getcwd allocates it with a buffer of size n,
-	If n is 0, getcwd automatically malloc the required length
-	Returns the address of the buffer (which changed because it was malloc'ed)
-*/
-void	pwd_command(char *argv[], int output_fd)
+# include "../../../includes/minishell.h"
+
+typedef struct s_dic_variable
 {
-	char		*curr_path;
-	static char	*empty_cd[2] = {"cd", NULL};
+	char	*key;
+	char	*value;
+}	t_env_variable;
 
-	(void) argv;
-	curr_path = NULL;
-	curr_path = getcwd(curr_path, 0);
-	if (curr_path)
-	{
-		ft_putstr_fd(curr_path, output_fd);
-		ft_putchar_fd('\n', output_fd);
-		ft_free(curr_path);
-		set_exit_status(EXIT_SUCCESS);
-	}
-	else
-	{
-		perror("Unable to retrieve current directory");
-		cd_command(empty_cd, STDOUT_FILENO);
-		set_exit_status(errno);
-	}
-}
+typedef struct s_env_link
+{
+	t_env_variable		var;
+	struct s_env_link	*next;
+}	t_env_link;
+
+void	add_env_variable(char *key, char *value);
+void	remove_env_variable(char *key);
+void	free_var_list(void);
+char	*get_env_variable(char *key);
+char	**get_env_as_string_array(void);
+
+#endif

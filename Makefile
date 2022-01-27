@@ -8,14 +8,14 @@
 #                               /\  `-'/      `-'  '/   (  `-'-..`-'-'
 #                           `._;  `._;                   `-           
 
-CPUS ?= $(shell sysctl -n hw.ncpu || echo 1)
-MAKEFLAGS += --jobs=$(CPUS)	# I'm fast as fuck boi
+#CPUS ?= $(shell sysctl -n hw.ncpu || echo 1)
+#MAKEFLAGS += --jobs=$(CPUS)	# I'm fast as fuck boi, not working on make re
 
 SRCS =	srcs/minishell.c \
 		srcs/signals.c \
 		\
-		ft_malloc/ft_free.c \
-		ft_malloc/ft_malloc.c \
+		srcs/ft_malloc/ft_free.c \
+		srcs/ft_malloc/ft_malloc.c \
 		\
 		srcs/parsing/exit_status/exit_status.c \
 		\
@@ -57,22 +57,22 @@ SRCS =	srcs/minishell.c \
 		\
 		srcs/parsing/parentheses/utils_parentheses.c \
 		\
-		builtins/environment/add_variable.c \
-		builtins/environment/get_variable.c \
-		builtins/environment/remove_variable.c \
-		builtins/environment/var_list.c \
-		builtins/environment/get_env.c \
-		builtins/environment/env.c \
-		builtins/environment/export.c \
-		builtins/environment/unset.c \
-		builtins/cd.c \
-		builtins/pwd.c \
-		builtins/exit.c \
-		builtins/echo.c \
+		srcs/builtins/environment/add_variable.c \
+		srcs/builtins/environment/get_variable.c \
+		srcs/builtins/environment/remove_variable.c \
+		srcs/builtins/environment/var_list.c \
+		srcs/builtins/environment/get_env.c \
+		srcs/builtins/environment/env.c \
+		srcs/builtins/environment/export.c \
+		srcs/builtins/environment/unset.c \
+		srcs/builtins/cd.c \
+		srcs/builtins/pwd.c \
+		srcs/builtins/exit.c \
+		srcs/builtins/echo.c \
 
-LIBFT = ./libft/libft.a
+LIBFT = ./srcs/libft/libft.a
 
-READLINE = ./libreadline.a -ltermcap # Need to include termcap to use readline
+READLINE = ./srcs/libreadline.a -ltermcap # Need to include termcap to use readline
 
 OBJS = $(SRCS:.c=.o)
 
@@ -94,20 +94,20 @@ $(NAME):	$(LIBFT) $(OBJS)
 	@./test.sh
 
 $(LIBFT):
-	$(MAKE) -j -C libft
+	$(MAKE) -j -C ./srcs/libft
 
 all:		$(NAME)
 
 clean:
 	@rm -f $(OBJS)
 	@echo "\033[0;91mRemoving \033[0;31m$(OBJS)\033[0m"
-	@make -C libft clean
+	@make -C ./srcs/libft clean
 	@rm -f echo
 
 fclean:		clean
 	@rm -f $(NAME)
 	@echo "\033[0;91mRemoving \033[0;31m$(NAME)\033[0m"
-	@make -C libft fclean
+	@make -C ./srcs/libft fclean
 
 re:			fclean all
 

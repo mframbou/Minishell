@@ -6,7 +6,7 @@
 /*   By: '/   /   (`.'  /      `-'-.-/   /.- (.''--'`-`-'  `--':        /     */
 /*                  -'            (   \  / .-._.).--..-._..  .-.  .-../ .-.   */
 /*   Created: 25-01-2022  by       `-' \/ (   )/    (   )  )/   )(   / (  |   */
-/*   Updated: 25-01-2022 14:48 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
+/*   Updated: 27-01-2022 13:09 by      /\  `-'/      `-'  '/   (  `-'-..`-'-' */
 /*                                 `._;  `._;                   `-            */
 /* ************************************************************************** */
 
@@ -65,6 +65,9 @@ char	*search_absolute_path_program(char *program)
 	struct stat	file_infos;
 
 	if (!is_regular_file_or_symlink(program) || !has_slash(program))
+	{
+		perror(program);
 		return (NULL);
+	}
 	return (ft_strdup(program));
 }
