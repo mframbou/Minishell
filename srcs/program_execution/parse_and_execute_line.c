@@ -116,10 +116,8 @@ static int	execute_and_and_or_if_needed(t_cmd **cmd, int read_fd)
 static int	execute_cmd_lst(int read_fd, t_cmd *cmd_lst)
 {
 	t_cmd	*curr;
-	int		new_read_fd;
 
 	curr = cmd_lst;
-	new_read_fd = -1;
 	while (curr)
 	{
 		read_fd = execute_one_cmd(curr, read_fd);

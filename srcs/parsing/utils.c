@@ -27,7 +27,7 @@ void	remove_char_from_string(char **str, size_t index)
 	size_t	new_len;
 	char	old_char;
 
-	if (index > ft_strlen(*str) - 1 || index < 0)
+	if (index > ft_strlen(*str) - 1)
 		return ;
 	new_len = ft_strlen(*str) - 1;
 	res = ft_malloc(sizeof(char) * (new_len + 1));
@@ -69,7 +69,7 @@ char	*insert_str_in_str(char *src, char *str, size_t index)
 	size_t	k;
 
 	res = ft_malloc(sizeof(char) * (ft_strlen(src) + ft_strlen(str) + 1));
-	if (index < 0 || index > ft_strlen(src))
+	if (index > ft_strlen(src))
 		return (NULL);
 	if (res)
 	{
